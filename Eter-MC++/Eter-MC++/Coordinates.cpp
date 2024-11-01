@@ -3,7 +3,7 @@
 
 Coordinates::Coordinates() : m_x{ 0 }, m_y{ 0 } {}
 
-Coordinates::Coordinates(int x, int y) : m_x{ x }, m_y{ y } {}
+Coordinates::Coordinates(short x, short y) : m_x{ x }, m_y{ y } {}
 
 Coordinates::Coordinates(const Coordinates& other) : m_x{ other.m_x }, m_y{ other.m_y } {}
 
@@ -17,22 +17,22 @@ bool Coordinates::operator==(const Coordinates& other) const
 	return (m_x == other.m_x && m_y == other.m_y);
 }
 
-int Coordinates::GetX() const
+short Coordinates::GetX() const
 {
 	return m_x;
 }
 
-int Coordinates::GetY() const
+short Coordinates::GetY() const
 {
 	return m_y;
 }
 
-void Coordinates::SetX(int x)
+void Coordinates::SetX(short x)
 {
 	m_x = x;
 }
 
-void Coordinates::SetY(int y)
+void Coordinates::SetY(short y)
 {
 	m_y = y;
 }

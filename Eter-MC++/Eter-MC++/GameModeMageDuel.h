@@ -1,5 +1,7 @@
 #pragma once
-class GameModeMageDuel
+#include "Game.h"
+
+class GameModeMageDuel : public Game
 {
 };
 

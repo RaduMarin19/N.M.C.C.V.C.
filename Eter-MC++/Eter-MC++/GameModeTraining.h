@@ -1,5 +1,7 @@
 #pragma once
-class GameModeTraining
+#include "Game.h"
+
+class GameModeTraining : public Game
 {
 };
 

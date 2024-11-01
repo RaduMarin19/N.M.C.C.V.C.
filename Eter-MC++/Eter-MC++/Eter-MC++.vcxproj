@@ -105,10 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>SDL2.lib;SDL2_image.lib;SDL2main.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2_image.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -128,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CardTexture.cpp" />
     <ClCompile Include="Coordinates.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -140,6 +144,7 @@
     <ClCompile Include="PlayingCard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CardTexture.h" />
     <ClInclude Include="Coordinates.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
