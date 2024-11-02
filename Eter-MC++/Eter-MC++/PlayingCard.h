@@ -12,6 +12,8 @@ public:
 	void SetCoordinates(const Coordinates& position);
 	void setValue(short value);
 
+	bool operator==(const PlayingCard& other) const;
+
 private:
 	Coordinates m_position;
 	short m_value;

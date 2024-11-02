@@ -7,9 +7,12 @@
 class Player
 {
 public:
+	Player();
 	Player(std::vector<PlayingCard> cards);
 
 	void SetGrabbedCard(const std::shared_ptr<PlayingCard>& grabbedCard);
+	void AddCard(const PlayingCard& card);
+	void removeCard(const PlayingCard& card);
 	std::vector<PlayingCard> GetCards() const;
 	PlayingCard GetGrabbedCard() const;
 	bool isGrabbingCard() const;

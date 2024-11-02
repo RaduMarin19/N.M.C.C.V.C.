@@ -21,3 +21,8 @@ void PlayingCard::setValue(short value)
 {
 	m_value = value;
 }
+
+bool PlayingCard::operator==(const PlayingCard& other) const
+{
+	return (m_position == other.m_position) && (m_value == other.m_value);
+}
