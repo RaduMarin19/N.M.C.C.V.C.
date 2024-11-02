@@ -11,3 +11,13 @@ short PlayingCard::GetValue() const
 {
 	return m_value;
 }
+
+void PlayingCard::SetCoordinates(const Coordinates& position)
+{
+	m_position = position;
+}
+
+void PlayingCard::setValue(short value)
+{
+	m_value = value;
+}
