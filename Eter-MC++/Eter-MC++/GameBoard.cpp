@@ -8,8 +8,8 @@ void GameBoard::pushNewCard(PlayingCard otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetCoordinates();
 
-    if (newCardCoords.GetX() < m_minX) this->m_minX = newCardCoords.GetX();
-    if (newCardCoords.GetX() > m_maxX) this->m_maxX = newCardCoords.GetX();
+    if (newCardCoords.GetX() < m_minX) this->m_minX = newCardCoords.GetX();  //updating the minimum and maximum
+    if (newCardCoords.GetX() > m_maxX) this->m_maxX = newCardCoords.GetX();  //coordinates values for the gameBoard
 
     if (newCardCoords.GetY() < m_minY) this->m_minY = newCardCoords.GetY();
     if (newCardCoords.GetY() > m_maxY) this->m_maxY = newCardCoords.GetY();
