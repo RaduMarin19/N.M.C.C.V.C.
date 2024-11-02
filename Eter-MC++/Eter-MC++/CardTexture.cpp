@@ -1,6 +1,9 @@
 #include "CardTexture.h"
 #include <iostream>
 
+CardTexture::CardTexture()
+{}
+
 CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 {
 	m_rect.w = textureWidth;
