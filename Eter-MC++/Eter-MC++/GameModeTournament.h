@@ -1,7 +1,11 @@
 #pragma once
-#include "Game.h"
+#include "GameBoard.h"
 
-class GameModeTournament : public Game
+class GameModeTournament : public GameBoard
 {
+public:
+	GameModeTournament() {
+		m_gameMode = GameBoard::GameMode::Tournament;
+	};
 };
 

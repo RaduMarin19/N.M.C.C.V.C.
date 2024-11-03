@@ -2,6 +2,14 @@
 
 PlayingCard::PlayingCard(Coordinates position, short value) : m_position{position}, m_value{value}{}
 
+PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id)
+{
+	this->m_cardId = id;
+	this->m_position = coord;
+	this->m_value = value;
+	this->texture = texture;
+}
+
 Coordinates PlayingCard::GetCoordinates() const
 {
 	return m_position;

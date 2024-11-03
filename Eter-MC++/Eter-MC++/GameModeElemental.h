@@ -1,7 +1,13 @@
 #pragma once
-#include "Game.h"
+#include "GameBoard.h"
 
-class GameModeElemental : public Game
+class GameModeElemental : public GameBoard
 {
+	GameModeElemental() {
+		setGameMode(GameMode::Elemental);
+		setTable(4);
+	}
+private:
+	std::vector<CardTexture> m_ElementalCards;
 };
 

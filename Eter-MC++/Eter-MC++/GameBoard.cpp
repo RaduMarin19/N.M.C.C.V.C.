@@ -114,4 +114,50 @@ void GameBoard::setTable(short tableSize)
     this->tableSize = tableSize;
 }
 
+GameBoard::GameBoard(SDL_Renderer* renderer)
+{
+    this->m_possiblePositions.emplace(0, 0);
+
+
+
+    for (int i = 0; i < 5; i++) {
+        m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
+        m_redCards.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");
+    }
+    m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_back.jpg");
+    m_redCards.emplace_back(renderer, "Dependencies/textures/red_back.jpg");
+
+    for (int i = 1; i < 9; i++) {
+        m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
+    }
+
+    std::vector<PlayingCard> PlayingCardsBlue;
+    std::vector<PlayingCard> PlayingCardsRed;
+    if (m_gameMode == GameBoard::GameMode::Training) {
+
+        for (int i = 0; i < 2; i++)
+            for (int i = 1; i <= 3; i++) {
+                PlayingCard cardBlue({ 0,0 }, &m_blueCards[i], i, nextCardId());
+                PlayingCard cardRed({ 0,0 }, &m_redCards[i], i, nextCardId());
+                PlayingCardsBlue.emplace_back(cardBlue);
+                PlayingCardsRed.emplace_back(cardRed);
+            }
+        PlayingCard cardBlue({ 0,0 }, &m_blueCards[4], 4, nextCardId());
+        PlayingCardsBlue.emplace_back(cardBlue);
+        PlayingCard cardRed({ 0,0 }, &m_redCards[4], 4, nextCardId());
+        PlayingCardsRed.emplace_back(cardRed);
+
+    }
+    Player playerBlue(PlayingCardsBlue);
+    this->m_PlayerBlue = playerBlue;
+
+    Player playerRed(PlayingCardsRed);
+    this->m_PlayerRed = playerRed;
+
+}
+
+unsigned short GameBoard::nextCardId() {
+    return ++GameBoard::m_cardId;
+}
+
 
