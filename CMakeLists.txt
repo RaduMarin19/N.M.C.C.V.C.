@@ -126,6 +126,9 @@ add_executable(N_M_C_C_V_C_
     Eter-MC++/Eter-MC++/Player.cpp
     Eter-MC++/Eter-MC++/Player.h
     Eter-MC++/Eter-MC++/PlayingCard.cpp
-    Eter-MC++/Eter-MC++/PlayingCard.h)
+    Eter-MC++/Eter-MC++/PlayingCard.h
+        Eter-MC++/Eter-MC++/Graphics.cpp
+        Eter-MC++/Eter-MC++/Graphics.h
+        Eter-MC++/Eter-MC++/Graphics.cpp)
 
 target_link_libraries(N_M_C_C_V_C_ ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRAY} SDL2_ttf::SDL2_ttf -lSDL2_image)
