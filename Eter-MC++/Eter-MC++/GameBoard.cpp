@@ -4,6 +4,25 @@
 GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
 m_blueCards{ 0 }, m_redCards{ 0 }, m_explosions{ 0 } {}
 
+void GameBoard::testPossiblePosition(short x, short y)
+{
+    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::tableSize - 1)) {
+        if (x < this->m_minX || x > this->m_maxX) {
+            std::cout << x << " " << y << " is out of bounds" << std::endl;
+            return;
+        }
+    }
+
+    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::tableSize - 1)) {
+        if (y < this->m_minY || y > this->m_maxY) {
+            std::cout << x << " " << y << " is out of bounds" << std::endl;
+            return;
+        }
+    }
+    if (!this->m_positions.contains({ x, y }))
+        this->m_possiblePositions.emplace(x, y);
+}
+
 void GameBoard::pushNewCard(PlayingCard otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetCoordinates();
@@ -29,6 +48,70 @@ void GameBoard::pushNewCard(PlayingCard otherCard)
         it->second.emplace(otherCard);
     }
 
-    /// mai trb adaugat
+    {
+
+        //vecini stanga dreapta
+        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
+        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
+
+        //vecini sus jos
+        this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() - 1);
+        this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() + 1);
+
+        //vecini diagonali stanga
+        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() - 1);
+        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() + 1);
+
+        //vecini diagonali dreapta
+        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() - 1);
+        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() + 1);
+    }
+
+    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::tableSize - 1)) {
+
+        auto it = this->m_possiblePositions.begin();
+        while (it != this->m_possiblePositions.end()) {
+
+           
+            if (it->GetX() < this->m_minX) {
+                it = this->m_possiblePositions.erase(it);
+                continue;
+            }
+
+            if (it == this->m_possiblePositions.end()) break;
+            if (it->GetX() > this->m_maxX) {
+                it = this->m_possiblePositions.erase(it);
+                continue;
+            }
+            ++it;
+        }
+
+    }
+
+    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::tableSize - 1)) {
+        auto it = this->m_possiblePositions.begin();
+        while (it != this->m_possiblePositions.end()) {
+
+            
+            if (it->GetY() < this->m_minY) {
+                it = this->m_possiblePositions.erase(it);
+                continue;
+            }
+
+            if (it == this->m_possiblePositions.end()) break;
+            if (it->GetY() > this->m_maxY) {
+                it = this->m_possiblePositions.erase(it);
+                continue;
+            }
+            ++it;
+        }
+    }
 
 }
+
+void GameBoard::setTable(short tableSize)
+{
+    this->tableSize = tableSize;
+}
+
+
