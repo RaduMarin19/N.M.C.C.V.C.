@@ -5,7 +5,8 @@ class GameModeTournament : public GameBoard
 {
 public:
 	GameModeTournament() {
-		m_gameMode = GameBoard::GameMode::Tournament;
+		setGameMode(GameMode::Tournament);
+		setTable(4);
 	};
 };
 

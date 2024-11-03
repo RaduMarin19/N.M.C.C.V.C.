@@ -7,7 +7,14 @@ PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short v
 	this->m_cardId = id;
 	this->m_position = coord;
 	this->m_value = value;
-	this->texture = texture;
+	this->m_texture = texture;
+}
+
+PlayingCard::PlayingCard(const PlayingCard &oth) {
+	m_position = oth.m_position;
+	m_value = oth.m_value;
+	m_texture = oth.m_texture;
+	m_cardId = oth.m_cardId;
 }
 
 Coordinates PlayingCard::GetCoordinates() const

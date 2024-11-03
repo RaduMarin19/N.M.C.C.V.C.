@@ -25,11 +25,15 @@ public:
     GameBoard();
     void pushNewCard(PlayingCard other);
     void setTable(short tableSize);
-	void setGameMode(GameMode mode);
+	void setGameMode(const GameMode& mode);
 	GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
-    // still need to add some functions
+
+    bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
+
+    Player *getPlayerRed();
+    Player *getPlayerBlue();
 
 protected:
     GameMode m_gameMode{ GameMode::Training };

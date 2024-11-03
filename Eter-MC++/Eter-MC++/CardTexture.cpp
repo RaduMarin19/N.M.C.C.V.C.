@@ -27,6 +27,11 @@ CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 	SDL_FreeSurface(surface);
 }
 
+CardTexture& CardTexture::operator=(const CardTexture &oth) {
+	m_texture = oth.m_texture;
+	m_rect = oth.m_rect;
+}
+
 SDL_Texture* CardTexture::getTexture() const
 {
 	return m_texture;

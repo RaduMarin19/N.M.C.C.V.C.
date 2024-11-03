@@ -114,6 +114,27 @@ void GameBoard::setTable(short tableSize)
     this->tableSize = tableSize;
 }
 
+void GameBoard::setGameMode(const GameMode& mode) {
+    this->m_gameMode = mode;
+}
+
+bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &card) const {
+    auto PlayingCard = this->m_positions.find(coordinates);
+    if(PlayingCard != this->m_positions.end()) {
+        card = PlayingCard->second.top();
+        return true;
+    } return false;
+
+}
+
+Player *GameBoard::getPlayerRed() {
+    return &m_PlayerRed;
+}
+
+Player *GameBoard::getPlayerBlue() {
+    return &m_PlayerBlue;
+}
+
 GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     this->m_possiblePositions.emplace(0, 0);
