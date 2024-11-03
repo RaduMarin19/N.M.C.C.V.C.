@@ -1,0 +1,131 @@
+cmake_minimum_required(VERSION 3.29)
+project(N_M_C_C_V_C_)
+
+set(CMAKE_CXX_STANDARD 20)
+
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+include_directories( ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} )
+
+include_directories(Eter-MC++/Eter-MC++)
+include_directories(Eter-MC++/Eter-MC++/Dependencies)
+include_directories(Eter-MC++/Eter-MC++/Dependencies/SDL)
+include_directories(Eter-MC++/Eter-MC++/Dependencies/SDL/include)
+
+add_executable(N_M_C_C_V_C_
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/begin_code.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/close_code.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_assert.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_atomic.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_audio.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_bits.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_blendmode.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_clipboard.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_android.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_emscripten.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_iphoneos.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_macosx.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_minimal.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_ngage.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_os2.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_pandora.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_windows.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_wingdk.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_winrt.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_config_xbox.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_copying.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_cpuinfo.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_egl.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_endian.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_error.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_events.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_filesystem.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_gamecontroller.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_gesture.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_guid.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_haptic.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_hidapi.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_hints.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_image.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_joystick.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_keyboard.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_keycode.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_loadso.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_locale.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_log.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_main.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_messagebox.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_metal.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_misc.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_mouse.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_mutex.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_name.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengl.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengl_glext.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles2.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles2_gl2.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles2_gl2ext.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles2_gl2platform.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_opengles2_khrplatform.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_pixels.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_platform.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_power.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_quit.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_rect.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_render.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_revision.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_rwops.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_scancode.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_sensor.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_shape.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_stdinc.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_surface.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_system.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_syswm.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_assert.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_common.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_compare.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_crc32.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_font.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_fuzzer.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_harness.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_images.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_log.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_md5.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_memory.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_test_random.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_thread.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_timer.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_touch.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_types.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_version.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_video.h
+    Eter-MC++/Eter-MC++/Dependencies/SDL/include/SDL_vulkan.h
+    Eter-MC++/Eter-MC++/CardTexture.cpp
+    Eter-MC++/Eter-MC++/CardTexture.h
+    Eter-MC++/Eter-MC++/Coordinates.cpp
+    Eter-MC++/Eter-MC++/Coordinates.h
+    Eter-MC++/Eter-MC++/Game.cpp
+    Eter-MC++/Eter-MC++/Game.h
+    Eter-MC++/Eter-MC++/GameBoard.cpp
+    Eter-MC++/Eter-MC++/GameBoard.h
+    Eter-MC++/Eter-MC++/GameModeElemental.cpp
+    Eter-MC++/Eter-MC++/GameModeElemental.h
+    Eter-MC++/Eter-MC++/GameModeMageDuel.cpp
+    Eter-MC++/Eter-MC++/GameModeMageDuel.h
+    Eter-MC++/Eter-MC++/GameModeTournament.cpp
+    Eter-MC++/Eter-MC++/GameModeTournament.h
+    Eter-MC++/Eter-MC++/GameModeTraining.cpp
+    Eter-MC++/Eter-MC++/GameModeTraining.h
+    Eter-MC++/Eter-MC++/main.cpp
+    Eter-MC++/Eter-MC++/Player.cpp
+    Eter-MC++/Eter-MC++/Player.h
+    Eter-MC++/Eter-MC++/PlayingCard.cpp
+    Eter-MC++/Eter-MC++/PlayingCard.h)
+
+target_link_libraries(N_M_C_C_V_C_ ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRAY} SDL2_ttf::SDL2_ttf -lSDL2_image)

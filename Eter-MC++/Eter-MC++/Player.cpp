@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <algorithm>
+
 Player::Player()
 {
 }
