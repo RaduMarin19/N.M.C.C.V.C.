@@ -9,6 +9,7 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 800
+#define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)
 
 class Game
 {

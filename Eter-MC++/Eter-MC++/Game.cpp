@@ -58,10 +58,28 @@ void Game::run() {
             {
                 quit = true;
             }
+
+            // Initialize renderer color white for the background
+            SDL_SetRenderDrawColor(renderer, 0x0f, 0x0f, 0x0f, 0xFF);
+
+            // Clear screen
+            SDL_RenderClear(renderer);
+
+            //Main Drawing area
+            painter.draw();
+
+            // Update screen
+            SDL_RenderPresent(renderer);
+        }
+        unsigned int frameTime = SDL_GetTicks() - frameStart;
+        if(TARGET_FRAME_TIME > frameTime) {
+            SDL_Delay(TARGET_FRAME_TIME - frameTime);
         }
     }
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
     SDL_Quit();
 }
 
