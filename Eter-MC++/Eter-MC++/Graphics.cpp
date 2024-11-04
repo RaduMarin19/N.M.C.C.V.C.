@@ -224,8 +224,60 @@ bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
 && m_mouseY > rect.y && m_mouseY < rect.y + rect.h);
 }
 
-void Graphics::draw() {
+bool Graphics::drawLoginPage() {
+
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
 
     drawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 14, true);
     drawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 14, true);
+
+    bool buttonActive = false;
+    drawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
+
+    // Present the updated render
+    SDL_RenderPresent(m_renderer);
+
+    return buttonActive;
+
+}
+
+void Graphics::drawModeSelection() {
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
+    drawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
+
+    // Define button positions and dimensions
+    bool tournamentActive = false;
+    bool mageDuelActive = false;
+    bool elementalBattleActive = false;
+    bool trainingActive = false;
+
+    // Draw and check each button
+    drawButton(tournamentActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
+    drawButton(mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    drawButton(elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    drawButton(trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+
+    // Check if a button was clicked and return or update game state
+    if (tournamentActive) {
+        std::cout << "Tournament mode selected!" << std::endl;
+        // Optionally update game state or trigger the corresponding game logic
+    }
+    if (mageDuelActive) {
+        std::cout << "Mage Duel mode selected!" << std::endl;
+        // Update state or logic here
+    }
+    if (elementalBattleActive) {
+        std::cout << "Elemental Battle mode selected!" << std::endl;
+        // Update state or logic here
+    }
+    if (trainingActive) {
+        std::cout << "Training mode selected!" << std::endl;
+        // Update state or logic here
+    }
+
+    SDL_RenderPresent(m_renderer);
 }

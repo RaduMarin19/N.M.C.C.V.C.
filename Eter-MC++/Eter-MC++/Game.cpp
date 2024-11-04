@@ -4,6 +4,16 @@ Game::Game() {
 
 }
 
+void Game::SetGameState(Game::GameState state)
+{
+    m_currentState = state;
+}
+
+Game::GameState Game::GetGameState() const
+{
+    return m_currentState;
+}
+
 void Game::run() {
 
     srand(time(NULL));
@@ -65,8 +75,16 @@ void Game::run() {
             // Clear screen
             SDL_RenderClear(renderer);
 
-            //Main Drawing area
-            painter.draw();
+            if (m_currentState == WELCOME_SCREEN) {
+                //Main Drawing area
+                if (painter.drawLoginPage()) {
+                    m_currentState = MODE_SELECTION;
+                }
+            }
+
+            if (m_currentState == MODE_SELECTION) {
+                painter.drawModeSelection();
+            }
 
             // Update screen
             SDL_RenderPresent(renderer);

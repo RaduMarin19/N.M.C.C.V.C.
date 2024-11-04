@@ -15,10 +15,19 @@ class Game
 {
 public:
 	Game();
+	enum GameState {
+		WELCOME_SCREEN,
+		MODE_SELECTION
+	};
 
+	void SetGameState(Game::GameState state);
+	Game::GameState GetGameState() const;
 	void run();
-
 private:
+
+
+	GameState m_currentState = WELCOME_SCREEN;
+
 	Player player1, player2;
 };
 

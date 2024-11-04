@@ -4,7 +4,7 @@
 
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
-#if defined linux  && SDL_VERSION_ATLEAST(2, 0, 8)
+#if defined linux
 #define FONT_PATH   "../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
 #else 
 #define FONT_PATH   "../../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
@@ -27,7 +27,8 @@ public:
     void setEvent(const SDL_Event &event);
     void setMousePos(const Coordinates& pos);
     bool isMouseInRect(const SDL_Rect& rect) const;
-    void draw();
+    bool drawLoginPage();
+    void drawModeSelection();
 
     private:
     SDL_Renderer *m_renderer;
