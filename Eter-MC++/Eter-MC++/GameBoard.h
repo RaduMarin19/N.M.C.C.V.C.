@@ -11,7 +11,7 @@
 #include <vector>
 
 
-class GameBoard : public Game
+class GameBoard
 {
 public:
 	enum class GameMode : short

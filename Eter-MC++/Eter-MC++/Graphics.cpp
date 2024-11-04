@@ -2,6 +2,8 @@
 // Created by mitza on 11/3/24.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "Graphics.h"
 
 #include <cstring>

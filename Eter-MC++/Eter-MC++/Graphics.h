@@ -4,8 +4,11 @@
 
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
+#if defined linux  && SDL_VERSION_ATLEAST(2, 0, 8)
 #define FONT_PATH   "../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
-
+#else 
+#define FONT_PATH   "../../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
+#endif
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <string>

@@ -30,6 +30,7 @@ CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 CardTexture& CardTexture::operator=(const CardTexture &oth) {
 	m_texture = oth.m_texture;
 	m_rect = oth.m_rect;
+	return *this;
 }
 
 SDL_Texture* CardTexture::getTexture() const
