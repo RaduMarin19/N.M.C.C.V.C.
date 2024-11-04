@@ -249,35 +249,16 @@ void Graphics::drawModeSelection() {
 
     drawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
-    // Define button positions and dimensions
-    bool tournamentActive = false;
-    bool mageDuelActive = false;
-    bool elementalBattleActive = false;
-    bool trainingActive = false;
-
     // Draw and check each button
-    drawButton(tournamentActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
-    drawButton(mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
-    drawButton(elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    drawButton(trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
-
-    // Check if a button was clicked and return or update game state
-    if (tournamentActive) {
-        std::cout << "Tournament mode selected!" << std::endl;
-        // Optionally update game state or trigger the corresponding game logic
-    }
-    if (mageDuelActive) {
-        std::cout << "Mage Duel mode selected!" << std::endl;
-        // Update state or logic here
-    }
-    if (elementalBattleActive) {
-        std::cout << "Elemental Battle mode selected!" << std::endl;
-        // Update state or logic here
-    }
-    if (trainingActive) {
-        std::cout << "Training mode selected!" << std::endl;
-        // Update state or logic here
-    }
+    drawButton(g_config.tournamentActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
+    drawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    drawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    drawButton(g_config.trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
 
     SDL_RenderPresent(m_renderer);
+}
+
+bool Graphics::isTrainingActive()
+{
+    return g_config.trainingActive;
 }

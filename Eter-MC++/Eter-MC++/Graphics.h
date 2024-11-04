@@ -16,6 +16,10 @@
 
 inline struct {
     std::string playerName;
+    bool tournamentActive;
+    bool mageDuelActive;
+    bool elementalBattleActive;
+    bool trainingActive;
 }g_config;
 
 class Graphics {
@@ -29,6 +33,7 @@ public:
     bool isMouseInRect(const SDL_Rect& rect) const;
     bool drawLoginPage();
     void drawModeSelection();
+    bool isTrainingActive();
 
     private:
     SDL_Renderer *m_renderer;
