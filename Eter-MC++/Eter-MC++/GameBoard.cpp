@@ -139,6 +139,18 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     this->m_possiblePositions.emplace(0, 0);
 
+#if defined linux
+    for (int i = 0; i < 5; i++) {
+        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
+        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_" + std::to_string(i) + ".jpg");
+    }
+    m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
+    m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
+
+    for (int i = 1; i < 9; i++) {
+        m_explosions.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
+    }
+#else
     for (int i = 0; i < 5; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");
@@ -149,6 +161,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 1; i < 9; i++) {
         m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
+#endif
+
 
     std::vector<PlayingCard> PlayingCardsBlue;
     std::vector<PlayingCard> PlayingCardsRed;
