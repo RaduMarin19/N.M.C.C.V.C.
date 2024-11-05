@@ -27,10 +27,12 @@ inline struct {
 
 class Graphics {
 public:
-    Graphics(SDL_Renderer*);
+    Graphics();
+    ~Graphics();
     void drawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void drawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void drawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
+    SDL_Renderer* GetRenderer();
     void setEvent(const SDL_Event &event);
     void setMousePos(const Coordinates& pos);
     bool isMouseInRect(const SDL_Rect& rect) const;
@@ -40,7 +42,8 @@ public:
     bool isTrainingActive();
 
     private:
-    SDL_Renderer *m_renderer;
+    SDL_Window* m_window;
+    SDL_Renderer* m_renderer;
     TTF_Font *m_font;
     SDL_Color m_mainColor;
     SDL_Color m_accentColor;

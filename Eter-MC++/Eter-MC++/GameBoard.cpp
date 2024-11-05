@@ -139,8 +139,6 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     this->m_possiblePositions.emplace(0, 0);
 
-
-
     for (int i = 0; i < 5; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");

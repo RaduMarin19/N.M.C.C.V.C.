@@ -16,7 +16,6 @@ class Game
 {
 public:
 	Game();
-	~Game();
 	enum GameState {
 		WELCOME_SCREEN,
 		MODE_SELECTION,
@@ -27,12 +26,6 @@ public:
 	Game::GameState GetGameState() const;
 	void run();
 private:
-	// SDL Window and Renderer
-	SDL_Window* m_window;
-	SDL_Renderer* m_renderer;
-
 	GameState m_currentState = WELCOME_SCREEN;
-
-	Player player1, player2;
 };
 

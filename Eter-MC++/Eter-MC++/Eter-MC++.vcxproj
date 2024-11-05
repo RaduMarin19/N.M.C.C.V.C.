@@ -153,6 +153,7 @@
     <ClInclude Include="GameModeMageDuel.h" />
     <ClInclude Include="GameModeTournament.h" />
     <ClInclude Include="GameModeTraining.h" />
+    <ClInclude Include="Graphics.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingCard.h" />
   </ItemGroup>

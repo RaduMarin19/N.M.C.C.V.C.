@@ -6,13 +6,50 @@
 
 #include "Graphics.h"
 
-Graphics::Graphics(SDL_Renderer *renderer) {
+Graphics::Graphics() {
 
     m_mainColor = {160, 220, 50, 255};
     m_accentColor = {40, 40, 80};
 
-    m_renderer = renderer;
-    TTF_Init();
+        srand(static_cast<unsigned int>(time(NULL)));
+
+        // Initialize SDL
+        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+            std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+            throw std::runtime_error("SDL Initialization Failed");
+        }
+
+#if defined linux && SDL_VERSION_ATLEAST(2, 0, 8)
+        // Disable compositor bypass
+        if (!SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0")) {
+            std::cerr << "SDL cannot disable compositor bypass!" << std::endl;
+            throw std::runtime_error("SDL Hint Setting Failed");
+        }
+#endif
+
+        // Create window
+        m_window = SDL_CreateWindow("Basic C++ SDL project",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            SCREEN_WIDTH, SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN);
+        if (!m_window) {
+            std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+            throw std::runtime_error("SDL Window Creation Failed");
+        }
+
+        // Create renderer
+        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+        if (!m_renderer) {
+            std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+            throw std::runtime_error("SDL Renderer Creation Failed");
+        }
+
+        // Initialize TTF
+        if (TTF_Init() == -1) {
+            std::cerr << "TTF_Init Failed! TTF_Error: " << TTF_GetError() << std::endl;
+            throw std::runtime_error("TTF Initialization Failed");
+        }
 
     m_font = TTF_OpenFont(FONT_PATH, 40);
     if(!m_font) {
@@ -20,6 +57,14 @@ Graphics::Graphics(SDL_Renderer *renderer) {
                "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
         exit(-1);
     }
+}
+
+Graphics::~Graphics()
+{
+    SDL_DestroyRenderer(m_renderer);
+    SDL_DestroyWindow(m_window);
+    TTF_Quit();
+    SDL_Quit();
 }
 
 void Graphics::drawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
@@ -203,6 +248,11 @@ void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int h
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
     SDL_FreeSurface(textSurface);
+}
+
+SDL_Renderer* Graphics::GetRenderer()
+{
+    return m_renderer;
 }
 
 void Graphics::setEvent(const SDL_Event &event) {
