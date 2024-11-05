@@ -5,16 +5,16 @@ class Coordinates
 {
 public:
 	Coordinates();
-	Coordinates(short x, short y);
+	Coordinates(int x, int y);
 	Coordinates(const Coordinates& other);
 	size_t operator() (const Coordinates& key) const;
 	bool operator== (const Coordinates& other) const;
-	short GetX() const;
-	short GetY() const;
-	void SetX(short x);
-	void SetY(short y);
+	int GetX() const;
+	int GetY() const;
+	void SetX(int x);
+	void SetY(int y);
 
 private:
-	short m_x, m_y;
+	int m_x, m_y;
 };
 

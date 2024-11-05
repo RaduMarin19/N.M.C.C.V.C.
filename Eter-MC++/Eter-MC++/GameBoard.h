@@ -26,6 +26,7 @@ public:
     void pushNewCard(PlayingCard other);
     void setTable(short tableSize);
 	void setGameMode(const GameMode& mode);
+    void generatePlayerCards(const GameMode& mode);
 	GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
@@ -43,12 +44,14 @@ private:
     short m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 };
     short tableSize{ 3 }; // it varies between 3 and 4 depending on game mode
 
+    static const int coordinatePadding { 50 };
+
     std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
     void testPossiblePosition(short x, short y);
 
-    Player m_PlayerBlue;
-    Player m_PlayerRed;
+    Player m_playerBlue;
+    Player m_playerRed;
 
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;

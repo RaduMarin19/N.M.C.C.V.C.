@@ -118,6 +118,41 @@ void GameBoard::setGameMode(const GameMode& mode) {
     this->m_gameMode = mode;
 }
 
+void GameBoard::generatePlayerCards(const GameMode &mode) {
+    if(mode == GameMode::Training) {
+        std::vector<PlayingCard> PlayingCardsBlue;
+        std::vector<PlayingCard> PlayingCardsRed;
+
+        int offsetX = 0;
+
+        for(int i = 0; i < 2; i++)
+            for(int i = 1; i<= 3; i++) {
+                PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId());
+                PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId());
+                PlayingCardsBlue.emplace_back(cardBlue);
+                PlayingCardsRed.emplace_back(cardRed);
+                offsetX += textureWidth / 2;
+            }
+        PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[4], 4, nextCardId());
+        PlayingCardsBlue.emplace_back(cardBlue);
+
+        PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[4], 4, nextCardId());
+        PlayingCardsRed.emplace_back(cardRed);
+
+        Player playerBlue(PlayingCardsBlue);
+        this->m_playerBlue = playerBlue;
+
+        Player playerRed(PlayingCardsRed);
+        this->m_playerRed = playerRed;
+    } else if (mode == GameMode::Elemental) {
+
+    } else if (mode == GameMode::MageDuel) {
+
+    } else if (mode == GameMode::Tournament) {
+
+    }
+}
+
 bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &card) const {
     auto PlayingCard = this->m_positions.find(coordinates);
     if(PlayingCard != this->m_positions.end()) {
@@ -128,11 +163,11 @@ bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &c
 }
 
 Player *GameBoard::getPlayerRed() {
-    return &m_PlayerRed;
+    return &m_playerRed;
 }
 
 Player *GameBoard::getPlayerBlue() {
-    return &m_PlayerBlue;
+    return &m_playerBlue;
 }
 
 GameBoard::GameBoard(SDL_Renderer* renderer)
@@ -162,30 +197,6 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
 #endif
-
-
-    std::vector<PlayingCard> PlayingCardsBlue;
-    std::vector<PlayingCard> PlayingCardsRed;
-    if (m_gameMode == GameBoard::GameMode::Training) {
-
-        for (int i = 0; i < 2; i++)
-            for (int i = 1; i <= 3; i++) {
-                PlayingCard cardBlue({ 0,0 }, &m_blueCards[i], i, nextCardId());
-                PlayingCard cardRed({ 0,0 }, &m_redCards[i], i, nextCardId());
-                PlayingCardsBlue.emplace_back(cardBlue);
-                PlayingCardsRed.emplace_back(cardRed);
-            }
-        PlayingCard cardBlue({ 0,0 }, &m_blueCards[4], 4, nextCardId());
-        PlayingCardsBlue.emplace_back(cardBlue);
-        PlayingCard cardRed({ 0,0 }, &m_redCards[4], 4, nextCardId());
-        PlayingCardsRed.emplace_back(cardRed);
-
-    }
-    Player playerBlue(PlayingCardsBlue);
-    this->m_PlayerBlue = playerBlue;
-
-    Player playerRed(PlayingCardsRed);
-    this->m_PlayerRed = playerRed;
 
 }
 

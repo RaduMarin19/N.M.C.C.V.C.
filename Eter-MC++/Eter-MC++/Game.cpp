@@ -50,11 +50,15 @@ void Game::run() {
                 painter.drawModeSelection();
                 if (painter.isTrainingActive()) {
                     m_currentState = TRAINING_MODE;
+                    board.generatePlayerCards(GameBoard::GameMode::Training);
                 }
             }
 
             if (m_currentState == TRAINING_MODE) {
-                painter.drawCard(board.getPlayerBlue()->GetCards()[1]);
+                for(const auto& card : board.getPlayerBlue()->GetCards())
+                    painter.drawCard(card);
+                for(const auto& card : board.getPlayerRed()->GetCards())
+                    painter.drawCard(card);
             }
             
 
