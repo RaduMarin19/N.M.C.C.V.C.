@@ -27,6 +27,11 @@ short PlayingCard::GetValue() const
 	return m_value;
 }
 
+CardTexture* PlayingCard::GetTexture() const
+{
+	return m_texture;
+}
+
 void PlayingCard::SetCoordinates(const Coordinates& position)
 {
 	m_position = position;

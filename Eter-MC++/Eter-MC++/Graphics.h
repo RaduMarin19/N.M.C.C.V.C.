@@ -12,7 +12,10 @@
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <string>
+#include <cstring>
 #include "Coordinates.h"
+#include "Game.h"
+#include "PlayingCard.h"
 
 inline struct {
     std::string playerName;
@@ -33,6 +36,7 @@ public:
     bool isMouseInRect(const SDL_Rect& rect) const;
     bool drawLoginPage();
     void drawModeSelection();
+    void drawCard(const PlayingCard& card);
     bool isTrainingActive();
 
     private:

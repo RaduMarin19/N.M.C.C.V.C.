@@ -12,6 +12,8 @@ public:
 	Coordinates GetCoordinates() const;
 	short GetValue() const;
 
+	CardTexture* GetTexture() const;
+
 	void SetCoordinates(const Coordinates& position);
 	void setValue(short value);
 

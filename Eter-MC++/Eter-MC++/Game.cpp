@@ -66,6 +66,7 @@ Game::GameState Game::GetGameState() const
 
 void Game::run() {
     Graphics painter(m_renderer);
+    GameBoard board(m_renderer);
 
     bool quit = false;
     SDL_Event e;
@@ -103,7 +104,7 @@ void Game::run() {
             }
 
             if (m_currentState == TRAINING_MODE) {
-
+                painter.drawCard(board.getPlayerBlue()->GetCards()[0]);
             }
             
 

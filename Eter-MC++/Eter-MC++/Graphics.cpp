@@ -6,10 +6,6 @@
 
 #include "Graphics.h"
 
-#include <cstring>
-
-#include "Game.h"
-
 Graphics::Graphics(SDL_Renderer *renderer) {
 
     m_mainColor = {160, 220, 50, 255};
@@ -256,6 +252,39 @@ void Graphics::drawModeSelection() {
     drawButton(g_config.trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
 
     SDL_RenderPresent(m_renderer);
+}
+//doesnt work
+void Graphics::drawCard(const PlayingCard& card)
+{
+    // Ensure the card has a valid texture
+    if (!card.GetTexture() || !card.GetTexture()->getTexture()) {
+        std::cerr << "Error: PlayingCard has no valid texture!\n";
+        return;
+    }
+
+    // Get the texture and source rectangle from the card
+    SDL_Texture* cardTexture = card.GetTexture()->getTexture();
+    SDL_Rect srcRect = card.GetTexture()->getRect();
+
+    // Get the card's position
+    Coordinates cardPos = card.GetCoordinates();
+
+    // Destination rectangle based on card's position
+    SDL_Rect destRect;
+    destRect.x = cardPos.GetX();
+    destRect.y = cardPos.GetY();
+    destRect.w = srcRect.w;
+    destRect.h = srcRect.h;
+
+    // Optional: Scale the card if desired
+    // For example, to scale to 128x128:
+    // destRect.w = 128;
+    // destRect.h = 128;
+
+    // Render the card
+    if (SDL_RenderCopy(m_renderer, cardTexture,NULL,&destRect) != 0) {
+        std::cerr << "SDL_RenderCopy Error: " << SDL_GetError() << std::endl;
+    }
 }
 
 bool Graphics::isTrainingActive()
