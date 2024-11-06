@@ -2,7 +2,6 @@
 #include "Coordinates.h"
 #include "PlayingCard.h"
 #include "CardTexture.h"
-#include "Game.h" /// INCLUDE-URI CIRCULARE !!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "Player.h"
 
 #include <unordered_map>
@@ -10,6 +9,12 @@
 #include <stack>
 #include <vector>
 
+#ifndef SCREEN_WIDTH
+#define SCREEN_WIDTH 800
+#endif
+#ifndef SCREEN_HEIGHT 
+#define SCREEN_HEIGHT 800
+#endif
 
 class GameBoard
 {
