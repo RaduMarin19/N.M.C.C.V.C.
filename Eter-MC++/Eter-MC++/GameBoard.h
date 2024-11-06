@@ -19,7 +19,8 @@ public:
         Training,
         MageDuel,
         Elemental,
-        Tournament
+        Tournament,
+        Quick
     };
 
     GameBoard();
@@ -48,7 +49,6 @@ private:
 
     std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
-    void testPossiblePosition(short x, short y);
 
     Player m_playerBlue;
     Player m_playerRed;
@@ -57,4 +57,5 @@ private:
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosions;
 
+    void testPossiblePosition(short x, short y);
 };

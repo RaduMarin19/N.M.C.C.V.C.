@@ -144,11 +144,14 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
         Player playerRed(PlayingCardsRed);
         this->m_playerRed = playerRed;
-    } else if (mode == GameMode::Elemental) {
+    } 
+    else if (mode == GameMode::Elemental) {
 
-    } else if (mode == GameMode::MageDuel) {
+    } 
+    else if (mode == GameMode::MageDuel) {
 
-    } else if (mode == GameMode::Tournament) {
+    } 
+    else if (mode == GameMode::Tournament) {
 
     }
 }

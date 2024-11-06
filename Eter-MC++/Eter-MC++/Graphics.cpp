@@ -341,3 +341,18 @@ bool Graphics::isTrainingActive()
 {
     return g_config.trainingActive;
 }
+
+bool Graphics::isMageDuelActive()
+{
+    return g_config.mageDuelActive;
+}
+
+bool Graphics::isElementalActive()
+{
+    return g_config.elementalBattleActive;
+}
+
+bool Graphics::isTournamentActive()
+{
+    return g_config.tournamentActive;
+}

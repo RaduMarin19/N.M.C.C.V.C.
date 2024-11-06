@@ -16,10 +16,15 @@ class Game
 {
 public:
 	Game();
+
 	enum GameState {
 		WELCOME_SCREEN,
 		MODE_SELECTION,
-		TRAINING_MODE
+		TRAINING_MODE,
+		ELEMENTAL_BATTLE,
+		MAGE_DUEL,
+		TOURNAMENT,
+		QUICK_MODE
 	};
 
 	void SetGameState(Game::GameState state);

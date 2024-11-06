@@ -1,7 +1,3 @@
-//
-// Created by mitza on 11/3/24.
-//
-
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 #if defined linux
@@ -40,6 +36,9 @@ public:
     void drawModeSelection();
     void drawCard(const PlayingCard& card);
     bool isTrainingActive();
+    bool isMageDuelActive();
+    bool isElementalActive();
+    bool isTournamentActive();
 
     private:
     SDL_Window* m_window;

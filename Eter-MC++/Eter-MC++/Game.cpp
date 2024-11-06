@@ -52,6 +52,21 @@ void Game::run() {
                     m_currentState = TRAINING_MODE;
                     board.generatePlayerCards(GameBoard::GameMode::Training);
                 }
+                else if (painter.isElementalActive())
+                {
+                    m_currentState = ELEMENTAL_BATTLE;
+                    board.generatePlayerCards(GameBoard::GameMode::Elemental);
+                }
+                else if (painter.isMageDuelActive())
+                {
+                    m_currentState = MAGE_DUEL;
+                    board.generatePlayerCards(GameBoard::GameMode::MageDuel);
+                }
+                else if (painter.isTournamentActive())
+                {
+                    m_currentState = TOURNAMENT;
+                    board.generatePlayerCards(GameBoard::GameMode::Tournament);
+                }
             }
 
             if (m_currentState == TRAINING_MODE) {
