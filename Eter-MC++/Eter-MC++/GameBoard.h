@@ -2,7 +2,7 @@
 #include "Coordinates.h"
 #include "PlayingCard.h"
 #include "CardTexture.h"
-#include "Game.h"
+#include "Game.h" /// INCLUDE-URI CIRCULARE !!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include "Player.h"
 
 #include <unordered_map>
@@ -14,13 +14,13 @@
 class GameBoard
 {
 public:
-	enum class GameMode : short
+	enum GameMode : short
     {
         Training,
         MageDuel,
         Elemental,
         Tournament,
-        Quick
+        QuickMode
     };
 
     GameBoard();
@@ -38,7 +38,7 @@ public:
     Player *getPlayerBlue();
 
 protected:
-    GameMode m_gameMode{ GameMode::Training };
+    GameMode m_gameMode;
 
 private:
 	unsigned short m_cardId{ 0 };

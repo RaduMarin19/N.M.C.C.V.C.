@@ -19,6 +19,7 @@ inline struct {
     bool mageDuelActive;
     bool elementalBattleActive;
     bool trainingActive;
+    bool quickMatchActive;
 }g_config;
 
 class Graphics {
@@ -39,6 +40,7 @@ public:
     bool isMageDuelActive();
     bool isElementalActive();
     bool isTournamentActive();
+    bool isQuickMatchActive();
 
     private:
     SDL_Window* m_window;

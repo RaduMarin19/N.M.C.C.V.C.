@@ -17,7 +17,8 @@ class Game
 public:
 	Game();
 
-	enum GameState {
+	enum GameState : short 
+	{
 		WELCOME_SCREEN,
 		MODE_SELECTION,
 		TRAINING_MODE,
@@ -30,6 +31,7 @@ public:
 	void SetGameState(Game::GameState state);
 	Game::GameState GetGameState() const;
 	void run();
+
 private:
 	GameState m_currentState = WELCOME_SCREEN;
 };

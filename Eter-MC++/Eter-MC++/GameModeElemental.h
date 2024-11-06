@@ -3,10 +3,12 @@
 
 class GameModeElemental : public GameBoard
 {
+public:
 	GameModeElemental() {
 		setGameMode(GameMode::Elemental);
 		setTable(4);
 	}
+
 private:
 	std::vector<CardTexture> m_ElementalCards;
 };

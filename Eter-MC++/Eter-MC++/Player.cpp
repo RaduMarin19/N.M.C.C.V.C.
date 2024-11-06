@@ -2,9 +2,7 @@
 
 #include <algorithm>
 
-Player::Player()
-{
-}
+Player::Player() {}
 
 Player::Player(std::vector<PlayingCard> cards)
 {

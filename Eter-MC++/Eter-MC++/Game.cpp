@@ -25,6 +25,8 @@ void Game::run() {
     while (!quit)
     {
         unsigned int frameStart = SDL_GetTicks();
+        static bool sendThisFrame = false;
+
         while (SDL_PollEvent(&e) != 0)
         {
             painter.setEvent(e);
@@ -39,15 +41,18 @@ void Game::run() {
             // Clear screen
             SDL_RenderClear(painter.GetRenderer());
 
-            if (m_currentState == WELCOME_SCREEN) {
+            if (m_currentState == WELCOME_SCREEN && !sendThisFrame) {
                 //Main Drawing area
                 if (painter.drawLoginPage()) {
                     m_currentState = MODE_SELECTION;
+                    sendThisFrame = true;
                 }
             }
 
-            if (m_currentState == MODE_SELECTION) {
+            if (m_currentState == MODE_SELECTION && !sendThisFrame) {
                 painter.drawModeSelection();
+                sendThisFrame = true;
+
                 if (painter.isTrainingActive()) {
                     m_currentState = TRAINING_MODE;
                     board.generatePlayerCards(GameBoard::GameMode::Training);
@@ -67,6 +72,11 @@ void Game::run() {
                     m_currentState = TOURNAMENT;
                     board.generatePlayerCards(GameBoard::GameMode::Tournament);
                 }
+                else if (painter.isQuickMatchActive())
+                {
+                    m_currentState = QUICK_MODE;
+                    board.generatePlayerCards(GameBoard::GameMode::QuickMode);
+                }
             }
 
             if (m_currentState == TRAINING_MODE) {
@@ -84,6 +94,7 @@ void Game::run() {
         if(TARGET_FRAME_TIME > frameTime) {
             SDL_Delay(TARGET_FRAME_TIME - frameTime);
         }
+        sendThisFrame = false;
     }
 }
 

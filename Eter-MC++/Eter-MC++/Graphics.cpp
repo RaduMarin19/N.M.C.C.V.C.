@@ -1,7 +1,3 @@
-//
-// Created by mitza on 11/3/24.
-//
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Graphics.h"
@@ -296,10 +292,11 @@ void Graphics::drawModeSelection() {
     drawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     // Draw and check each button
-    drawButton(g_config.tournamentActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
-    drawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    drawButton(g_config.tournamentActive,      { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
+    drawButton(g_config.mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
     drawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    drawButton(g_config.trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    drawButton(g_config.trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    drawButton(g_config.quickMatchActive,      { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Quick Match", 14);
 
     SDL_RenderPresent(m_renderer);
 }
@@ -356,3 +353,9 @@ bool Graphics::isTournamentActive()
 {
     return g_config.tournamentActive;
 }
+
+bool Graphics::isQuickMatchActive()
+{
+    return g_config.quickMatchActive;
+}
+
