@@ -29,7 +29,7 @@ public:
     };
 
     GameBoard();
-    void pushNewCard(PlayingCard other);
+    void pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);

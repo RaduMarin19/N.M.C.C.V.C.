@@ -9,6 +9,7 @@ CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 	m_rect.w = textureWidth;
 	m_rect.h = textureHeight;
 
+	//Load the surface image into memory
 	SDL_Surface* surface = IMG_Load(texturePath.c_str());
 
 	if (surface == NULL) {
@@ -16,6 +17,7 @@ CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 			<< "SDL_Error: " << SDL_GetError() << std::endl;
 	}
 
+	//Create a texture from the loaded surface
 	m_texture = SDL_CreateTextureFromSurface(renderer, surface);
 
 	if (m_texture == NULL)
@@ -24,6 +26,7 @@ CardTexture::CardTexture(SDL_Renderer* renderer, const std::string& texturePath)
 			<< "SDL_Error: " << SDL_GetError() << std::endl;
 	}
 
+	//After we created the texture, we can free the surface
 	SDL_FreeSurface(surface);
 }
 

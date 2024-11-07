@@ -4,16 +4,18 @@
 
 Graphics::Graphics() {
 
+    //Initialize the color pallete, currently "magic numbers"
     m_mainColor = {160, 220, 50, 255};
     m_accentColor = {40, 40, 80};
 
-        srand(static_cast<unsigned int>(time(NULL)));
+    //Initialize random seed
+    srand(static_cast<unsigned int>(time(NULL)));
 
-        // Initialize SDL
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
-            throw std::runtime_error("SDL Initialization Failed");
-        }
+    // Initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("SDL Initialization Failed");
+    }
 
 #if defined linux && SDL_VERSION_ATLEAST(2, 0, 8)
         // Disable compositor bypass
@@ -23,23 +25,23 @@ Graphics::Graphics() {
         }
 #endif
 
-        // Create window
-        m_window = SDL_CreateWindow("Basic C++ SDL project",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            SCREEN_WIDTH, SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN);
-        if (!m_window) {
-            std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-            throw std::runtime_error("SDL Window Creation Failed");
-        }
+    // Create window
+    m_window = SDL_CreateWindow("Basic C++ SDL project",
+    SDL_WINDOWPOS_UNDEFINED,
+    SDL_WINDOWPOS_UNDEFINED,
+    SCREEN_WIDTH, SCREEN_HEIGHT,
+    SDL_WINDOW_SHOWN);
+    if (!m_window) {
+        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("SDL Window Creation Failed");
+    }
 
-        // Create renderer
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
-        if (!m_renderer) {
-            std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-            throw std::runtime_error("SDL Renderer Creation Failed");
-        }
+    // Create renderer
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+    if (!m_renderer) {
+        std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("SDL Renderer Creation Failed");
+    }
 
         // Initialize TTF
         if (TTF_Init() == -1) {
@@ -65,8 +67,8 @@ Graphics::~Graphics()
 
 void Graphics::drawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
 
-
-    SDL_Texture *text = NULL;
+    //Initialize a texture and rectangle for the text
+    SDL_Texture *texture = NULL;
     SDL_Rect textRect;
 
     textRect.x = pos.GetX();
@@ -75,6 +77,7 @@ void Graphics::drawText(const std::string &buf, const Coordinates &pos, int font
     SDL_Color textColor = m_accentColor;
     textColor.a = 255;
 
+    //Try to load our text buffer onto a surface
     SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buf.c_str(), SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
 
     if(!textSurface) {
@@ -82,8 +85,8 @@ void Graphics::drawText(const std::string &buf, const Coordinates &pos, int font
                "SDL2_ttf Error: %s\n", TTF_GetError());
     } else {
         // Create texture from surface pixels
-        text = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-        if(!text) {
+        texture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+        if(!texture) {
             printf("Unable to create texture from rendered text!\n"
                    "SDL2 Error: %s\n", SDL_GetError());
             return;
@@ -92,12 +95,14 @@ void Graphics::drawText(const std::string &buf, const Coordinates &pos, int font
         textRect.w = textSurface->w;
         textRect.h = textSurface->h;
 
+        //Create an "outline", a rectangle that's one pixel larger than our text rectangle
         SDL_Rect outlineRect = textRect;
         outlineRect.w +=2;
         outlineRect.h +=2;
         outlineRect.x --;
         outlineRect.y --;
 
+        //If the centered flag is set, shift the rectangles by half it's width
         if(isCentered) {
             textRect.x -= textSurface->w /2;
             outlineRect.x -= textSurface->w /2;
@@ -106,21 +111,24 @@ void Graphics::drawText(const std::string &buf, const Coordinates &pos, int font
             outlineRect.y -= textSurface->h /2;
         }
 
+        //Render our rectangles and the texture onto the screen
         SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
 
         SDL_RenderDrawRect(m_renderer, &outlineRect);
 
         SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
-        SDL_RenderCopy(m_renderer, text, NULL, &textRect);
+        SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
 
+        //Delete the created surface
         SDL_FreeSurface(textSurface);
     }
 }
 
 void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
 
-    SDL_Texture *text = NULL;
+    //Initialize a texture and rectangle for the text
+    SDL_Texture *texture = NULL;
     SDL_Rect textRect;
 
     textRect.x = pos.GetX();
@@ -132,6 +140,7 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
     char *buffer;
     bool isPlaceholder = false;
 
+    //If the given buffer is empty, replace it with placeholder text
     if(buf.empty()) {
         char placeHolder[] = "Enter text...";
         buffer = new char[strlen(placeHolder) + 1];
@@ -142,6 +151,7 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
         strcpy(buffer, buf.c_str());
     }
 
+    //Try to load our text buffer onto a surface
     SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buffer, isPlaceholder ? SDL_Color(80, 80, 80, 240) : SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
 
     if(!textSurface) {
@@ -149,8 +159,8 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
                "SDL2_ttf Error: %s\n", TTF_GetError());
     } else {
         // Create texture from surface pixels
-        text = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-        if(!text) {
+        texture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+        if(!texture) {
             printf("Unable to create texture from rendered text!\n"
                    "SDL2 Error: %s\n", SDL_GetError());
             return;
@@ -159,12 +169,14 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
         textRect.w = textSurface->w;
         textRect.h = textSurface->h;
 
+        //Create an "outline", a rectangle that's one pixel larger than our text rectangle
         SDL_Rect outlineRect = textRect;
         outlineRect.w = (textSurface->w / strlen(buffer)) * 20;
         outlineRect.h +=2;
         outlineRect.x --;
         outlineRect.y --;
 
+        //If the centered flag is set, shift the rectangles by half it's width
         if(isCentered) {
             textRect.x -= ((textSurface->w / strlen(buffer)) * 20) / 2;
             outlineRect.x -= ((textSurface->w / strlen(buffer)) * 20) / 2;
@@ -173,10 +185,15 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
             outlineRect.y -= textSurface->h /2;
         }
 
+        //Typing logic, if the mouse is on the element, we can type in it
+        //TODO: Change this logic to be on click instead
         if(this->isMouseInRect(outlineRect)) {
             if(m_event.type == SDL_KEYDOWN) {
+                //Get the key ASCII id
                 unsigned short key = m_event.key.keysym.sym;
 
+                //If we pressed backspace, delete a character instead of adding it
+                //TODO: This logic should delete multiple characters if backspace is held down
                 if(key == SDLK_BACKSPACE) {
                     buf = buf.substr(0, buf.size() - 1);
                 } else if(buf.length() < 20) buf += static_cast<char>(key);
@@ -184,28 +201,34 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
             SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
         } else SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
 
+        //Render our rectangles and the texture onto the screen
         SDL_RenderDrawRect(m_renderer, &outlineRect);
 
         SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
-        SDL_RenderCopy(m_renderer, text, NULL, &textRect);
+        SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
 
+        //Delete the created surface
         SDL_FreeSurface(textSurface);
     }
 }
 
 void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int height, std::string text, int fontSize) {
 
+    //Initialize a texture and rectangle for the text
     SDL_Rect buttonRect = {pos.GetX(), pos.GetY(), width, height};
 
     SDL_Texture *texture = NULL;
     SDL_Color chosenColor;
 
+    //Is the mouse hovering our button?
     if(isMouseInRect(buttonRect)) {
+        //If we are hovering and we pressed on it, invert its state
         if(m_event.type == SDL_MOUSEBUTTONDOWN) {
             if(m_event.button.button == SDL_BUTTON_LEFT) {
                 active = !active;
             }
+            //Set the button color depending on the mouse action
             chosenColor = m_mainColor;
         } else chosenColor = m_accentColor;
     } else {
@@ -214,6 +237,7 @@ void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int h
 
     SDL_SetRenderDrawColor(m_renderer, chosenColor.r, chosenColor.g, chosenColor.b, chosenColor.a);
 
+    //Try to load our text buffer onto a surface
     SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, text.c_str(), SDL_Color(255.f, 255.f, 255.f, 255.f), chosenColor);
 
     if(!textSurface) {
@@ -229,6 +253,7 @@ void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int h
         }
     }
 
+    //Create an "outline", a rectangle that's one pixel larger than our text rectangle
     SDL_Rect outlineRect = buttonRect;
     outlineRect.w += 2;
     outlineRect.h +=2;
@@ -237,12 +262,14 @@ void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int h
 
     SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
 
+    //Render our rectangles and the texture onto the screen
     SDL_RenderDrawRect(m_renderer, &outlineRect);
 
     SDL_RenderCopy(m_renderer, texture, NULL, &buttonRect);
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 
+    //Delete the created surface
     SDL_FreeSurface(textSurface);
 }
 
@@ -268,10 +295,11 @@ bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
 
 bool Graphics::drawLoginPage() {
 
+    //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
-
+    //Draw our elements onto the screen, a text item, a text box and a button
     drawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 14, true);
     drawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 14, true);
 
@@ -281,14 +309,17 @@ bool Graphics::drawLoginPage() {
     // Present the updated render
     SDL_RenderPresent(m_renderer);
 
+    //If the user pressed the button return true, otherwise return false;
     return buttonActive;
 
 }
 
 void Graphics::drawModeSelection() {
+    //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
+    //Draw our elements onto the screen, a text item and our buttons
     drawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     // Draw and check each button
@@ -300,7 +331,7 @@ void Graphics::drawModeSelection() {
 
     SDL_RenderPresent(m_renderer);
 }
-//doesnt work
+
 void Graphics::drawCard(const PlayingCard& card)
 {
     // Ensure the card has a valid texture

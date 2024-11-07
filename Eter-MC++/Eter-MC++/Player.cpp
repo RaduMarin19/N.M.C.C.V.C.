@@ -1,12 +1,14 @@
 #include "Player.h"
 
 #include <algorithm>
+#include <utility>
 
 Player::Player() {}
 
 Player::Player(std::vector<PlayingCard> cards)
 {
-	m_cards = cards;
+	//Move semantics, do not create an unnecessary copy of the player deck
+	m_cards = std::move(cards);
 }
 
 void Player::SetGrabbedCard(const std::shared_ptr<PlayingCard>& grabbedCard)
@@ -20,11 +22,13 @@ void Player::AddCard(const PlayingCard& card)
 }
 
 void Player::removeCard(const PlayingCard& card) {
+	//Find the given card in the player deck
 	auto it = std::remove_if(m_cards.begin(), m_cards.end(),
 		[&card](const PlayingCard& c) {
 			return c == card; 
 		});
 
+	//If it's there, remove it
 	if (it != m_cards.end()) {
 		m_cards.erase(it, m_cards.end());
 	}
