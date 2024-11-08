@@ -41,7 +41,7 @@ SDL_Texture* CardTexture::getTexture() const
 	return m_texture;
 }
 
-SDL_Rect CardTexture::getRect() const
+SDL_Rect& CardTexture::getRect()
 {
 	return m_rect;
 }

@@ -14,7 +14,7 @@ public:
 	CardTexture(SDL_Renderer* renderer, const std::string& texturePath);
 	CardTexture& operator= (const CardTexture&);
 	SDL_Texture* getTexture() const;
-	SDL_Rect getRect() const;
+	SDL_Rect& getRect();
 
 private:
 	SDL_Rect m_rect;

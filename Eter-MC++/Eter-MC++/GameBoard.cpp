@@ -141,6 +141,11 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId());
                 PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId());
+                std::cout << "Initialized card with x:"<< coordinatePadding + offsetX <<" y:"<< SCREEN_HEIGHT - textureHeight - coordinatePadding <<"\n";
+                cardBlue.GetTexture()->getRect().x = coordinatePadding + offsetX;
+                cardBlue.GetTexture()->getRect().y = SCREEN_HEIGHT - textureHeight - coordinatePadding;
+                cardRed.GetTexture()->getRect().x = coordinatePadding + offsetX;
+                cardRed.GetTexture()->getRect().y = coordinatePadding;
                 PlayingCardsBlue.emplace_back(cardBlue);
                 PlayingCardsRed.emplace_back(cardRed);
                 offsetX += textureWidth / 2;
