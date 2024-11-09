@@ -29,6 +29,8 @@ void GameBoard::testPossiblePosition(short x, short y)
 void GameBoard::checkStatus(GameState &gameState) {
     if (gameState == TRAINING_MODE) {
         
+        /// verify rows
+
         for (int j = m_minY; j <= m_maxY; ++j)
         {
             int redCardsInRow = 0;
@@ -36,7 +38,6 @@ void GameBoard::checkStatus(GameState &gameState) {
 
             for (int i = m_minX; i <= m_maxX; ++i)
             {
-                /// verify rows
                 if (m_positions.find({ i, j }) != m_positions.end())
                 {
                     if (m_positions.find({ i, j })->second.top().GetColor() == RED)
@@ -60,6 +61,9 @@ void GameBoard::checkStatus(GameState &gameState) {
                 return;
             }
         }
+
+        /// verify columns
+
         for (int i = m_minX; i <= m_maxX; ++i)
         {
             int redCardsInColumn = 0;
@@ -67,7 +71,6 @@ void GameBoard::checkStatus(GameState &gameState) {
 
             for (int j = m_minY; j <= m_maxY; ++j)
             {
-                /// verify columns
                 if (m_positions.find({ i, j }) != m_positions.end())
                 {
                     if (m_positions.find({ i, j })->second.top().GetColor() == RED)
@@ -92,6 +95,71 @@ void GameBoard::checkStatus(GameState &gameState) {
             }
         }
 
+        int indexI = m_minX;
+        int indexJ = m_minY;
+
+        bool redPlayerWon = true;
+        bool bluePlayerWon = true;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
+            {
+                if (m_positions.find({ indexI + i, indexJ + i })->second.top().GetColor() == BLUE)
+                    redPlayerWon = false;
+                else
+                    bluePlayerWon = false;
+            }
+            else
+            {
+                redPlayerWon = false;
+                bluePlayerWon = false;
+            }
+        }
+
+        if(redPlayerWon == true)
+        {
+            gameState = RED_PLAYER_WON;
+            return;
+        }
+        if (bluePlayerWon == true)
+        {
+            gameState = BLUE_PLAYER_WON;
+            return;
+        }
+
+        indexI = m_minX;
+        indexJ = m_maxY;
+
+        redPlayerWon = true;
+        bluePlayerWon = true;
+
+        for (int i = 0; i < 3; ++i)
+        {
+            if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
+            {
+                if (m_positions.find({ indexI + i, indexJ - i })->second.top().GetColor() == BLUE)
+                    redPlayerWon = false;
+                else
+                    bluePlayerWon = false;
+            }
+            else
+            {
+                redPlayerWon = false;
+                bluePlayerWon = false;
+            }
+        }
+
+        if (redPlayerWon == true)
+        {
+            gameState = RED_PLAYER_WON;
+            return;
+        }
+        if (bluePlayerWon == true)
+        {
+            gameState = BLUE_PLAYER_WON;
+            return;
+        }
     }
 }
 
