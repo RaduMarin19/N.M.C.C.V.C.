@@ -97,9 +97,16 @@ void Game::run() {
                 }
             }
             if (m_currentState == RED_PLAYER_WON)
+            {
                 std::cout << "Red Player Won";
-            if (m_currentState == BLUE_PLAYER_WON)
+                //m_currentState = MODE_SELECTION;
+            }
+                
+            if (m_currentState == BLUE_PLAYER_WON) 
+            {
                 std::cout << "Blue Player Won";
+                //m_currentState = MODE_SELECTION;
+            }
 
             if (m_currentState == TRAINING_MODE) {
                 //Draw the board, with the possible positions and played cards;
@@ -119,7 +126,7 @@ void Game::run() {
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
-                                //board.checkStatus(m_currentState); still needs work
+                                board.checkStatus(m_currentState); //still needs work
                             }
                             else {
 
@@ -133,7 +140,7 @@ void Game::run() {
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
                                 board.setIsBluePlayer(true);
-                                //board.checkStatus(m_currentState); still needs work
+                                board.checkStatus(m_currentState); //still needs work
                             }
                         }
                     } else {
@@ -166,7 +173,7 @@ void Game::run() {
                             }
                             if(board.getPlayerBlue()->isGrabbingCard()) {
                                 if(board.getPlayerBlue()->GetGrabbedCard()->GetId() == card.GetId()) {
-                                    std::cout << "Player blue is grabbing a card\n";
+                                    //std::cout << "Player blue is grabbing a card\n";
                                     Coordinates mousePos = painter.getMousePos();
                                     mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
                                     mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
@@ -196,7 +203,7 @@ void Game::run() {
                             }
                             if (board.getPlayerRed()->isGrabbingCard()) {
                                 if (board.getPlayerRed()->GetGrabbedCard()->GetId() == card.GetId()) {
-                                    std::cout << "Player red is grabbing a card\n";
+                                    //std::cout << "Player red is grabbing a card\n";
                                     Coordinates mousePos = painter.getMousePos();
                                     mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
                                     mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
@@ -209,7 +216,7 @@ void Game::run() {
                     }
                 }
                 if(!painter.isPressingLeftClick() && (board.getPlayerRed()->isGrabbingCard() || board.getPlayerBlue()->isGrabbingCard()) ) {
-                    std::cout << "Player stopped grabbing a card\n";
+                    //std::cout << "Player stopped grabbing a card\n";
                     board.getPlayerRed()->SetIsGrabbingCard(false);
                     board.getPlayerBlue()->SetIsGrabbingCard(false);
                 }

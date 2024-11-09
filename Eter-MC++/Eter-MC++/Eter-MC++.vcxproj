@@ -146,7 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardTexture.h" />
-    <ClInclude Include="Colors.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="Coordinates.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />

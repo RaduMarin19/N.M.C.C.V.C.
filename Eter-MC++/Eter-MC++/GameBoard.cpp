@@ -28,28 +28,70 @@ void GameBoard::testPossiblePosition(short x, short y)
 
 void GameBoard::checkStatus(GameState &gameState) {
     if (gameState == TRAINING_MODE) {
+        
+        for (int j = m_minY; j <= m_maxY; ++j)
+        {
+            int redCardsInRow = 0;
+            int blueCardsInRow = 0;
 
-        for (int i = m_minX; i < m_maxX; ++i) {
-            short bluePlayerLine = 0;
-            short redPlayerLine = 0;
-            for (int j = m_minY; j < m_maxY; ++j) {
-                if (m_positions.find({ i,j }) != m_positions.end()) {
-                    PlayingCard actualCard = m_positions.find({ i,j })->second.top();
-                    if (actualCard.GetColor() == BLUE)
-                        bluePlayerLine++;
-                    else {
-                        redPlayerLine++;
+            for (int i = m_minX; i <= m_maxX; ++i)
+            {
+                /// verify rows
+                if (m_positions.find({ i, j }) != m_positions.end())
+                {
+                    if (m_positions.find({ i, j })->second.top().GetColor() == RED)
+                    {
+                        redCardsInRow++;
+                    }
+                    else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
+                    {
+                        blueCardsInRow++;
                     }
                 }
-                else {
-                    break;
+            }
+            if (redCardsInRow == 3)
+            {
+                gameState = RED_PLAYER_WON;
+                return;
+            }
+            if (blueCardsInRow == 3)
+            {
+                gameState = BLUE_PLAYER_WON;
+                return;
+            }
+        }
+        for (int i = m_minX; i <= m_maxX; ++i)
+        {
+            int redCardsInColumn = 0;
+            int blueCardsInColumn = 0;
+
+            for (int j = m_minY; j <= m_maxY; ++j)
+            {
+                /// verify columns
+                if (m_positions.find({ i, j }) != m_positions.end())
+                {
+                    if (m_positions.find({ i, j })->second.top().GetColor() == RED)
+                    {
+                        redCardsInColumn++;
+                    }
+                    else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
+                    {
+                        blueCardsInColumn++;
+                    }
                 }
             }
-            if (bluePlayerLine==2)
-                gameState =BLUE_PLAYER_WON;
-            if (bluePlayerLine==2)
-                gameState= RED_PLAYER_WON;
+            if (redCardsInColumn == 3)
+            {
+                gameState = RED_PLAYER_WON;
+                return;
+            }
+            if (blueCardsInColumn == 3)
+            {
+                gameState = BLUE_PLAYER_WON;
+                return;
+            }
         }
+
     }
 }
 
@@ -85,7 +127,6 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
         else return false;
     }
 
-    {
         //Check horizontally for new possible positions
         this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
         this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
@@ -100,7 +141,6 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
 
         this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() - 1);
         this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() + 1);
-    }
 
     //If the board size is at max size, erase all old entries that are out of bounds
     //TODO: this should be it's own function
@@ -163,8 +203,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
         int offsetX = 0;
 
-        for(int i = 0; i < 2; i++)
-            for(int i = 1; i<= 3; i++) {
+        for(int j = 0; j < 2; j++)
+            for(int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId(),RED);

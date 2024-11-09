@@ -1,13 +1,13 @@
 #pragma once
 #include "Coordinates.h"
 #include "CardTexture.h"
-#include "Colors.h"
+#include "Color.h"
 
 class PlayingCard
 {
 public:
 	PlayingCard(Coordinates position, short value);
-	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short,Color);
+	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short, Color);
 	PlayingCard(const PlayingCard&);
 
 	Coordinates GetCoordinates() const;
