@@ -1,5 +1,6 @@
 #pragma once
-enum Color {
+enum Color : short 
+{
 	BLUE,
 	RED
 };
