@@ -39,6 +39,7 @@ public:
 
     bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
     const std::unordered_set<Coordinates, Coordinates>& GetPossiblePositions();
+    const std::vector<PlayingCard> GetPlayedCards() const;
 
     Player *getPlayerRed();
     Player *getPlayerBlue();

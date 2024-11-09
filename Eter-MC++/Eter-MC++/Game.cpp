@@ -112,6 +112,7 @@ void Game::run() {
                         if(board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
+                            pushCard.SetCoordinates({renderRect.x, renderRect.y});
                             board.pushNewCard(pushCard);
                             board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                         }
@@ -122,14 +123,8 @@ void Game::run() {
 
                 }
 
-                for(const auto& cards = board.GetPlayingCards(); const auto& card : cards) {
-                    cardTexture *tex;
-                    if(card.isIllusion()) {
-                        if(card.getTeam() == 0 && !m_isBluePlayer) tex = lastBlueCard;
-                        else if(card.getTeam() == 1 && m_isBluePlayer) tex = lastRedCard;
-                    } else tex = card.getTexture();
-                    board->drawCard(renderer, tex, {(SCREEN_WIDTH/2 - cardTexture::m_texWidth/2) + card.getCoordinates().getX()*cardTexture::m_texWidth,
-                        (SCREEN_HEIGHT/2 - cardTexture::m_texHeight / 2) + card.getCoordinates().getY()*cardTexture::m_texHeight});
+                for(const auto& cards = board.GetPlayedCards(); const auto& card : cards) {
+                    painter.drawCard(card, card.GetTexture()->getTexture());
                 }
 
                 //Iterate each players' cards and draw them onto the screen
