@@ -242,11 +242,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
 
-    CardTexture blueCardBack(renderer,"Dependencies/textures/blue_back.jpg");
-    m_blueCardIllusion = blueCardBack;
-
-    CardTexture redCardBack(renderer, "Dependencies/textures/red_back.jpg");
-    m_blueCardIllusion = redCardBack;
+    m_blueCardIllusion = new CardTexture(renderer,"Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = new CardTexture(renderer,"Dependencies/textures/red_back.jpg");
 #endif
 
 }
