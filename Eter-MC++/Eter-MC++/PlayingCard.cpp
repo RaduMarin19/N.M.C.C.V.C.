@@ -35,6 +35,10 @@ short PlayingCard::GetValue() const
 	return m_value;
 }
 
+unsigned short PlayingCard::GetId() const {
+	return m_cardId;
+}
+
 CardTexture* PlayingCard::GetTexture() const
 {
 	return m_texture;

@@ -109,6 +109,12 @@ void Game::run() {
 
                     if(painter.isMouseInRect(renderRect)) {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                        if(board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
+                            PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
+                            pushCard.SetBoardPosition(possiblePosition);
+                            board.pushNewCard(pushCard);
+                            board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
+                        }
                     } else {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 255, 255);
                     }
@@ -116,15 +122,46 @@ void Game::run() {
 
                 }
 
+                for(const auto& cards = board.GetPlayingCards(); const auto& card : cards) {
+                    cardTexture *tex;
+                    if(card.isIllusion()) {
+                        if(card.getTeam() == 0 && !m_isBluePlayer) tex = lastBlueCard;
+                        else if(card.getTeam() == 1 && m_isBluePlayer) tex = lastRedCard;
+                    } else tex = card.getTexture();
+                    board->drawCard(renderer, tex, {(SCREEN_WIDTH/2 - cardTexture::m_texWidth/2) + card.getCoordinates().getX()*cardTexture::m_texWidth,
+                        (SCREEN_HEIGHT/2 - cardTexture::m_texHeight / 2) + card.getCoordinates().getY()*cardTexture::m_texHeight});
+                }
+
                 //Iterate each players' cards and draw them onto the screen
                 //This is where all the in game logic will go
-                for(const auto& card : board.getPlayerBlue()->GetCards()) {
+                for(auto& card : board.getPlayerBlue()->GetCards()) {
                     SDL_Rect cardRect;
                     cardRect.x = card.GetCoordinates().GetX();
                     cardRect.y = card.GetCoordinates().GetY();
                     cardRect.w = textureWidth;
                     cardRect.h = textureHeight;
-                    painter.drawCard(card);
+                    if(board.isBluePlayer()) {
+                        painter.drawCard(card, card.GetTexture()->getTexture());
+                        if(painter.isMouseInRect(cardRect)) {
+                            SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                            SDL_RenderDrawRect(painter.GetRenderer(), &cardRect);
+                            if(painter.isPressingLeftClick() && !board.getPlayerBlue()->isGrabbingCard()) {
+                                board.getPlayerBlue()->SetIsGrabbingCard(true);
+                                board.getPlayerBlue()->SetGrabbedCard(&card);
+                            }
+                            if(board.getPlayerBlue()->isGrabbingCard()) {
+                                if(board.getPlayerBlue()->GetGrabbedCard()->GetId() == card.GetId()) {
+                                    std::cout << "Player blue is grabbing a card\n";
+                                    Coordinates mousePos = painter.getMousePos();
+                                    mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
+                                    mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
+                                    card.SetCoordinates(mousePos);
+                                }
+                            }
+                        }
+                    } else {
+                        painter.drawCard(card, board.getBlueIllusionTexture()->getTexture());
+                    }
                 }
                 for(const auto& card : board.getPlayerRed()->GetCards()) {
                     SDL_Rect cardRect;
@@ -132,7 +169,20 @@ void Game::run() {
                     cardRect.y = card.GetCoordinates().GetY();
                     cardRect.w = textureWidth;
                     cardRect.h = textureHeight;
-                    painter.drawCard(card);
+                    if(!board.isBluePlayer()) {
+                        painter.drawCard(card, card.GetTexture()->getTexture());
+                        if(painter.isMouseInRect(cardRect)) {
+                            SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                            SDL_RenderDrawRect(painter.GetRenderer(), &cardRect);
+                        }
+                    } else {
+                        painter.drawCard(card, board.getRedIllusionTexture()->getTexture());
+                    }
+                }
+                if(!painter.isPressingLeftClick() && (board.getPlayerRed()->isGrabbingCard() || board.getPlayerBlue()->isGrabbingCard()) ) {
+                    std::cout << "Player stopped grabbing a card\n";
+                    board.getPlayerRed()->SetIsGrabbingCard(false);
+                    board.getPlayerBlue()->SetIsGrabbingCard(false);
                 }
             }
             

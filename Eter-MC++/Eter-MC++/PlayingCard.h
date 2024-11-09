@@ -12,6 +12,7 @@ public:
 	Coordinates GetCoordinates() const;
 	Coordinates GetBoardPosition() const;
 	short GetValue() const;
+	unsigned short GetId() const;
 
 	CardTexture* GetTexture() const;
 

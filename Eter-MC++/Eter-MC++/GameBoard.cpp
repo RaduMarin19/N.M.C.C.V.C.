@@ -144,7 +144,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
                 cardRed.GetTexture()->getRect().y = coordinatePadding;
                 PlayingCardsBlue.emplace_back(cardBlue);
                 PlayingCardsRed.emplace_back(cardRed);
-                offsetX += textureWidth / 2;
+                offsetX += textureWidth;
             }
         PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[4], 4, nextCardId());
         PlayingCardsBlue.emplace_back(cardBlue);
@@ -191,6 +191,15 @@ Player *GameBoard::getPlayerBlue() {
     return &m_playerBlue;
 }
 
+CardTexture * GameBoard::getBlueIllusionTexture() {
+    return this->m_blueCardIllusion;
+}
+
+CardTexture * GameBoard::getRedIllusionTexture() {
+    return this->m_redCardIllusion;
+
+}
+
 GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     //First possible position will always be 0,0
@@ -208,6 +217,10 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 1; i < 9; i++) {
         m_explosions.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
+
+    m_blueCardIllusion = new CardTexture(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = new CardTexture(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
+
 #else
     for (int i = 0; i < 5; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
@@ -219,6 +232,12 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 1; i < 9; i++) {
         m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
+
+    CardTexture blueCardBack(renderer,"Dependencies/textures/blue_back.jpg");
+    m_blueCardIllusion = blueCardBack;
+
+    CardTexture redCardBack(renderer, "Dependencies/textures/red_back.jpg");
+    m_blueCardIllusion = redCardBack;
 #endif
 
 }

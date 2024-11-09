@@ -9,9 +9,10 @@ Player::Player(std::vector<PlayingCard> cards)
 {
 	//Move semantics, do not create an unnecessary copy of the player deck
 	m_cards = std::move(cards);
+	m_isGrabbingCard = false;
 }
 
-void Player::SetGrabbedCard(const std::shared_ptr<PlayingCard>& grabbedCard)
+void Player::SetGrabbedCard(PlayingCard* grabbedCard)
 {
 	m_grabbedCard = grabbedCard;
 }
@@ -37,22 +38,21 @@ void Player::removeCard(const PlayingCard& card) {
 	}
 }
 
-std::vector<PlayingCard> Player::GetCards() const
+std::vector<PlayingCard>& Player::GetCards()
 {
 	return m_cards;
 }
 
-PlayingCard Player::GetGrabbedCard() const
+PlayingCard *Player::GetGrabbedCard() const
 {
-	if (auto grabbedCard = m_grabbedCard.lock()) {
-		return *grabbedCard;  
-	}
-	else {
-		throw std::runtime_error("No card is currently grabbed.");
-	}
+		return m_grabbedCard;
 }
 
 bool Player::isGrabbingCard() const
 {
-	return !m_grabbedCard.expired();
+	return m_isGrabbingCard;
+}
+
+void Player::SetIsGrabbingCard(bool isGrabbingCard) {
+	this->m_isGrabbingCard = isGrabbingCard;
 }

@@ -10,15 +10,17 @@ public:
 	Player();
 	Player(std::vector<PlayingCard> cards);
 
-	void SetGrabbedCard(const std::shared_ptr<PlayingCard>& grabbedCard);
+	void SetGrabbedCard(PlayingCard* grabbedCard);
 	void AddCard(const PlayingCard& card);
 	void removeCard(const PlayingCard& card);
-	std::vector<PlayingCard> GetCards() const;
-	PlayingCard GetGrabbedCard() const;
+	std::vector<PlayingCard>& GetCards();
+	PlayingCard *GetGrabbedCard() const;
 	bool isGrabbingCard() const;
+	void SetIsGrabbingCard(bool isGrabbingCard);
 
 private:
 	std::vector<PlayingCard> m_cards;
-	std::weak_ptr<PlayingCard> m_grabbedCard;
+	PlayingCard *m_grabbedCard;
+	bool m_isGrabbingCard;
 };
 

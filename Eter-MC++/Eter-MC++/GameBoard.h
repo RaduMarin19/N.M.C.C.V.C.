@@ -43,6 +43,9 @@ public:
     Player *getPlayerRed();
     Player *getPlayerBlue();
 
+    CardTexture *getBlueIllusionTexture();
+    CardTexture *getRedIllusionTexture();
+
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
 
@@ -65,6 +68,10 @@ private:
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosions;
+
+    CardTexture *m_blueCardIllusion;
+    CardTexture *m_redCardIllusion;
+
     bool m_isBluePlayer;
 
 

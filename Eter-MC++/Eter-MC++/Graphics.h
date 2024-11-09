@@ -32,15 +32,18 @@ public:
     SDL_Renderer* GetRenderer();
     void setEvent(const SDL_Event &event);
     void setMousePos(const Coordinates& pos);
+    Coordinates getMousePos();
     bool isMouseInRect(const SDL_Rect& rect) const;
     bool drawLoginPage();
     void drawModeSelection();
-    void drawCard(const PlayingCard& card);
+    void drawCard(const PlayingCard& card, SDL_Texture* cardTexture);
     bool isTrainingActive();
     bool isMageDuelActive();
     bool isElementalActive();
     bool isTournamentActive();
     bool isQuickMatchActive();
+    bool isPressingLeftClick();
+    bool isPressingRightClick();
 
     private:
     SDL_Window* m_window;
@@ -50,6 +53,8 @@ public:
     SDL_Color m_accentColor;
     SDL_Event m_event;
     int m_mouseX, m_mouseY;
+    bool m_isPressingLeftClick;
+    bool m_isPressingRightClick;
 };
 
 

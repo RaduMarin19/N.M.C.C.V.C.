@@ -281,11 +281,26 @@ SDL_Renderer* Graphics::GetRenderer()
 void Graphics::setEvent(const SDL_Event &event) {
     m_event = event;
     SDL_GetMouseState(&m_mouseX, &m_mouseY);
+
+    if(event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) {
+        m_isPressingLeftClick = true;
+    }
+
+    if(event.button.button == SDL_BUTTON_RIGHT && event.type == SDL_MOUSEBUTTONDOWN) {
+        m_isPressingRightClick = true;
+    }
+    if(event.type == SDL_MOUSEBUTTONUP) {
+        m_isPressingLeftClick = false;
+    }
 }
 
 void Graphics::setMousePos(const Coordinates &pos) {
     m_mouseX = pos.GetX();
     m_mouseY = pos.GetY();
+}
+
+Coordinates Graphics::getMousePos() {
+    return {m_mouseX, m_mouseY};
 }
 
 bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
@@ -332,16 +347,15 @@ void Graphics::drawModeSelection() {
     SDL_RenderPresent(m_renderer);
 }
 
-void Graphics::drawCard(const PlayingCard& card)
+void Graphics::drawCard(const PlayingCard& card, SDL_Texture* cardTexture)
 {
     // Ensure the card has a valid texture
-    if (!card.GetTexture() || !card.GetTexture()->getTexture()) {
+    if (!card.GetTexture() || !cardTexture) {
         std::cerr << "Error: PlayingCard has no valid texture!\n";
         return;
     }
 
     // Get the texture and source rectangle from the card
-    SDL_Texture* cardTexture = card.GetTexture()->getTexture();
     SDL_Rect srcRect = card.GetTexture()->getRect();
 
     // Get the card's position
@@ -388,5 +402,13 @@ bool Graphics::isTournamentActive()
 bool Graphics::isQuickMatchActive()
 {
     return g_config.quickMatchActive;
+}
+
+bool Graphics::isPressingLeftClick() {
+    return this->m_isPressingLeftClick;
+}
+
+bool Graphics::isPressingRightClick() {
+    return this->m_isPressingRightClick;
 }
 
