@@ -20,9 +20,37 @@ void GameBoard::testPossiblePosition(short x, short y)
             return;
         }
     }
+
     //If there is already a card there then no need to add it as a possible position again
     if (!this->m_positions.contains({ x, y }))
         this->m_possiblePositions.emplace(x, y);
+}
+
+void GameBoard::checkStatus(GameState &gameState) {
+    if (gameState == TRAINING_MODE) {
+
+        for (int i = m_minX; i < m_maxX; ++i) {
+            short bluePlayerLine = 0;
+            short redPlayerLine = 0;
+            for (int j = m_minY; j < m_maxY; ++j) {
+                if (m_positions.find({ i,j }) != m_positions.end()) {
+                    PlayingCard actualCard = m_positions.find({ i,j })->second.top();
+                    if (actualCard.GetColor() == BLUE)
+                        bluePlayerLine++;
+                    else {
+                        redPlayerLine++;
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+            if (bluePlayerLine==2)
+                gameState =BLUE_PLAYER_WON;
+            if (bluePlayerLine==2)
+                gameState= RED_PLAYER_WON;
+        }
+    }
 }
 
 bool GameBoard::pushNewCard(const PlayingCard& otherCard)
@@ -138,8 +166,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         for(int i = 0; i < 2; i++)
             for(int i = 1; i<= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId());
-                PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId());
+                PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId(),BLUE);
+                PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId(),RED);
                 std::cout << "Initialized card with x:"<< coordinatePadding + offsetX <<" y:"<< SCREEN_HEIGHT - textureHeight - coordinatePadding <<"\n";
                 cardBlue.GetTexture()->getRect().x = coordinatePadding + offsetX;
                 cardBlue.GetTexture()->getRect().y = SCREEN_HEIGHT - textureHeight - coordinatePadding;
@@ -149,10 +177,10 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
                 PlayingCardsRed.emplace_back(cardRed);
                 offsetX += textureWidth;
             }
-        PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[4], 4, nextCardId());
+        PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[4], 4, nextCardId(),BLUE);
         PlayingCardsBlue.emplace_back(cardBlue);
 
-        PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[4], 4, nextCardId());
+        PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[4], 4, nextCardId(),RED);
         PlayingCardsRed.emplace_back(cardRed);
 
         //Initialize the two players with the newly generated decks

@@ -4,14 +4,14 @@ Game::Game()
     : m_currentState(WELCOME_SCREEN) {}
 
 
-void Game::SetGameState(Game::GameState state)
+void Game::SetGameState(GameState state)
 {
     m_currentState = state;
 }
 
 
 
-Game::GameState Game::GetGameState() const
+GameState Game::GetGameState() const
 {
     return m_currentState;
 }
@@ -38,6 +38,7 @@ void Game::run() {
 
         while (SDL_PollEvent(&e) != 0)
         {
+            
             painter.setEvent(e);
             if (e.type == SDL_QUIT)
             {
@@ -95,10 +96,12 @@ void Game::run() {
                     drawThisFrame = true;
                 }
             }
-
+            if (m_currentState == RED_PLAYER_WON)
+                std::cout << "Red Player Won";
+            if (m_currentState == BLUE_PLAYER_WON)
+                std::cout << "Blue Player Won";
 
             if (m_currentState == TRAINING_MODE) {
-
                 //Draw the board, with the possible positions and played cards;
                 for(const auto& possiblePosition : board.GetPossiblePositions()) {
                     SDL_Rect renderRect;
@@ -116,6 +119,7 @@ void Game::run() {
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
+                                //board.checkStatus(m_currentState); still needs work
                             }
                             else {
 
@@ -129,6 +133,7 @@ void Game::run() {
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
                                 board.setIsBluePlayer(true);
+                                //board.checkStatus(m_currentState); still needs work
                             }
                         }
                     } else {

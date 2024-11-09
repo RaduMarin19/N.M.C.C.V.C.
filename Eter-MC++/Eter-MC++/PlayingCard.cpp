@@ -2,8 +2,9 @@
 
 PlayingCard::PlayingCard(Coordinates position, short value) : m_position{position}, m_value{value}{}
 
-PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id)
+PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id,Color color)
 {
+	this->m_color = color;
 	this->m_cardId = id;
 	this->m_position = coord;
 	this->m_value = value;
@@ -28,6 +29,11 @@ void PlayingCard::SetBoardPosition(Coordinates position) {
 
 Coordinates PlayingCard::GetBoardPosition() const {
 	return m_boardPosition;
+}
+
+Color PlayingCard::GetColor() const
+{
+	return m_color;
 }
 
 short PlayingCard::GetValue() const

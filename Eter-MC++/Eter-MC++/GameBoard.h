@@ -3,6 +3,7 @@
 #include "PlayingCard.h"
 #include "CardTexture.h"
 #include "Player.h"
+#include "GameState.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -46,6 +47,7 @@ public:
 
     CardTexture *getBlueIllusionTexture();
     CardTexture *getRedIllusionTexture();
+    void checkStatus(GameState& gameMode);
 
     void setIsBluePlayer(bool player);
     bool isBluePlayer();

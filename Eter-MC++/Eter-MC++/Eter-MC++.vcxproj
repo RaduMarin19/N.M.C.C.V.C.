@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CardTexture.h" />
+    <ClInclude Include="Colors.h" />
     <ClInclude Include="Coordinates.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="GameModeMageDuel.h" />
     <ClInclude Include="GameModeTournament.h" />
     <ClInclude Include="GameModeTraining.h" />
+    <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingCard.h" />

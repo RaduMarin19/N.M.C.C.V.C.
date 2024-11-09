@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Graphics.h"
 #include "GameBoard.h"
+#include "GameState.h"
 #include <iostream>
 #include <algorithm>
 
@@ -17,21 +18,11 @@ class Game
 public:
 	Game();
 
-	enum GameState : short 
-	{
-		WELCOME_SCREEN,
-		MODE_SELECTION,
-		TRAINING_MODE,
-		ELEMENTAL_BATTLE,
-		MAGE_DUEL,
-		TOURNAMENT,
-		QUICK_MODE
-	};
+	void SetGameState(GameState state);
 
-	void SetGameState(Game::GameState state);
-
-	Game::GameState GetGameState() const;
+	GameState GetGameState() const;
 	void run();
+
 
 private:
 	GameState m_currentState = WELCOME_SCREEN;
