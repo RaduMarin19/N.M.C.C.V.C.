@@ -109,12 +109,27 @@ void Game::run() {
 
                     if(painter.isMouseInRect(renderRect)) {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
-                        if(board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
+                        if(board.isBluePlayer() &&board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({renderRect.x, renderRect.y});
-                            board.pushNewCard(pushCard);
-                            board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
+                            if (board.pushNewCard(pushCard)) {
+                                board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
+                                board.setIsBluePlayer(false);
+                            }
+                            else {
+
+                            }
+                           
+                        }
+                        else if (board.getPlayerRed()->isGrabbingCard() && !painter.isPressingLeftClick()) {
+                            PlayingCard pushCard = *board.getPlayerRed()->GetGrabbedCard();
+                            pushCard.SetBoardPosition(possiblePosition);
+                            pushCard.SetCoordinates({ renderRect.x, renderRect.y });
+                            if (board.pushNewCard(pushCard)) {
+                                board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
+                                board.setIsBluePlayer(true);
+                            }
                         }
                     } else {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 255, 255);
@@ -158,7 +173,7 @@ void Game::run() {
                         painter.drawCard(card, board.getBlueIllusionTexture()->getTexture());
                     }
                 }
-                for(const auto& card : board.getPlayerRed()->GetCards()) {
+                for(auto& card : board.getPlayerRed()->GetCards()) {
                     SDL_Rect cardRect;
                     cardRect.x = card.GetCoordinates().GetX();
                     cardRect.y = card.GetCoordinates().GetY();
@@ -166,9 +181,23 @@ void Game::run() {
                     cardRect.h = textureHeight;
                     if(!board.isBluePlayer()) {
                         painter.drawCard(card, card.GetTexture()->getTexture());
-                        if(painter.isMouseInRect(cardRect)) {
+                        if (painter.isMouseInRect(cardRect)) {
                             SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
                             SDL_RenderDrawRect(painter.GetRenderer(), &cardRect);
+
+                            if (painter.isPressingLeftClick() && !board.getPlayerRed()->isGrabbingCard()) {
+                                board.getPlayerRed()->SetIsGrabbingCard(true);
+                                board.getPlayerRed()->SetGrabbedCard(&card);
+                            }
+                            if (board.getPlayerRed()->isGrabbingCard()) {
+                                if (board.getPlayerRed()->GetGrabbedCard()->GetId() == card.GetId()) {
+                                    std::cout << "Player red is grabbing a card\n";
+                                    Coordinates mousePos = painter.getMousePos();
+                                    mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
+                                    mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
+                                    card.SetCoordinates(mousePos);
+                                }
+                            }
                         }
                     } else {
                         painter.drawCard(card, board.getRedIllusionTexture()->getTexture());

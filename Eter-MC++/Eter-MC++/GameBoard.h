@@ -10,7 +10,7 @@
 #include <vector>
 
 #ifndef SCREEN_WIDTH
-#define SCREEN_WIDTH 800
+#define SCREEN_WIDTH 1200
 #endif
 #ifndef SCREEN_HEIGHT 
 #define SCREEN_HEIGHT 800
@@ -29,7 +29,7 @@ public:
     };
 
     GameBoard();
-    void pushNewCard(const PlayingCard& otherCard);
+    bool pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);

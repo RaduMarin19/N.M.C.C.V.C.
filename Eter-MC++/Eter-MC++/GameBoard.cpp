@@ -25,7 +25,7 @@ void GameBoard::testPossiblePosition(short x, short y)
         this->m_possiblePositions.emplace(x, y);
 }
 
-void GameBoard::pushNewCard(const PlayingCard& otherCard)
+bool GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetBoardPosition();
 
@@ -40,7 +40,7 @@ void GameBoard::pushNewCard(const PlayingCard& otherCard)
     //If the position at which the new card is played is not on the posible positions list, discard it
     if (!m_possiblePositions.contains(newCardCoords)) {
         std::cout << "Not playing card because not a possible position." << newCardCoords.GetX() << " " << newCardCoords.GetY() << "\n";
-        return;
+        return false;
     }
 
     //If there is no card at the position create a new stack and add to it
@@ -52,7 +52,9 @@ void GameBoard::pushNewCard(const PlayingCard& otherCard)
     //Otherwise just add to the existing stack
     else {
         auto it = m_positions.find(newCardCoords);
-        it->second.emplace(otherCard);
+        if (it->second.top().GetValue() < otherCard.GetValue())
+            it->second.emplace(otherCard);
+        else return false;
     }
 
     {
@@ -113,6 +115,7 @@ void GameBoard::pushNewCard(const PlayingCard& otherCard)
             ++it;
         }
     }
+    return true;
 }
 
 void GameBoard::setTable(short tableSize)
