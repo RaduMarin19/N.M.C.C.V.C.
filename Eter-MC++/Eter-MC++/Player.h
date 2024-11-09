@@ -17,10 +17,15 @@ public:
 	PlayingCard *GetGrabbedCard() const;
 	bool isGrabbingCard() const;
 	void SetIsGrabbingCard(bool isGrabbingCard);
+	void SetHasPlayedIllusion();
+	bool HasPlayedIllusion() const;
+	bool& isPlayingIllusion();
 
 private:
 	std::vector<PlayingCard> m_cards;
 	PlayingCard *m_grabbedCard;
+	bool m_isPlayingIllusion;
 	bool m_isGrabbingCard;
+	bool m_hasPlayedIllusion;
 };
 

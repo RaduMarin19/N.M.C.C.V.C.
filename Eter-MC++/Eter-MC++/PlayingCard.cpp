@@ -4,6 +4,7 @@ PlayingCard::PlayingCard(Coordinates position, short value) : m_position{positio
 
 PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color)
 {
+	m_isIllusion = false;
 	this->m_color = color;
 	this->m_cardId = id;
 	this->m_position = coord;
@@ -12,11 +13,21 @@ PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short v
 }
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
+	m_isIllusion = oth.m_isIllusion;
 	this->m_position = oth.m_position;
 	this->m_value = oth.m_value;
 	this->m_texture = oth.m_texture;
 	this->m_cardId = oth.m_cardId;
 	this->m_color = oth.m_color;
+}
+
+void PlayingCard::SetIllussion(bool isIllusion) {
+	m_isIllusion = isIllusion;
+}
+
+bool PlayingCard::isIllusion() const
+{
+	return m_isIllusion;
 }
 
 Coordinates PlayingCard::GetCoordinates() const

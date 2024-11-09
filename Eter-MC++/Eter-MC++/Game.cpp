@@ -109,6 +109,15 @@ void Game::run() {
             }
 
             if (m_currentState == TRAINING_MODE) {
+
+                if (board.getPlayerBlue()->HasPlayedIllusion() == false&& board.isBluePlayer()) {
+                    painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), {SCREEN_WIDTH - 200, SCREEN_HEIGHT - 140}, 100, 40, "Play illusion!", 14);
+                }
+
+                if (board.getPlayerRed()->HasPlayedIllusion() == false&&!board.isBluePlayer()) {
+                    painter.drawButton(board.getPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 140 }, 100, 40, "Play illusion!", 14);
+               
+                }
                 //Draw the board, with the possible positions and played cards;
                 for(const auto& possiblePosition : board.GetPossiblePositions()) {
                     SDL_Rect renderRect;
@@ -116,13 +125,21 @@ void Game::run() {
                     renderRect.y =  SCREEN_HEIGHT / 2 - textureHeight / 2 - (possiblePosition.GetY() * textureHeight);
                     renderRect.w = textureWidth;
                     renderRect.h = textureHeight;
-
+                    
                     if(painter.isMouseInRect(renderRect)) {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                       
                         if(board.isBluePlayer() &&board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
+                            if(board.getPlayerBlue()->HasPlayedIllusion()==false&& board.getPlayerBlue()->isPlayingIllusion())
+                            {
+                                pushCard.SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
+                                board.getPlayerBlue()->SetHasPlayedIllusion();
+                            }
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({renderRect.x, renderRect.y});
+
+                            //should move the illusion checking after pushing the card for both players
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
@@ -137,8 +154,14 @@ void Game::run() {
                             PlayingCard pushCard = *board.getPlayerRed()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({ renderRect.x, renderRect.y });
+                            if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion())
+                                {
+                                    pushCard.SetIllussion(board.getPlayerRed()->isPlayingIllusion());
+                                    board.getPlayerRed()->SetHasPlayedIllusion();
+                                }
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
+                                
                                 board.setIsBluePlayer(true);
                                 board.checkStatus(m_currentState); //still needs work
                             }
@@ -151,7 +174,19 @@ void Game::run() {
                 }
 
                 for(const auto& cards = board.GetPlayedCards(); const auto& card : cards) {
-                    painter.drawCard(card, card.GetTexture()->getTexture());
+                    if (card.isIllusion())
+                    {
+                        if (card.GetColor() == BLUE)
+                            painter.drawCard(card, board.getBlueIllusionTexture()->getTexture());
+                        else if(card.GetColor() == RED)
+                        {
+                            painter.drawCard(card, board.getRedIllusionTexture()->getTexture());
+                        }
+                    }
+                    else
+                    {
+                        painter.drawCard(card, card.GetTexture()->getTexture());
+                    }
                 }
 
                 //Iterate each players' cards and draw them onto the screen

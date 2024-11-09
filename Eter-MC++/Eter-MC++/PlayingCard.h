@@ -10,6 +10,9 @@ public:
 	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short, Color);
 	PlayingCard(const PlayingCard&);
 
+	void SetIllussion(bool isIllusion);
+	bool isIllusion() const;
+
 	Coordinates GetCoordinates() const;
 	Coordinates GetBoardPosition() const;
 	Color GetColor() const;
@@ -31,5 +34,6 @@ private:
 	short m_value;
 	CardTexture* m_texture;
 	unsigned short m_cardId;
+	bool m_isIllusion;
 };
 

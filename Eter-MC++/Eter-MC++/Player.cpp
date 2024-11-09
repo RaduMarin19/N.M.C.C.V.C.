@@ -10,6 +10,8 @@ Player::Player(std::vector<PlayingCard> cards)
 	//Move semantics, do not create an unnecessary copy of the player deck
 	m_cards = std::move(cards);
 	m_isGrabbingCard = false;
+	m_hasPlayedIllusion = false;
+	m_isPlayingIllusion = false;
 }
 
 void Player::SetGrabbedCard(PlayingCard* grabbedCard)
@@ -55,4 +57,19 @@ bool Player::isGrabbingCard() const
 
 void Player::SetIsGrabbingCard(bool isGrabbingCard) {
 	this->m_isGrabbingCard = isGrabbingCard;
+}
+
+void Player::SetHasPlayedIllusion()
+{
+	m_hasPlayedIllusion = true;
+}
+
+bool Player::HasPlayedIllusion() const
+{
+	return m_hasPlayedIllusion;
+}
+
+bool& Player::isPlayingIllusion()
+{
+	return m_isPlayingIllusion;
 }
