@@ -29,9 +29,6 @@ void GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetBoardPosition();
 
-    //TODO: This logic is now broken since the update made to the coordinates class,
-    //changing x and y from coordinates on the board to coordinates on screen
-    return;
 
     //Update minimum and maximum board coordinates
     if (newCardCoords.GetX() < m_minX) this->m_minX = newCardCoords.GetX();
@@ -182,6 +179,10 @@ bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &c
 
 }
 
+const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePositions() {
+    return this->m_possiblePositions;
+}
+
 Player *GameBoard::getPlayerRed() {
     return &m_playerRed;
 }
@@ -226,4 +227,11 @@ unsigned short GameBoard::nextCardId() {
     return ++GameBoard::m_cardId;
 }
 
+void GameBoard::setIsBluePlayer(bool player) {
+    this->m_isBluePlayer = player;
+}
+
+bool GameBoard::isBluePlayer() {
+    return this->m_isBluePlayer;
+}
 

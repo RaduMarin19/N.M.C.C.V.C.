@@ -9,6 +9,8 @@ void Game::SetGameState(Game::GameState state)
     m_currentState = state;
 }
 
+
+
 Game::GameState Game::GetGameState() const
 {
     return m_currentState;
@@ -65,6 +67,7 @@ void Game::run() {
                 if (painter.isTrainingActive()) {
                     m_currentState = TRAINING_MODE;
                     board.generatePlayerCards(GameBoard::GameMode::Training);
+                    board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (painter.isElementalActive())
@@ -95,12 +98,42 @@ void Game::run() {
 
 
             if (m_currentState == TRAINING_MODE) {
+
+                //Draw the board, with the possible positions and played cards;
+                for(const auto& possiblePosition : board.GetPossiblePositions()) {
+                    SDL_Rect renderRect;
+                    renderRect.x = SCREEN_WIDTH / 2 - textureWidth / 2 - (possiblePosition.GetX() * textureWidth);
+                    renderRect.y =  SCREEN_HEIGHT / 2 - textureHeight / 2 - (possiblePosition.GetY() * textureHeight);
+                    renderRect.w = textureWidth;
+                    renderRect.h = textureHeight;
+
+                    if(painter.isMouseInRect(renderRect)) {
+                        SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                    } else {
+                        SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 255, 255);
+                    }
+                    SDL_RenderDrawRect(painter.GetRenderer(), &renderRect);
+
+                }
+
                 //Iterate each players' cards and draw them onto the screen
                 //This is where all the in game logic will go
-                for(const auto& card : board.getPlayerBlue()->GetCards())
+                for(const auto& card : board.getPlayerBlue()->GetCards()) {
+                    SDL_Rect cardRect;
+                    cardRect.x = card.GetCoordinates().GetX();
+                    cardRect.y = card.GetCoordinates().GetY();
+                    cardRect.w = textureWidth;
+                    cardRect.h = textureHeight;
                     painter.drawCard(card);
-                for(const auto& card : board.getPlayerRed()->GetCards())
+                }
+                for(const auto& card : board.getPlayerRed()->GetCards()) {
+                    SDL_Rect cardRect;
+                    cardRect.x = card.GetCoordinates().GetX();
+                    cardRect.y = card.GetCoordinates().GetY();
+                    cardRect.w = textureWidth;
+                    cardRect.h = textureHeight;
                     painter.drawCard(card);
+                }
             }
             
 

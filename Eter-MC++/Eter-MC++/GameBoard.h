@@ -38,9 +38,13 @@ public:
     unsigned short nextCardId();
 
     bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
+    const std::unordered_set<Coordinates, Coordinates>& GetPossiblePositions();
 
     Player *getPlayerRed();
     Player *getPlayerBlue();
+
+    void setIsBluePlayer(bool player);
+    bool isBluePlayer();
 
 protected:
     GameMode m_gameMode;
@@ -61,6 +65,8 @@ private:
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosions;
+    bool m_isBluePlayer;
+
 
     void testPossiblePosition(short x, short y);
 };
