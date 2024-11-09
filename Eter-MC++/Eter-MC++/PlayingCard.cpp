@@ -22,6 +22,14 @@ Coordinates PlayingCard::GetCoordinates() const
 	return m_position;
 }
 
+void PlayingCard::SetBoardPosition(Coordinates position) {
+	m_boardPosition = position;
+}
+
+Coordinates PlayingCard::GetBoardPosition() const {
+	return m_boardPosition;
+}
+
 short PlayingCard::GetValue() const
 {
 	return m_value;

@@ -27,7 +27,7 @@ void GameBoard::testPossiblePosition(short x, short y)
 
 void GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
-	Coordinates newCardCoords = otherCard.GetCoordinates();
+	Coordinates newCardCoords = otherCard.GetBoardPosition();
 
     //TODO: This logic is now broken since the update made to the coordinates class,
     //changing x and y from coordinates on the board to coordinates on screen
@@ -59,7 +59,6 @@ void GameBoard::pushNewCard(const PlayingCard& otherCard)
     }
 
     {
-
         //Check horizontally for new possible positions
         this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
         this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
