@@ -160,6 +160,34 @@ void GameBoard::checkStatus(GameState &gameState) {
             gameState = BLUE_PLAYER_WON;
             return;
         }
+
+        int blueScore = 0;
+        int redScore = 0;
+        //checking to see if the enemy has any more cards
+        if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
+            for (auto& [coords, cardStack] : m_positions) {
+                if (cardStack.top().GetColor() == BLUE) {
+                    if (cardStack.top().isIllusion()) {
+                        blueScore += 1;
+                    }
+                    else blueScore += cardStack.top().GetValue();
+                }
+                if (cardStack.top().GetColor() == RED) {
+                    if (cardStack.top().isIllusion()) {
+                        redScore += 1;
+                    }
+                    else redScore += cardStack.top().GetValue();
+                }
+            }
+            if (redScore > blueScore) {
+                gameState = RED_PLAYER_WON;
+                return;
+            }
+            else {
+                gameState = BLUE_PLAYER_WON;
+                return;
+            }
+        }
     }
 }
 
