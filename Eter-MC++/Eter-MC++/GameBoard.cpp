@@ -191,7 +191,7 @@ void GameBoard::checkStatus(GameState &gameState) {
     }
 }
 
-bool GameBoard::pushNewCard(const PlayingCard& otherCard)
+CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetBoardPosition();
 
@@ -206,7 +206,7 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
     //If the position at which the new card is played is not on the posible positions list, discard it
     if (!m_possiblePositions.contains(newCardCoords)) {
         std::cout << "Not playing card because not a possible position." << newCardCoords.GetX() << " " << newCardCoords.GetY() << "\n";
-        return false;
+        return IN_HAND;
     }
 
     //If there is no card at the position create a new stack and add to it
@@ -217,18 +217,18 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-        if (!otherCard.isIllusion()) {
-            auto it = m_positions.find(newCardCoords);
-            if (it->second.top().GetValue() < otherCard.GetValue())
+        if (!otherCard.isIllusion()) { //if a card is a illusion you cannot add it to an existing stack
+            auto it = m_positions.find(newCardCoords); 
+            if (it->second.top().GetValue() < otherCard.GetValue()) 
                 it->second.emplace(otherCard);
             else if (it->second.top().isIllusion()) {
                 m_isBluePlayer = !m_isBluePlayer;
                 it->second.top().SetIllussion(false);
-                return false;
+                return REMOVED;
             }
-            else return false;
+            else return IN_HAND;
         }
-        else return false;
+        else return IN_HAND;
     }
 
         //Check horizontally for new possible positions
@@ -287,7 +287,7 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
             ++it;
         }
     }
-    return true;
+    return ON_BOARD;
 }
 
 void GameBoard::returnCardToDeck(PlayingCard& card) {

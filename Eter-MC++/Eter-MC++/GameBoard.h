@@ -4,6 +4,7 @@
 #include "CardTexture.h"
 #include "Player.h"
 #include "GameState.h"
+#include "CardStatus.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -31,7 +32,7 @@ public:
     };
 
     GameBoard();
-    bool pushNewCard(const PlayingCard& otherCard);
+    CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);

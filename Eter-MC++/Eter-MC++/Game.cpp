@@ -150,10 +150,12 @@ void Game::run() {
                             if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.getPlayerBlue()->isPlayingIllusion())
                                 pushCard.SetIllussion(true);
 
-                            if (board.pushNewCard(pushCard)) {
+                            CardStatus status = board.pushNewCard(pushCard);
+
+                            if (status == ON_BOARD) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
-                                if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.getPlayerBlue()->isPlayingIllusion())
+                                if (pushCard.isIllusion())
                                 {   
                                     for(auto& card: board.GetPlayedPositions())
                                         if(card.second.top() == pushCard)
@@ -162,8 +164,11 @@ void Game::run() {
                                 }
                                 board.checkStatus(m_currentState);
                             }
-                            else {
+                            else if (status == IN_HAND) {
                                 board.returnCardToDeck(*board.getPlayerBlue()->GetGrabbedCard());
+                            }
+                            else if (status == REMOVED) {
+                                board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                             }
                            
                         }
@@ -174,9 +179,11 @@ void Game::run() {
                             if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion())
                                 pushCard.SetIllussion(true);
 
-                            if (board.pushNewCard(pushCard)) {
+                            CardStatus status = board.pushNewCard(pushCard);
+
+                            if (status==ON_BOARD) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
-                                if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion()) {
+                                if (pushCard.isIllusion()) {
                                     for (auto& card : board.GetPlayedPositions())
                                         if (card.second.top() == pushCard)
                                             card.second.top().SetIllussion(board.getPlayerRed()->isPlayingIllusion());
@@ -185,8 +192,11 @@ void Game::run() {
                                 board.setIsBluePlayer(true);
                                 board.checkStatus(m_currentState);
                             }
-                            else {
+                            else if(status==IN_HAND){
                                 board.returnCardToDeck(*board.getPlayerRed()->GetGrabbedCard());
+                            }
+                            else if (status == REMOVED) {
+                                board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
                             }
                         }
                     } else {

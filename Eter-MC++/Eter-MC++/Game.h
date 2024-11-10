@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "GameBoard.h"
 #include "GameState.h"
+#include "CardStatus.h"
 #include <iostream>
 #include <algorithm>
 
