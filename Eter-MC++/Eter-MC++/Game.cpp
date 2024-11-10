@@ -145,10 +145,10 @@ void Game::run() {
                                             card.second.top().SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
                                     board.getPlayerBlue()->SetHasPlayedIllusion();
                                 }
-                                board.checkStatus(m_currentState); //still needs work
+                                board.checkStatus(m_currentState);
                             }
                             else {
-
+                                board.returnCardToDeck(*board.getPlayerBlue()->GetGrabbedCard());
                             }
                            
                         }
@@ -167,6 +167,9 @@ void Game::run() {
                                 }
                                 board.setIsBluePlayer(true);
                                 board.checkStatus(m_currentState);
+                            }
+                            else {
+                                board.returnCardToDeck(*board.getPlayerRed()->GetGrabbedCard());
                             }
                         }
                     } else {

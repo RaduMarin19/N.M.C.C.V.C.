@@ -15,6 +15,7 @@ public:
 
 	Coordinates GetCoordinates() const;
 	Coordinates GetBoardPosition() const;
+	Coordinates GetInitialPosition() const;
 	Color GetColor() const;
 	short GetValue() const;
 	unsigned short GetId() const;
@@ -30,6 +31,7 @@ public:
 private:
 	Coordinates m_boardPosition;
 	Coordinates m_position;
+	Coordinates m_initialPosition;
 	Color m_color;
 	short m_value;
 	CardTexture* m_texture;

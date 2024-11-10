@@ -192,6 +192,11 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
         auto it = m_positions.find(newCardCoords);
         if (it->second.top().GetValue() < otherCard.GetValue())
             it->second.emplace(otherCard);
+        else if (it->second.top().isIllusion()) {
+            m_isBluePlayer = !m_isBluePlayer;
+            it->second.top().SetIllussion(false);
+            return false;
+        }
         else return false;
     }
 
@@ -252,6 +257,11 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
         }
     }
     return true;
+}
+
+void GameBoard::returnCardToDeck(PlayingCard& card) {
+    card.SetCoordinates(card.GetInitialPosition());
+    
 }
 
 void GameBoard::setTable(short tableSize)

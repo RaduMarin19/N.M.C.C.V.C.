@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <stack>
 #include <vector>
+#include <variant>
 
 #ifndef SCREEN_WIDTH
 #define SCREEN_WIDTH 1200
@@ -49,6 +50,7 @@ public:
     CardTexture *getBlueIllusionTexture();
     CardTexture *getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
+    void returnCardToDeck(PlayingCard& card);
 
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
