@@ -217,13 +217,16 @@ bool GameBoard::pushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-        auto it = m_positions.find(newCardCoords);
-        if (it->second.top().GetValue() < otherCard.GetValue())
-            it->second.emplace(otherCard);
-        else if (it->second.top().isIllusion()) {
-            m_isBluePlayer = !m_isBluePlayer;
-            it->second.top().SetIllussion(false);
-            return false;
+        if (!otherCard.isIllusion()) {
+            auto it = m_positions.find(newCardCoords);
+            if (it->second.top().GetValue() < otherCard.GetValue())
+                it->second.emplace(otherCard);
+            else if (it->second.top().isIllusion()) {
+                m_isBluePlayer = !m_isBluePlayer;
+                it->second.top().SetIllussion(false);
+                return false;
+            }
+            else return false;
         }
         else return false;
     }

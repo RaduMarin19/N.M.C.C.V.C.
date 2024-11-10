@@ -147,8 +147,9 @@ void Game::run() {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({renderRect.x, renderRect.y});
+                            if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.getPlayerBlue()->isPlayingIllusion())
+                                pushCard.SetIllussion(true);
 
-                            //should move the illusion checking after pushing the card for both players
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
@@ -170,6 +171,8 @@ void Game::run() {
                             PlayingCard pushCard = *board.getPlayerRed()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({ renderRect.x, renderRect.y });
+                            if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion())
+                                pushCard.SetIllussion(true);
 
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
