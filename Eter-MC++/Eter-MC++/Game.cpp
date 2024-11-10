@@ -131,11 +131,6 @@ void Game::run() {
                        
                         if(board.isBluePlayer() &&board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
-                            if(board.getPlayerBlue()->HasPlayedIllusion()==false&& board.getPlayerBlue()->isPlayingIllusion())
-                            {
-                                pushCard.SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
-                                board.getPlayerBlue()->SetHasPlayedIllusion();
-                            }
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({renderRect.x, renderRect.y});
 
@@ -143,6 +138,13 @@ void Game::run() {
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                                 board.setIsBluePlayer(false);
+                                if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.getPlayerBlue()->isPlayingIllusion())
+                                {   
+                                    for(auto& card: board.GetPlayedPositions())
+                                        if(card.second.top() == pushCard)
+                                            card.second.top().SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
+                                    board.getPlayerBlue()->SetHasPlayedIllusion();
+                                }
                                 board.checkStatus(m_currentState); //still needs work
                             }
                             else {
@@ -154,16 +156,17 @@ void Game::run() {
                             PlayingCard pushCard = *board.getPlayerRed()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({ renderRect.x, renderRect.y });
-                            if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion())
-                                {
-                                    pushCard.SetIllussion(board.getPlayerRed()->isPlayingIllusion());
-                                    board.getPlayerRed()->SetHasPlayedIllusion();
-                                }
+
                             if (board.pushNewCard(pushCard)) {
                                 board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
-                                
+                                if (board.getPlayerRed()->HasPlayedIllusion() == false && board.getPlayerRed()->isPlayingIllusion()) {
+                                    for (auto& card : board.GetPlayedPositions())
+                                        if (card.second.top() == pushCard)
+                                            card.second.top().SetIllussion(board.getPlayerRed()->isPlayingIllusion());
+                                            board.getPlayerRed()->SetHasPlayedIllusion();
+                                }
                                 board.setIsBluePlayer(true);
-                                board.checkStatus(m_currentState); //still needs work
+                                board.checkStatus(m_currentState);
                             }
                         }
                     } else {

@@ -322,6 +322,8 @@ const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePosit
     return this->m_possiblePositions;
 }
 
+
+
 const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;
 
@@ -329,6 +331,11 @@ const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
         playingCards.emplace_back(v.top());
     }
     return playingCards;
+}
+
+std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates>& GameBoard::GetPlayedPositions()
+{
+    return m_positions;
 }
 
 Player *GameBoard::getPlayerRed() {
