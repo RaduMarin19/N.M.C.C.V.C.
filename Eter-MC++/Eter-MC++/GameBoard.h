@@ -55,6 +55,7 @@ public:
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
 
+    void clear();
 protected:
     GameMode m_gameMode;
 

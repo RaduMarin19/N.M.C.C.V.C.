@@ -273,6 +273,14 @@ void GameBoard::setGameMode(const GameMode& mode) {
     this->m_gameMode = mode;
 }
 
+void GameBoard::clear() {
+    m_positions.clear();
+    m_possiblePositions.clear();
+    m_possiblePositions.insert({ 0,0 });
+    m_playerBlue.reset();
+    m_playerRed.reset();
+}
+
 void GameBoard::generatePlayerCards(const GameMode &mode) {
     if(mode == GameMode::Training) {
         //Initialize a deck for each player

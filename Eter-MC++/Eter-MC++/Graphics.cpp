@@ -303,6 +303,12 @@ Coordinates Graphics::getMousePos() {
     return {m_mouseX, m_mouseY};
 }
 
+void Graphics::resetGameModes()
+{
+    g_config.elementalBattleActive = false;
+    g_config.trainingActive = false;
+}
+
 bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
     return (m_mouseX > rect.x &&m_mouseX < rect.x + rect.w
 && m_mouseY > rect.y && m_mouseY < rect.y + rect.h);

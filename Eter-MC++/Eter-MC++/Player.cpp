@@ -73,3 +73,12 @@ bool& Player::isPlayingIllusion()
 {
 	return m_isPlayingIllusion;
 }
+
+void Player::reset()
+{
+	m_isGrabbingCard = false;
+	m_hasPlayedIllusion = false;
+	m_isPlayingIllusion = false;
+	m_cards.clear();
+	m_grabbedCard = nullptr;
+}

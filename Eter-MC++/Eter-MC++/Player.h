@@ -20,6 +20,7 @@ public:
 	void SetHasPlayedIllusion();
 	bool HasPlayedIllusion() const;
 	bool& isPlayingIllusion();
+	void reset();
 
 private:
 	std::vector<PlayingCard> m_cards;

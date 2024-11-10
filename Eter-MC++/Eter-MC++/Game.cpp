@@ -98,14 +98,28 @@ void Game::run() {
             }
             if (m_currentState == RED_PLAYER_WON)
             {
-                std::cout << "Red Player Won";
-                //m_currentState = MODE_SELECTION;
+                painter.drawText("RED player WON!", { SCREEN_WIDTH / 2, 50 }, 14, true);
+                bool isPressed = false;
+                painter.drawButton(isPressed, { SCREEN_WIDTH / 2, 250 }, 150, 40, "Return to menu!", 14);
+                if (isPressed) {
+                    m_currentState = MODE_SELECTION;
+                    drawThisFrame = true;
+                    painter.resetGameModes();
+                    board.clear();
+                }
             }
                 
             if (m_currentState == BLUE_PLAYER_WON) 
             {
-                std::cout << "Blue Player Won";
-                //m_currentState = MODE_SELECTION;
+                painter.drawText("Blue player WON!", { SCREEN_WIDTH / 2, 50 }, 14, true);
+                bool isPressed = false;
+                painter.drawButton(isPressed, { SCREEN_WIDTH / 2, 250 }, 150, 40, "Return to menu!", 14);
+                if (isPressed) {
+                    m_currentState = MODE_SELECTION;
+                    drawThisFrame = true;
+                    painter.resetGameModes();
+                    board.clear();
+                }
             }
 
             if (m_currentState == TRAINING_MODE) {

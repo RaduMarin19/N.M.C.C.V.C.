@@ -33,6 +33,7 @@ public:
     void setEvent(const SDL_Event &event);
     void setMousePos(const Coordinates& pos);
     Coordinates getMousePos();
+    void resetGameModes();
     bool isMouseInRect(const SDL_Rect& rect) const;
     bool drawLoginPage();
     void drawModeSelection();
