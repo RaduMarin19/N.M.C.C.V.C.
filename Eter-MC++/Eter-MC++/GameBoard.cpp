@@ -309,6 +309,10 @@ void GameBoard::clear() {
     m_possiblePositions.clear();
     m_possiblePositions.insert({ 0,0 });
     m_playerBlue.reset();
+    m_maxX = 0;
+    m_minX = 0;
+    m_minY = 0;
+    m_maxY = 0;
     m_playerRed.reset();
 }
 

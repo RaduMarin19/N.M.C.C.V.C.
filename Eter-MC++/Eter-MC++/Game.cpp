@@ -83,7 +83,7 @@ void Game::run() {
                     board.generatePlayerCards(GameBoard::GameMode::MageDuel);
                     drawThisFrame = true;
                 }
-                else if (painter.isTournamentActive())
+                else if (g_config.tournamentActive)
                 {
                     m_currentState = TOURNAMENT;
                     board.generatePlayerCards(GameBoard::GameMode::Tournament);
