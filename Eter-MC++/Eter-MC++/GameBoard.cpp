@@ -309,11 +309,38 @@ void GameBoard::clear() {
     m_possiblePositions.clear();
     m_possiblePositions.insert({ 0,0 });
     m_playerBlue.reset();
+    m_exploded = false;
     m_maxX = 0;
     m_minX = 0;
     m_minY = 0;
     m_maxY = 0;
     m_playerRed.reset();
+}
+
+bool GameBoard::canUseExplosion() {
+    short row = 0;
+    short xCount = 0;
+    for (int i = m_minX; i <= m_maxX; i++) {
+        xCount = 0;
+        for (int j = m_minY; j <= m_maxY; j++) {
+            if (m_positions.find({ i,j }) != m_positions.end())
+                xCount++;
+        }
+        if (xCount == 3)
+            row++;
+    }
+    short column = 0;
+    short yCount = 0;
+    for (int j = m_minY; j <= m_maxY; j++) {
+        yCount = 0;
+        for (int i = m_minX; i <= m_maxX; i++) {
+            if (m_positions.find({ i,j }) != m_positions.end())
+                yCount++;
+        }
+        if (yCount == 3)
+            column++;
+    }
+    return row+column>1;
 }
 
 void GameBoard::generatePlayerCards(const GameMode &mode) {
@@ -457,5 +484,15 @@ void GameBoard::setIsBluePlayer(bool player) {
 
 bool GameBoard::isBluePlayer() {
     return this->m_isBluePlayer;
+}
+
+bool GameBoard::didExplode() const
+{
+    return m_exploded;
+}
+
+void GameBoard::explode()
+{
+    m_exploded = true;
 }
 

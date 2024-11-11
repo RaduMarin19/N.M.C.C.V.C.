@@ -49,12 +49,15 @@ public:
     Player *getPlayerBlue();
 
     CardTexture *getBlueIllusionTexture();
+    bool canUseExplosion();
     CardTexture *getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
     void returnCardToDeck(PlayingCard& card);
 
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
+    bool didExplode() const;
+    void explode();
 
     void clear();
 protected:
@@ -81,7 +84,7 @@ private:
     CardTexture *m_redCardIllusion;
 
     bool m_isBluePlayer;
-
+    bool m_exploded = false;
 
     void testPossiblePosition(short x, short y);
 };
