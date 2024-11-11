@@ -10,6 +10,8 @@
 #include <unordered_set>
 #include <stack>
 #include <vector>
+#include <time.h>
+#include <cstdlib>
 #include <variant>
 
 #ifndef SCREEN_WIDTH
@@ -56,6 +58,7 @@ public:
 
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
+
     bool didExplode() const;
     void explode();
 
@@ -85,6 +88,8 @@ private:
 
     bool m_isBluePlayer;
     bool m_exploded = false;
+    int m_generatedExplosionIndex = rand() % 8;
+
 
     void testPossiblePosition(short x, short y);
 };

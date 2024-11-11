@@ -163,6 +163,7 @@ void GameBoard::checkStatus(GameState &gameState) {
 
         int blueScore = 0;
         int redScore = 0;
+
         //checking to see if the enemy has any more cards
         if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
             for (auto& [coords, cardStack] : m_positions) {
@@ -183,8 +184,13 @@ void GameBoard::checkStatus(GameState &gameState) {
                 gameState = RED_PLAYER_WON;
                 return;
             }
-            else {
+            if (redScore < blueScore) {
                 gameState = BLUE_PLAYER_WON;
+                return;
+            }
+
+            if (redScore == blueScore) {
+                gameState = TIE;
                 return;
             }
         }
@@ -232,19 +238,19 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
     }
 
         //Check horizontally for new possible positions
-        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
-        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
+    this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
+    this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
 
 	    //Check vertically for new possible positions
-        this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() - 1);
-        this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() + 1);
+    this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() - 1);
+    this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() + 1);
 
 	    //Check diagonally for new possible positions
-        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() - 1);
-        this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() + 1);
+    this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() - 1);
+    this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() + 1);
 
-        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() - 1);
-        this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() + 1);
+    this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() - 1);
+    this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() + 1);
 
     //If the board size is at max size, erase all old entries that are out of bounds
     //TODO: this should be it's own function
@@ -401,8 +407,6 @@ bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &c
 const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePositions() {
     return this->m_possiblePositions;
 }
-
-
 
 const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;

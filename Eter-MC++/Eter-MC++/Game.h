@@ -20,10 +20,8 @@ public:
 	Game();
 
 	void SetGameState(GameState state);
-
 	GameState GetGameState() const;
 	void run();
-
 
 private:
 	GameState m_currentState = WELCOME_SCREEN;

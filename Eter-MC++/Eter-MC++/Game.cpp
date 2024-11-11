@@ -1,15 +1,15 @@
 #include "Game.h"
 
 Game::Game()
-    : m_currentState(WELCOME_SCREEN) {}
+    : m_currentState(WELCOME_SCREEN) {
+    srand(time(NULL));
+}
 
 
 void Game::SetGameState(GameState state)
 {
     m_currentState = state;
 }
-
-
 
 GameState Game::GetGameState() const
 {
@@ -100,7 +100,7 @@ void Game::run() {
             {
                 painter.drawText("RED player WON!", { SCREEN_WIDTH / 2, 50 }, 14, true);
                 bool isPressed = false;
-                painter.drawButton(isPressed, { SCREEN_WIDTH / 2, 250 }, 150, 40, "Return to menu!", 14);
+                painter.drawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
                 if (isPressed) {
                     m_currentState = MODE_SELECTION;
                     drawThisFrame = true;
@@ -113,7 +113,20 @@ void Game::run() {
             {
                 painter.drawText("Blue player WON!", { SCREEN_WIDTH / 2, 50 }, 14, true);
                 bool isPressed = false;
-                painter.drawButton(isPressed, { SCREEN_WIDTH / 2, 250 }, 150, 40, "Return to menu!", 14);
+                painter.drawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
+                if (isPressed) {
+                    m_currentState = MODE_SELECTION;
+                    drawThisFrame = true;
+                    painter.resetGameModes();
+                    board.clear();
+                }
+            }
+
+            if (m_currentState == TIE)
+            {
+                painter.drawText("TIE!", { SCREEN_WIDTH / 2, 50 }, 14, true);
+                bool isPressed = false;
+                painter.drawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
                 if (isPressed) {
                     m_currentState = MODE_SELECTION;
                     drawThisFrame = true;
@@ -123,7 +136,7 @@ void Game::run() {
             }
 
             if (m_currentState == TRAINING_MODE) {
-                if (board.canUseExplosion()&&board.didExplode()==false) {
+                if (board.canUseExplosion() && board.didExplode()==false) {
                     bool used = false;
                     painter.drawButton(used, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "EXPLODE!", 14);
                     if (used) {
@@ -151,7 +164,7 @@ void Game::run() {
                     if(painter.isMouseInRect(renderRect)) {
                         SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
                        
-                        if(board.isBluePlayer() &&board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
+                        if(board.isBluePlayer() && board.getPlayerBlue()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                             PlayingCard pushCard = *board.getPlayerBlue()->GetGrabbedCard();
                             pushCard.SetBoardPosition(possiblePosition);
                             pushCard.SetCoordinates({renderRect.x, renderRect.y});

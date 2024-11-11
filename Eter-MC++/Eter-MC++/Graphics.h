@@ -46,7 +46,7 @@ public:
     bool isPressingLeftClick();
     bool isPressingRightClick();
 
-    private:
+private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
     TTF_Font *m_font;
