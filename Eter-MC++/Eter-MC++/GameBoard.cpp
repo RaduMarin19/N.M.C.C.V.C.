@@ -14,6 +14,10 @@ void GameBoard::testPossiblePosition(short x, short y)
         }
     }
 
+    if (m_holes.find({ x,y }) != m_holes.end()){
+        return;  //cannot add a hole as a possible position
+    }
+
     if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::tableSize - 1)) {
         if (y < this->m_minY || y > this->m_maxY) {
             std::cout << x << " " << y << " is out of bounds" << std::endl;
@@ -197,6 +201,63 @@ void GameBoard::checkStatus(GameState &gameState) {
     }
 }
 
+void GameBoard::generateRandomExplosion() {
+    short maxEffects = rand() % 3 + 2;
+    short numEffects = 0;
+
+    while(numEffects<=maxEffects)
+    for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
+        std::cout << it->first.GetX() << " " << it->first.GetY() << "\n";
+        bool generateExplosion = rand() % 2;
+        if (generateExplosion) {
+            numEffects++;
+            short explosionType = rand() % 21;
+            if (explosionType < 10) {
+                if (!it->second.empty()) {
+                    auto& card = it->second.top();
+                    if (card.GetColor() == BLUE) {
+                        returnCardToDeck(card);
+                        m_playerBlue.AddCard(card);
+                    }
+                    else {
+                        returnCardToDeck(card);
+                        m_playerRed.AddCard(card);
+                    }
+                    it->second.pop();
+                }
+                std::cout << "returned card to hand\n";
+                if (it->second.empty()) {
+                    m_possiblePositions.insert(it->first);
+                    m_positions.erase(it);
+                }
+                break;
+            }
+            else if (explosionType > 10) {
+                std::cout << "removed card from game\n";
+                if (!it->second.empty())
+                    it->second.pop();
+                if (it->second.empty()) {
+                    m_possiblePositions.insert(it->first);
+                    m_positions.erase(it);
+                }
+                break;
+            }
+            else {
+                while (!it->second.empty()) {
+                    it->second.pop();
+                }
+                m_holes.insert(it->first);
+                m_possiblePositions.erase(it->first);
+                m_positions.erase(it);
+                std::cout << "hole\n";
+                break;
+            }
+        }
+    }
+
+
+}
+
 CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
 	Coordinates newCardCoords = otherCard.GetBoardPosition();
@@ -298,7 +359,6 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 
 void GameBoard::returnCardToDeck(PlayingCard& card) {
     card.SetCoordinates(card.GetInitialPosition());
-    
 }
 
 void GameBoard::setTable(short tableSize)
@@ -497,6 +557,7 @@ bool GameBoard::didExplode() const
 
 void GameBoard::explode()
 {
+    generateRandomExplosion();
     m_exploded = true;
 }
 

@@ -13,6 +13,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <variant>
+#include <random>
 
 #ifndef SCREEN_WIDTH
 #define SCREEN_WIDTH 1200
@@ -38,6 +39,7 @@ public:
     void setTable(short tableSize);
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);
+    void generateRandomExplosion();
 	GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
@@ -75,6 +77,7 @@ private:
 
     std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
+    std::unordered_set<Coordinates, Coordinates> m_holes;
 
     Player m_playerBlue;
     Player m_playerRed;
