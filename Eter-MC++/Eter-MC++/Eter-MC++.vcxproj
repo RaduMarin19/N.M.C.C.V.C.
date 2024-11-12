@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Card.cpp" />
     <ClCompile Include="CardTexture.cpp" />
     <ClCompile Include="Coordinates.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="PlayingCard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Card.h" />
     <ClInclude Include="CardStatus.h" />
     <ClInclude Include="CardTexture.h" />
     <ClInclude Include="Color.h" />

@@ -1,17 +1,17 @@
 #include "PlayingCard.h"
 
-PlayingCard::PlayingCard(Coordinates position, short value) : m_position{position}, m_value{value}{}
+PlayingCard::PlayingCard(Coordinates position, short value) : 
+	Card{ position }, 
+	m_value{ value },
+	m_isIllusion{false}
+	{}
 
-PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color)
-{
-	m_isIllusion = false;
-	this->m_color = color;
-	this->m_cardId = id;
-	this->m_position = coord;
-	m_initialPosition = coord;
-	this->m_value = value;
-	this->m_texture = texture;
-}
+PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color) :
+	Card{coord,texture,id},
+	m_value{value},
+	m_color{color},
+    m_isIllusion{ false }
+	{}
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_isIllusion = oth.m_isIllusion;
@@ -32,21 +32,12 @@ bool PlayingCard::isIllusion() const
 	return m_isIllusion;
 }
 
-Coordinates PlayingCard::GetCoordinates() const
-{
-	return m_position;
-}
-
 void PlayingCard::SetBoardPosition(Coordinates position) {
 	this->m_boardPosition = position;
 }
 
 Coordinates PlayingCard::GetBoardPosition() const {
 	return m_boardPosition;
-}
-
-Coordinates PlayingCard::GetInitialPosition() const {
-	return m_initialPosition;
 }
 
 Color PlayingCard::GetColor() const
@@ -57,20 +48,6 @@ Color PlayingCard::GetColor() const
 short PlayingCard::GetValue() const
 {
 	return m_value;
-}
-
-unsigned short PlayingCard::GetId() const {
-	return m_cardId;
-}
-
-CardTexture* PlayingCard::GetTexture() const
-{
-	return m_texture;
-}
-
-void PlayingCard::SetCoordinates(const Coordinates& position)
-{
-	m_position = position;
 }
 
 void PlayingCard::setValue(short value)

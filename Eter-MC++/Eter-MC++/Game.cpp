@@ -2,7 +2,7 @@
 
 Game::Game()
     : m_currentState(WELCOME_SCREEN) {
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(0)));
 }
 
 
@@ -136,6 +136,7 @@ void Game::run() {
             }
 
             if (m_currentState == TRAINING_MODE) {
+
                 if (board.canUseExplosion() && board.didExplode()==false) {
                     bool used = false;
                     painter.drawButton(used, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "EXPLODE!", 14);
@@ -143,8 +144,8 @@ void Game::run() {
                         std::cout << "Exploded!\n";
                         board.explode();
                     }
-
                 }
+
                 if (board.getPlayerBlue()->HasPlayedIllusion() == false&& board.isBluePlayer()) {
                     painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), {SCREEN_WIDTH - 200, SCREEN_HEIGHT - 140}, 100, 40, "Play illusion!", 14);
                 }
