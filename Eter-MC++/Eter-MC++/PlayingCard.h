@@ -2,8 +2,9 @@
 #include "Coordinates.h"
 #include "CardTexture.h"
 #include "Color.h"
+#include "Card.h"
 
-class PlayingCard
+class PlayingCard : public Card
 {
 public:
 	PlayingCard(Coordinates position, short value);
@@ -13,29 +14,19 @@ public:
 	void SetIllussion(bool isIllusion);
 	bool isIllusion() const;
 
-	Coordinates GetCoordinates() const;
 	Coordinates GetBoardPosition() const;
-	Coordinates GetInitialPosition() const;
 	Color GetColor() const;
 	short GetValue() const;
-	unsigned short GetId() const;
-
-	CardTexture* GetTexture() const;
 
 	void SetBoardPosition(Coordinates position);
-	void SetCoordinates(const Coordinates& position);
 	void setValue(short value);
 
 	bool operator==(const PlayingCard& other) const;
 
 private:
 	Coordinates m_boardPosition;
-	Coordinates m_position;
-	Coordinates m_initialPosition;
 	Color m_color;
 	short m_value;
-	CardTexture* m_texture;
-	unsigned short m_cardId;
 	bool m_isIllusion;
 };
 
