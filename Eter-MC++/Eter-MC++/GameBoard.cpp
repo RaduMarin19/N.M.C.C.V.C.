@@ -201,11 +201,65 @@ void GameBoard::checkStatus(GameState &gameState) {
     }
 }
 
-void GameBoard::generateRandomExplosion() {
-    short maxEffects = rand() % 3 + 2;
-    short numEffects = 0;
+void GameBoard::rotateExplosionMask() {
+    int n = m_explosionMask.size();
 
-    while(numEffects<=maxEffects)
+    for (int i = 0; i < n / 2; i++) {
+
+        // Consider elements in group of 4 as P1, P2, P3 & P4 in current square
+        for (int j = i; j < n - i - 1; j++) {
+
+            // Swap elements in clockwise order
+            ExplosionType temp = m_explosionMask[i][j];
+            m_explosionMask[i][j] = m_explosionMask[n - 1 - j][i];                 // Move P4 to P1
+            m_explosionMask[n - 1 - j][i] = m_explosionMask[n - 1 - i][n - 1 - j]; // Move P3 to P4
+            m_explosionMask[n - 1 - i][n - 1 - j] = m_explosionMask[j][n - 1 - i]; // Move P2 to P3
+            m_explosionMask[j][n - 1 - i] = temp;                      // Move P1 to P2
+        }
+    }
+}
+
+void GameBoard::generateRandomExplosion() {
+
+    static bool generated = false;
+    if (!generated) {
+        short maxEffects = rand() % 3 + 2;
+        short numEffects = 0;
+
+        m_explosionMask.fill({ ExplosionType::NONE, ExplosionType::NONE, ExplosionType::NONE });
+
+        while (numEffects <= maxEffects) {
+            for (short i = m_minX; i <= m_maxX; ++i) {
+                for (short j = m_minY; j <= m_maxY; ++i) {
+                    int xIndex = i - m_minX;
+                    int yIndex = j - m_minY; //calculating offset to adjust the indices 
+
+                    if (xIndex >= 0 && xIndex < 3 && yIndex >= 0 && yIndex < 3) {
+                        bool generateExplosion = rand() % 2;
+                        if (generateExplosion) {
+                            ++numEffects;
+                            short explosionType = rand() % 21;
+                            if (explosionType < 10) {
+                                m_explosionMask[xIndex][yIndex] = ExplosionType::RETURN;
+                                break;
+                            }
+                            else if (explosionType > 10) {
+                                m_explosionMask[xIndex][yIndex] = ExplosionType::DELETE;
+                                break;
+                            }
+                            else {
+                                m_explosionMask[xIndex][yIndex] = ExplosionType::HOLE;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        generated = true;
+    }
+
+    /*while(numEffects<=maxEffects)
     for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
         std::cout << it->first.GetX() << " " << it->first.GetY() << "\n";
         bool generateExplosion = rand() % 2;
@@ -253,9 +307,87 @@ void GameBoard::generateRandomExplosion() {
                 break;
             }
         }
+    }*/
+}
+
+
+void GameBoard::explode()
+{
+    short n = m_explosionMask.size();
+    for (short i = 0; i < n; ++i) {
+        for (short j = 0; j < n; ++j) {
+            short mapX = m_minX + i;
+            short mapY = m_minY + j;
+            auto it = m_positions.find({ mapX, mapY });
+        if (m_explosionMask[i][j] == ExplosionType::RETURN) {
+           
+                if (!it->second.empty()) {
+                    auto& card = it->second.top();
+                    if (card.GetColor() == BLUE) {
+                        returnCardToDeck(card);
+                        m_playerBlue.AddCard(card);
+                    }
+                    else {
+                        returnCardToDeck(card);
+                        m_playerRed.AddCard(card);
+                    }
+                    it->second.pop();
+                }
+                std::cout << "returned card to hand\n";
+                if (it->second.empty()) {
+                    m_possiblePositions.insert(it->first);
+                    m_positions.erase(it);
+                }
+                break;
+            }
+            else if (m_explosionMask[i][j] == ExplosionType::DELETE) {
+                std::cout << "removed card from game\n";
+                if (!it->second.empty())
+                    it->second.pop();
+                if (it->second.empty()) {
+                    m_possiblePositions.insert(it->first);
+                    m_positions.erase(it);
+                }
+                break;
+            }
+            else if(m_explosionMask[i][j] == ExplosionType::HOLE){
+                while (!it->second.empty()) {
+                    it->second.pop();
+                }
+                m_holes.insert(it->first);
+                m_possiblePositions.erase(it->first);
+                m_positions.erase(it);
+                std::cout << "hole\n";
+                break;
+            }
+        }
     }
+    m_exploded = true;
+}
 
+void GameBoard::printExplosionMask() {
+    short n = m_explosionMask.size();
+    for (short i = 0; i < n; ++i) {
+        for (short j = 0; j < n; ++j) {
+            short mapX = m_minX + i;
+            short mapY = m_minY + j;
 
+            std::cout << mapX << " " << mapY << " explosion: ";
+            switch (m_explosionMask[i][j]) {
+            case ExplosionType::RETURN:
+                std::cout << "RETURN\n";
+                break;
+            case ExplosionType::DELETE:
+                std::cout << "DELETE\n";
+                break;
+            case ExplosionType::HOLE:
+                std::cout << "HOLE\n";
+                break;
+            default:
+                std::cout << " No explosion\n";
+            }
+        }
+    }
 }
 
 CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
@@ -555,9 +687,4 @@ bool GameBoard::didExplode() const
     return m_exploded;
 }
 
-void GameBoard::explode()
-{
-    generateRandomExplosion();
-    m_exploded = true;
-}
 

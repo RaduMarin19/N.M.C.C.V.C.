@@ -5,10 +5,12 @@
 #include "Player.h"
 #include "GameState.h"
 #include "CardStatus.h"
+#include "ExplosionType.h"
 
 #include <unordered_map>
 #include <unordered_set>
 #include <stack>
+#include <array>
 #include <vector>
 #include <time.h>
 #include <cstdlib>
@@ -56,6 +58,8 @@ public:
     bool canUseExplosion();
     CardTexture *getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
+    void rotateExplosionMask();
+
     void returnCardToDeck(PlayingCard& card);
 
     void setIsBluePlayer(bool player);
@@ -63,6 +67,8 @@ public:
 
     bool didExplode() const;
     void explode();
+
+    void printExplosionMask();
 
     void clear();
 protected:
@@ -91,7 +97,8 @@ private:
 
     bool m_isBluePlayer;
     bool m_exploded = false;
-    int m_generatedExplosionIndex = rand() % 8;
+    std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
+
 
 
     void testPossiblePosition(short x, short y);
