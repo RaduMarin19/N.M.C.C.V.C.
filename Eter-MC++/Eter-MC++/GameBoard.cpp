@@ -214,7 +214,7 @@ void GameBoard::rotateExplosionMask() {
             m_explosionMask[i][j] = m_explosionMask[n - 1 - j][i];                 // Move P4 to P1
             m_explosionMask[n - 1 - j][i] = m_explosionMask[n - 1 - i][n - 1 - j]; // Move P3 to P4
             m_explosionMask[n - 1 - i][n - 1 - j] = m_explosionMask[j][n - 1 - i]; // Move P2 to P3
-            m_explosionMask[j][n - 1 - i] = temp;                      // Move P1 to P2
+            m_explosionMask[j][n - 1 - i] = temp;                                  // Move P1 to P2
         }
     }
 }

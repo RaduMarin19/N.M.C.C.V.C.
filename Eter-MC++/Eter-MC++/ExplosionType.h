@@ -1,7 +1,8 @@
 #pragma once
-#include<string>
+#include <string>
+#include <stdexcept>
 
-enum class ExplosionType {
+enum class ExplosionType{
 	NONE,
 	DELETE,
 	RETURN,

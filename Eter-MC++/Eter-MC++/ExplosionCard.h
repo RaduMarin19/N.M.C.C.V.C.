@@ -1,20 +1,25 @@
 #include "ExplosionType.h"
+
 #include <random>
 #include <unordered_map>
 
 class ExplosionCard
 {
 public:
-	ExplosionCard();
+	struct pair_hash {
+		size_t operator()(const std::pair<int, int>& key) const
+		{
+			return std::hash<int>()(key.first) ^ std::hash<int>()(key.second);
+		}
+	};
+	
+	ExplosionCard(uint16_t tableSize);
 
-	void setExplosionType(const ExplosionType& type);
-	ExplosionType getExplosionType() const;
+	std::unordered_map<std::pair<int, int>, ExplosionType, pair_hash>& getAffectedPos();
 
-	std::vector<std::pair<int, int>>& getAffectedPos();
 	short getAffectedPosCounter() const;
 
 private:
-	ExplosionType m_explosionType;
 	short m_affectedPosCounter;
-	std::vector<std::pair<int, int>> m_affectedPositions;
+	std::unordered_map<std::pair<int, int>, ExplosionType, pair_hash> m_affectedPositions; /// hashing function doesn't work
 };
