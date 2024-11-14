@@ -138,13 +138,15 @@ void Game::run() {
             if (m_currentState == TRAINING_MODE) {
 
                 if (board.canUseExplosion() && board.didExplode()==false) {
+                    static bool checkExplosion = false;
                     board.generateRandomExplosion();
-                    static bool used = false;
-                    painter.drawButton(used, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "Check explosion!", 14);
-                    if (used) {
-                        board.printExplosionMask();
+                    if (!checkExplosion) {
+                        painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "Check explosion!", 14);
+                    }
+                    if (checkExplosion) {
+                        drawThisFrame = false;
                         bool exploded = false;
-                        painter.drawButton(exploded, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "Explode!", 14);
+                        painter.drawButton(exploded, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 650 }, 100, 40, "Explode!", 14);
                         bool rotate = false;
                         painter.drawButton(rotate, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 450 }, 100, 40, "Rotate!", 14);
                         if (exploded) {
@@ -152,6 +154,8 @@ void Game::run() {
                         }
                         if (rotate) {
                             board.rotateExplosionMask();
+                            std::cout << "----------------\n";
+                            board.printExplosionMask();
                         }
                     }
                 }
