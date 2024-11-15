@@ -39,6 +39,7 @@ public:
     GameBoard();
     CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
+	short getTableSize() const;
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);
     void generateRandomExplosion();

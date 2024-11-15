@@ -7,9 +7,8 @@ class ExplosionCard
 {
 public:
 	struct pair_hash {
-		size_t operator()(const std::pair<int, int>& key) const
-		{
-			return std::hash<int>()(key.first) ^ std::hash<int>()(key.second);
+		size_t operator()(const std::pair<int, int>& key) const {
+			return std::hash<int>()(key.first) ^ (std::hash<int>()(key.second) << 1);
 		}
 	};
 	
