@@ -643,7 +643,57 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         this->m_playerRed = playerRed;
     } 
     else if (mode == GameMode::MageDuel) {
-       
+        std::vector<PlayingCard> PlayingCardsBlue;
+        std::vector<PlayingCard> PlayingCardsRed;
+
+        int offsetY = 0;
+
+        PlayingCard cardBlueEter({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[0], 5, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueEter);
+
+        PlayingCard cardRedEter({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[0], 5, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedEter);
+        offsetY += textureWidth * 0.5;
+        for (int i = 0; i < 2; i++) {
+            //Fill each deck with cards
+            PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[1], i, nextCardId(), BLUE);
+            PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[1], i, nextCardId(), RED);
+            std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
+            cardBlue.GetTexture()->getRect().x = coordinatePadding;
+            cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
+            cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
+            cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
+            PlayingCardsBlue.emplace_back(cardBlue);
+            PlayingCardsRed.emplace_back(cardRed);
+            offsetY += textureWidth * 0.5;
+        }
+
+        for (int j = 0; j < 3; j++)
+            for (int i = 2; i <= 3; i++) {
+                //Fill each deck with cards
+                PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[i], i, nextCardId(), BLUE);
+                PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[i], i, nextCardId(), RED);
+                std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
+                cardBlue.GetTexture()->getRect().x = coordinatePadding;
+                cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
+                cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
+                cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
+                PlayingCardsBlue.emplace_back(cardBlue);
+                PlayingCardsRed.emplace_back(cardRed);
+                offsetY += textureWidth * 0.5;
+            }
+        PlayingCard cardBlue({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[4], 4, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlue);
+
+        PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[4], 4, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRed);
+
+        //Initialize the two players with the newly generated decks
+        Player playerBlue(PlayingCardsBlue);
+        this->m_playerBlue = playerBlue;
+
+        Player playerRed(PlayingCardsRed);
+        this->m_playerRed = playerRed;
     } 
     else if (mode == GameMode::Tournament) {
 

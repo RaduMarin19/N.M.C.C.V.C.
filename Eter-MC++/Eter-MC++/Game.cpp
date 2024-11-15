@@ -207,6 +207,81 @@ void Game::run() {
                 }
             }
 
+            if (m_currentState == MAGE_DUEL)
+            {
+                {
+                    for (auto& card : board.getPlayerBlue()->GetCards()) {
+                        SDL_Rect cardRect;
+                        cardRect.x = card.GetCoordinates().GetX();
+                        cardRect.y = card.GetCoordinates().GetY();
+                        cardRect.w = textureWidth;
+                        cardRect.h = textureHeight;
+
+                        if (board.isBluePlayer()) {
+                            painter.drawCard(card, card.GetTexture()->getTexture());
+                            if (painter.isMouseInRect(cardRect)) {
+                                SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                                SDL_RenderDrawRect(painter.GetRenderer(), &cardRect);
+                                if (painter.isPressingLeftClick() && !board.getPlayerBlue()->isGrabbingCard()) {
+                                    board.getPlayerBlue()->SetIsGrabbingCard(true);
+                                    board.getPlayerBlue()->SetGrabbedCard(&card);
+                                }
+                                if (board.getPlayerBlue()->isGrabbingCard()) {
+                                    if (board.getPlayerBlue()->GetGrabbedCard()->GetId() == card.GetId()) {
+                                        Coordinates mousePos = painter.getMousePos();
+                                        mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
+                                        mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
+                                        card.SetCoordinates(mousePos);
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            painter.drawCard(card, board.getBlueIllusionTexture()->getTexture());
+                        }
+                    }
+                    for (auto& card : board.getPlayerRed()->GetCards()) {
+                        SDL_Rect cardRect;
+                        cardRect.x = card.GetCoordinates().GetX();
+                        cardRect.y = card.GetCoordinates().GetY();
+                        cardRect.w = textureWidth;
+                        cardRect.h = textureHeight;
+
+                        if (!board.isBluePlayer()) {
+                            painter.drawCard(card, card.GetTexture()->getTexture());
+                            if (painter.isMouseInRect(cardRect)) {
+                                SDL_SetRenderDrawColor(painter.GetRenderer(), 250, 250, 50, 255);
+                                SDL_RenderDrawRect(painter.GetRenderer(), &cardRect);
+                                if (painter.isPressingLeftClick() && !board.getPlayerRed()->isGrabbingCard()) {
+                                    board.getPlayerRed()->SetIsGrabbingCard(true);
+                                    board.getPlayerRed()->SetGrabbedCard(&card);
+                                }
+                                if (board.getPlayerRed()->isGrabbingCard()) {
+                                    if (board.getPlayerRed()->GetGrabbedCard()->GetId() == card.GetId()) {
+                                        Coordinates mousePos = painter.getMousePos();
+                                        mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
+                                        mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
+                                        card.SetCoordinates(mousePos);
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            painter.drawCard(card, board.getRedIllusionTexture()->getTexture());
+                        }
+                    }
+                    if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.isBluePlayer()) {
+                        painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+                    }
+
+                    if (board.getPlayerRed()->HasPlayedIllusion() == false && !board.isBluePlayer()) {
+                        painter.drawButton(board.getPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+
+                    }
+
+                }
+            }
+
             if (m_currentState == TRAINING_MODE) {
 
                 if (board.canUseExplosion() && board.didExplode()==false) {
