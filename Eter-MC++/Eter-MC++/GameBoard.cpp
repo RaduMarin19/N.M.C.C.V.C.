@@ -545,26 +545,27 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
-        int offsetX = 0;
+        int offsetY = 0;
 
         for(int j = 0; j < 2; j++)
             for(int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[i], i, nextCardId(),BLUE);
-                PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[i], i, nextCardId(),RED);
-                std::cout << "Initialized card with x:"<< coordinatePadding + offsetX <<" y:"<< SCREEN_HEIGHT - textureHeight - coordinatePadding <<"\n";
-                cardBlue.GetTexture()->getRect().x = coordinatePadding + offsetX;
-                cardBlue.GetTexture()->getRect().y = SCREEN_HEIGHT - textureHeight - coordinatePadding;
-                cardRed.GetTexture()->getRect().x = coordinatePadding + offsetX;
-                cardRed.GetTexture()->getRect().y = coordinatePadding;
+                PlayingCard cardBlue({coordinatePadding,  coordinatePadding +offsetY}, &m_blueCards[i], i, nextCardId(),BLUE);
+                PlayingCard cardRed({ SCREEN_WIDTH-textureWidth -coordinatePadding, coordinatePadding +offsetY }, &m_redCards[i], i, nextCardId(),RED);
+                std::cout << "Initialized card with x:"<< coordinatePadding + offsetY <<" y:"<< SCREEN_HEIGHT - textureHeight - coordinatePadding <<"\n";
+                cardBlue.GetTexture()->getRect().x = coordinatePadding ;
+                cardBlue.GetTexture()->getRect().y = coordinatePadding+offsetY;
+                cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
+                cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
                 PlayingCardsBlue.emplace_back(cardBlue);
                 PlayingCardsRed.emplace_back(cardRed);
-                offsetX += textureWidth;
+                offsetY += textureWidth*0.75;
+
             }
-        PlayingCard cardBlue({ coordinatePadding + offsetX, SCREEN_HEIGHT - textureHeight - coordinatePadding }, &m_blueCards[4], 4, nextCardId(),BLUE);
+        PlayingCard cardBlue({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[4], 4, nextCardId(),BLUE);
         PlayingCardsBlue.emplace_back(cardBlue);
 
-        PlayingCard cardRed({ coordinatePadding + offsetX, coordinatePadding }, &m_redCards[4], 4, nextCardId(),RED);
+        PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[4], 4, nextCardId(),RED);
         PlayingCardsRed.emplace_back(cardRed);
 
         //Initialize the two players with the newly generated decks

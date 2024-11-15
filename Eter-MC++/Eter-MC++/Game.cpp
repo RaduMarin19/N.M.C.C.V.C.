@@ -141,14 +141,14 @@ void Game::run() {
                     static bool checkExplosion = false;
                     board.generateRandomExplosion();
                     if (!checkExplosion) {
-                        painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 300 }, 100, 40, "Check explosion!", 14);
+                        painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
                     }
                     if (checkExplosion) {
                         drawThisFrame = false;
                         bool exploded = false;
-                        painter.drawButton(exploded, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 650 }, 100, 40, "Explode!", 14);
+                        painter.drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
                         bool rotate = false;
-                        painter.drawButton(rotate, { SCREEN_WIDTH - 1100, SCREEN_HEIGHT - 450 }, 100, 40, "Rotate!", 14);
+                        painter.drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
                         if (exploded) {
                             board.explode();
                         }
@@ -161,11 +161,11 @@ void Game::run() {
                 }
 
                 if (board.getPlayerBlue()->HasPlayedIllusion() == false&& board.isBluePlayer()) {
-                    painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), {SCREEN_WIDTH - 200, SCREEN_HEIGHT - 140}, 100, 40, "Play illusion!", 14);
+                    painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), {SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100}, 120, 50, "Play illusion!", 14);
                 }
 
                 if (board.getPlayerRed()->HasPlayedIllusion() == false&&!board.isBluePlayer()) {
-                    painter.drawButton(board.getPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 200, SCREEN_HEIGHT - 140 }, 100, 40, "Play illusion!", 14);
+                    painter.drawButton(board.getPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
                
                 }
                 //Draw the board, with the possible positions and played cards;
