@@ -800,4 +800,50 @@ bool GameBoard::didExplode() const
     return m_exploded;
 }
 
+bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& explodedBoardMask, int x, int y)
+{
+    for (int i = x - 1; i <= x + 1; ++i)
+    {
+        for (int j = y - 1; j <= y + 1; ++j)
+        {
+            if (i >= 0 && i <= 3 && j >= 0 && j <= 3)
+            {
+                if (explodedBoardMask[i][j] != 0)
+                    return true;
+            }
+        }
+    }
+	return false;
+}
+
+void GameBoard::updateBoardMask()
+{
+	for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+			if (m_positions.find({ m_maxX - i, m_maxY - j }) != m_positions.end())
+			    m_boardMask[i][j] = m_positions[{m_maxX - i, m_maxY - j}].size();
+			else
+				m_boardMask[i][j] = 0;
+}
+
+bool GameBoard::validateExplosion()
+{
+	std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+            if (m_explosionMask[i][j] != ExplosionType::NONE)
+            {
+                if (m_explosionMask[i][j] == ExplosionType::HOLE)
+                    explodedBoardMask[i][j] = 0;
+                else
+                    explodedBoardMask[i][j]--;
+            }
+    
+    for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+            if (explodedBoardMask[i][j] != 0)
+                return verifyNeighbours(explodedBoardMask, i, j);
+}
+
 

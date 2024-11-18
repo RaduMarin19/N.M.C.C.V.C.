@@ -297,7 +297,8 @@ void Game::run() {
                         bool rotate = false;
                         painter.drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
                         if (exploded) {
-                            board.explode();
+                            if(board.validateExplosion())
+                                board.explode();
                         }
                         if (rotate) {
                             board.rotateExplosionMask();

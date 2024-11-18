@@ -67,6 +67,9 @@ public:
     bool isBluePlayer();
 
     bool didExplode() const;
+    bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
+    void updateBoardMask();
+	bool validateExplosion();
     void explode();
 
     void printExplosionMask();
@@ -99,7 +102,7 @@ private:
     bool m_isBluePlayer;
     bool m_exploded = false;
     std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
-
+    std::array<std::array<uint8_t, 3>, 3> m_boardMask;
 
 
     void testPossiblePosition(short x, short y);
