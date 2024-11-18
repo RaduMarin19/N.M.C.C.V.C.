@@ -299,6 +299,8 @@ void Game::run() {
                         if (exploded) {
                             if(board.validateExplosion())
                                 board.explode();
+                            else
+								std::cout << "Explosion invalidates map!\n";
                         }
                         if (rotate) {
                             board.rotateExplosionMask();

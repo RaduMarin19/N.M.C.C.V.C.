@@ -806,7 +806,7 @@ bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& ex
     {
         for (int j = y - 1; j <= y + 1; ++j)
         {
-            if (i >= 0 && i <= 3 && j >= 0 && j <= 3)
+            if (i >= 0 && i <= 2 && j >= 0 && j <= 2 && i != x && j != y)
             {
                 if (explodedBoardMask[i][j] != 0)
                     return true;
@@ -828,6 +828,7 @@ void GameBoard::updateBoardMask()
 
 bool GameBoard::validateExplosion()
 {
+    updateBoardMask();
 	std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
 
 	for (int i = 0; i < 3; i++)
