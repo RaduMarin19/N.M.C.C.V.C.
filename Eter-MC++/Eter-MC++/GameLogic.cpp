@@ -8,14 +8,17 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
         break;
 
     case ELEMENTAL_BATTLE:
+        board.setTable(4);
         // Specific logic for ELEMENTAL_BATTLE (if any)
         break;
 
     case MAGE_DUEL:
+        board.setTable(4);
         // Specific logic for MAGE_DUEL (if any)
         break;
 
     case TOURNAMENT:
+        board.setTable(4);
         // Specific logic for TOURNAMENT (if any)
         break;
 

@@ -76,24 +76,28 @@ void Game::run() {
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     board.generatePlayerCards(GameBoard::GameMode::Elemental);
+					board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (painter.isMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
                     board.generatePlayerCards(GameBoard::GameMode::MageDuel);
+                    board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (g_config.tournamentActive)
                 {
                     m_currentState = TOURNAMENT;
                     board.generatePlayerCards(GameBoard::GameMode::Tournament);
+                    board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (painter.isQuickMatchActive())
                 {
                     m_currentState = QUICK_MODE;
                     board.generatePlayerCards(GameBoard::GameMode::QuickMode);
+                    board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
             }

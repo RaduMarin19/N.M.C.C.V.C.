@@ -761,6 +761,31 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 1; i < 9; i++) {
         m_explosions.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
+    if (m_gameMode == Elemental)
+    {
+        for (int i = 0; i < 6; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+}
+    }
+    else if (m_gameMode == MageDuel)
+    {
+        for (int i = 0; i < 4; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        }
+    }
+    else if (m_gameMode == Tournament)
+    {
+        for (int i = 0; i < 6; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        }
+        for (int i = 0; i < 4; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        }
+    }
 
     m_blueCardIllusion = new CardTexture(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = new CardTexture(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
@@ -776,6 +801,31 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 1; i < 9; i++) {
         m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
     }
+	if (m_gameMode == Elemental)
+	{
+        for (int i = 0; i < 6; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        }
+	}
+	else if (m_gameMode == MageDuel)
+	{
+		for (int i = 0; i < 4; i++) {
+			m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+			m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+		}
+	}
+	else if(m_gameMode == Tournament)
+	{
+		for (int i = 0; i < 6; i++) {
+			m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+			m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+		}
+        for (int i = 0; i < 4; i++) {
+            m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+            m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        }
+	}
 
     m_blueCardIllusion = new CardTexture(renderer,"Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = new CardTexture(renderer,"Dependencies/textures/red_back.jpg");
