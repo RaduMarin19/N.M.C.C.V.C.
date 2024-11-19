@@ -1,4 +1,4 @@
-#include "ExplosionCard.h"
+﻿#include "ExplosionCard.h"
 
 ExplosionCard::ExplosionCard(uint16_t tableSize)
 {
