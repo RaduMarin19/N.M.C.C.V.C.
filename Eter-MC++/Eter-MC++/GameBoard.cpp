@@ -369,6 +369,30 @@ void GameBoard::explode()
     m_exploded = true;
 }
 
+void GameBoard::updateBoardCenter() {
+
+    //Difference between max and min on each axis (how large is the board and in which direction it spans)
+    unsigned int offsetX = m_maxX - m_minX;
+    unsigned int offsetY = m_maxY - m_minY;
+    //Offset the center by the needed amount so the middle square is always at WIDTH,HEIGHT/2
+    m_centerX = (SCREEN_WIDTH / 2 - textureWidth / 2) - ( (textureWidth / 2) * offsetX);
+    m_centerY = (SCREEN_HEIGHT / 2 - textureHeight / 2) - ( (textureHeight / 2) * offsetY);
+
+    //Also shift all played cards by said amount
+    for (auto& [pos, cards] : m_positions) {
+        auto& card = cards.top();
+        card.SetCoordinates({static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight)});
+    }
+}
+
+unsigned int GameBoard::getCenterX() {
+    return this->m_centerX;
+}
+
+unsigned int GameBoard::getCenterY() {
+    return this->m_centerY;
+}
+
 void GameBoard::printExplosionMask() {
     short n = m_explosionMask.size();
     for (short i = 0; i < n; ++i) {
@@ -417,13 +441,16 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
         std::stack<PlayingCard> cards;
         cards.emplace(otherCard);
         m_positions.emplace(newCardCoords, cards);
+        updateBoardCenter();
     }
     //Otherwise just add to the existing stack
     else {
         if (!otherCard.isIllusion()) { //if a card is a illusion you cannot add it to an existing stack
             auto it = m_positions.find(newCardCoords); 
-            if (it->second.top().GetValue() < otherCard.GetValue()) 
+            if (it->second.top().GetValue() < otherCard.GetValue()) {
                 it->second.emplace(otherCard);
+                updateBoardCenter();
+            }
             else if (it->second.top().isIllusion()) {
                 m_isBluePlayer = !m_isBluePlayer;
                 it->second.top().SetIllussion(false);
@@ -760,6 +787,9 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 
+    this->m_centerX = SCREEN_WIDTH / 2 - textureWidth / 2;
+    this->m_centerY = SCREEN_HEIGHT / 2 - textureHeight / 2;
+
     //Load all card textures into memory
 #if defined linux
     for (int i = 0; i < 5; i++) {
@@ -774,13 +804,13 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     }
 
     for (int i = 0; i < 4; i++) {
-        m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
     for (int i = 0; i < 6; i++) {
-        m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
     m_blueCardIllusion = new CardTexture(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
@@ -876,6 +906,7 @@ bool GameBoard::validateExplosion()
 		for (int j = 0; j < 3; j++)
             if (explodedBoardMask[i][j] != 0)
                 return verifyNeighbours(explodedBoardMask, i, j);
+    return false;
 }
 
 

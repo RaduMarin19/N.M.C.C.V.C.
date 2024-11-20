@@ -68,8 +68,8 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
     //Draw the board, with the possible positions and played cards;
     for (const auto& possiblePosition : board.GetPossiblePositions()) {
         SDL_Rect renderRect;
-        renderRect.x = SCREEN_WIDTH / 2 - textureWidth / 2 - (possiblePosition.GetX() * textureWidth);
-        renderRect.y = SCREEN_HEIGHT / 2 - textureHeight / 2 - (possiblePosition.GetY() * textureHeight);
+        renderRect.x = board.getCenterX() - (possiblePosition.GetX() * textureWidth);
+        renderRect.y = board.getCenterY() - (possiblePosition.GetY() * textureHeight);
         renderRect.w = textureWidth;
         renderRect.h = textureHeight;
 

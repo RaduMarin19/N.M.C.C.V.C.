@@ -11,7 +11,7 @@
 #include <vector>
 
 #define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
+#define SCREEN_HEIGHT 1000
 #define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)
 
 class Game

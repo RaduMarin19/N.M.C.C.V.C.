@@ -21,7 +21,7 @@
 #define SCREEN_WIDTH 1200
 #endif
 #ifndef SCREEN_HEIGHT 
-#define SCREEN_HEIGHT 800
+#define SCREEN_HEIGHT 1000
 #endif
 
 class GameBoard
@@ -72,6 +72,11 @@ public:
 	bool validateExplosion();
     void explode();
 
+	void updateBoardCenter();
+
+	unsigned int getCenterX();
+	unsigned int getCenterY();
+
     void printExplosionMask();
 
     void clear();
@@ -103,6 +108,9 @@ private:
     bool m_exploded = false;
     std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
     std::array<std::array<uint8_t, 3>, 3> m_boardMask;
+
+	unsigned int m_centerX;
+	unsigned int m_centerY;
 
 
     void testPossiblePosition(short x, short y);
