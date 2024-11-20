@@ -372,8 +372,8 @@ void GameBoard::explode()
 void GameBoard::updateBoardCenter() {
 
     //Difference between max and min on each axis (how large is the board and in which direction it spans)
-    unsigned int offsetX = m_maxX - m_minX;
-    unsigned int offsetY = m_maxY - m_minY;
+    unsigned int offsetX = (m_maxX + m_minX)*-1;
+    unsigned int offsetY = (m_maxY + m_minY)*-1;
     //Offset the center by the needed amount so the middle square is always at WIDTH,HEIGHT/2
     m_centerX = (SCREEN_WIDTH / 2 - textureWidth / 2) - ( (textureWidth / 2) * offsetX);
     m_centerY = (SCREEN_HEIGHT / 2 - textureHeight / 2) - ( (textureHeight / 2) * offsetY);
@@ -587,91 +587,117 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
-        int offsetY = 0;
+        for(int j = 0; j < 2; j++)
+            for(int i = 1; i <= 3; i++) {
+                //Fill each deck with cards
+                PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
+                PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
+
+                PlayingCardsBlue.emplace_back(cardBlue);
+                PlayingCardsRed.emplace_back(cardRed);
+            }
+        PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
+        PlayingCardsBlue.emplace_back(cardBlue);
+
+        PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
+        PlayingCardsRed.emplace_back(cardRed);
+
+        //Set how much space we have for our deck, the whole screen - padding top/bottom
+        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int currentCardOffset = 0;
+        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
+        for(auto &card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding ;
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            currentCardOffset += availableSpacePerCard;
+        }
+
+        currentCardOffset = 0;
+        for(auto &card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+            card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            currentCardOffset += availableSpacePerCard;
+        }
+
+        //Initialize the two players with the newly generated decks
+        Player playerBlue(PlayingCardsBlue);
+        this->m_playerBlue = playerBlue;
+
+        Player playerRed(PlayingCardsRed);
+        this->m_playerRed = playerRed;
+    }
+    else if (mode == GameMode::Elemental) {
+
+                //Initialize a deck for each player
+        std::vector<PlayingCard> PlayingCardsBlue;
+        std::vector<PlayingCard> PlayingCardsRed;
+
+
+        for (int i = 0; i < 2; i++) {
+            //Fill each deck with cards
+            PlayingCard cardBlue({0, 0}, &m_blueCards[1], i, nextCardId(), BLUE);
+            PlayingCard cardRed({0, 0}, &m_redCards[1], i, nextCardId(), RED);
+            PlayingCardsBlue.emplace_back(cardBlue);
+            PlayingCardsRed.emplace_back(cardRed);
+        }
 
         for(int j = 0; j < 2; j++)
             for(int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({coordinatePadding,  coordinatePadding +offsetY}, &m_blueCards[i], i, nextCardId(),BLUE);
-                PlayingCard cardRed({ SCREEN_WIDTH-textureWidth -coordinatePadding, coordinatePadding +offsetY }, &m_redCards[i], i, nextCardId(),RED);
-                std::cout << "Initialized card with x:"<< coordinatePadding + offsetY <<" y:"<< SCREEN_HEIGHT - textureHeight - coordinatePadding <<"\n";
-                cardBlue.GetTexture()->getRect().x = coordinatePadding ;
-                cardBlue.GetTexture()->getRect().y = coordinatePadding+offsetY;
-                cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
-                cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
+                PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
+                PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
                 PlayingCardsBlue.emplace_back(cardBlue);
                 PlayingCardsRed.emplace_back(cardRed);
-                offsetY += textureWidth*0.75;
             }
-        PlayingCard cardBlue({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[4], 4, nextCardId(),BLUE);
+        PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
         PlayingCardsBlue.emplace_back(cardBlue);
 
-        PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[4], 4, nextCardId(),RED);
+        PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
         PlayingCardsRed.emplace_back(cardRed);
 
-        //Initialize the two players with the newly generated decks
-        Player playerBlue(PlayingCardsBlue);
-        this->m_playerBlue = playerBlue;
 
-        Player playerRed(PlayingCardsRed);
-        this->m_playerRed = playerRed;
-    } 
-    else if (mode == GameMode::Elemental) {
-        std::vector<PlayingCard> PlayingCardsBlue;
-        std::vector<PlayingCard> PlayingCardsRed;
+        PlayingCard cardBlueEter({0, 0}, &m_blueCards[0], 5, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueEter);
 
-        int offsetY = 0;
+        PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedEter);
 
-
-        std::cout << m_blueCards.size() << "\n";
-        std::cout << m_redCards.size() << "\n";
-
-        PlayingCard cardBlueSpell({ coordinatePadding*2+textureWidth , coordinatePadding + offsetY }, &m_blueCards[10], 5, nextCardId(), BLUE);
+        PlayingCard cardBlueSpell({0, 0}, &m_blueCards[10], 5, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(cardBlueSpell);
 
-        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth*2 - coordinatePadding*2 , coordinatePadding + offsetY }, &m_redCards[10], 5, nextCardId(), RED);
+        PlayingCard cardRedSpell({0, 0}, &m_redCards[10], 5, nextCardId(), RED);
         PlayingCardsRed.emplace_back(cardRedSpell);
 
-        PlayingCard cardBlueEter({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[0], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlueEter);
+        //Set how much space we have for our deck, the whole screen - padding top/bottom
+        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int currentCardOffset = 0;
+        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
+        for(auto &card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding ;
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
 
-        PlayingCard cardRedEter({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[0], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRedEter);
-
-		offsetY += textureWidth * 0.5;
-        for (int i = 0; i < 2; i++) {
-            //Fill each deck with cards
-            PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[1], i, nextCardId(), BLUE);
-            PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[1], i, nextCardId(), RED);
-            std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
-            cardBlue.GetTexture()->getRect().x = coordinatePadding;
-            cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
-            cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
-            cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
-            PlayingCardsBlue.emplace_back(cardBlue);
-            PlayingCardsRed.emplace_back(cardRed);
-            offsetY += textureWidth * 0.5;
+            currentCardOffset += availableSpacePerCard;
         }
 
-        for (int j = 0; j < 3; j++)
-            for (int i = 2; i <= 3; i++) {
-                //Fill each deck with cards
-                PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[i], i, nextCardId(), BLUE);
-                PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[i], i, nextCardId(), RED);
-                std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
-                cardBlue.GetTexture()->getRect().x = coordinatePadding;
-                cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
-                cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
-                cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
-                PlayingCardsBlue.emplace_back(cardBlue);
-                PlayingCardsRed.emplace_back(cardRed);
-                offsetY += textureWidth * 0.5;
-            }
-        PlayingCard cardBlue({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[4], 4, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlue);
+        currentCardOffset = 0;
+        for(auto &card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+            card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
 
-        PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[4], 4, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRed);
+            currentCardOffset += availableSpacePerCard;
+        }
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -679,52 +705,66 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
         Player playerRed(PlayingCardsRed);
         this->m_playerRed = playerRed;
-    } 
+    }
     else if (mode == GameMode::MageDuel) {
+
+                //Initialize a deck for each player
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
-        int offsetY = 0;
 
-        PlayingCard cardBlueEter({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[0], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlueEter);
-
-        PlayingCard cardRedEter({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[0], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRedEter);
-        offsetY += textureWidth * 0.5;
         for (int i = 0; i < 2; i++) {
             //Fill each deck with cards
-            PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[1], i, nextCardId(), BLUE);
-            PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[1], i, nextCardId(), RED);
-            std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
-            cardBlue.GetTexture()->getRect().x = coordinatePadding;
-            cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
-            cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
-            cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
+            PlayingCard cardBlue({0, 0}, &m_blueCards[1], i, nextCardId(), BLUE);
+            PlayingCard cardRed({0, 0}, &m_redCards[1], i, nextCardId(), RED);
             PlayingCardsBlue.emplace_back(cardBlue);
             PlayingCardsRed.emplace_back(cardRed);
-            offsetY += textureWidth * 0.5;
         }
 
-        for (int j = 0; j < 3; j++)
-            for (int i = 2; i <= 3; i++) {
+        for(int j = 0; j < 2; j++)
+            for(int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({ coordinatePadding,  coordinatePadding + offsetY }, &m_blueCards[i], i, nextCardId(), BLUE);
-                PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding, coordinatePadding + offsetY }, &m_redCards[i], i, nextCardId(), RED);
-                std::cout << "Initialized card with x:" << coordinatePadding + offsetY << " y:" << SCREEN_HEIGHT - textureHeight - coordinatePadding << "\n";
-                cardBlue.GetTexture()->getRect().x = coordinatePadding;
-                cardBlue.GetTexture()->getRect().y = coordinatePadding + offsetY;
-                cardRed.GetTexture()->getRect().x = SCREEN_WIDTH - textureWidth - coordinatePadding;
-                cardRed.GetTexture()->getRect().y = coordinatePadding + offsetY;
+                PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
+                PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
                 PlayingCardsBlue.emplace_back(cardBlue);
                 PlayingCardsRed.emplace_back(cardRed);
-                offsetY += textureWidth * 0.5;
             }
-        PlayingCard cardBlue({ coordinatePadding , coordinatePadding + offsetY }, &m_blueCards[4], 4, nextCardId(), BLUE);
+        PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
         PlayingCardsBlue.emplace_back(cardBlue);
 
-        PlayingCard cardRed({ SCREEN_WIDTH - textureWidth - coordinatePadding , coordinatePadding + offsetY }, &m_redCards[4], 4, nextCardId(), RED);
+        PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
         PlayingCardsRed.emplace_back(cardRed);
+
+
+        PlayingCard cardBlueEter({0, 0}, &m_blueCards[0], 5, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueEter);
+
+        PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedEter);
+
+        //Set how much space we have for our deck, the whole screen - padding top/bottom
+        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int currentCardOffset = 0;
+        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
+        for(auto &card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding ;
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            currentCardOffset += availableSpacePerCard;
+        }
+
+        currentCardOffset = 0;
+        for(auto &card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+            card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+            card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            currentCardOffset += availableSpacePerCard;
+        }
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -732,7 +772,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
         Player playerRed(PlayingCardsRed);
         this->m_playerRed = playerRed;
-    } 
+    }
     else if (mode == GameMode::Tournament) {
 
     }
