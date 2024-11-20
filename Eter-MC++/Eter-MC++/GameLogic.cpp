@@ -34,6 +34,28 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
     if (board.canUseExplosion() && board.didExplode() == false) {
         static bool checkExplosion = false;
         board.generateRandomExplosion();
+
+        {
+            SDL_Rect explosionRect { SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
+            painter.drawTexturedRect(explosionRect, board.GetExplosionBoardTexture()->getTexture());
+            auto explosionMask = board.GetExplosionMask();
+            for(int i = 0; i < 3; i++) {
+                for(int j = 0; j < 3; j++) {
+                    SDL_Rect spriteRect {explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32};
+                    if(explosionMask[i][j] == ExplosionType::HOLE) {
+                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(2)->getTexture());
+                    }
+                    else if(explosionMask[i][j] == ExplosionType::DELETE) {
+                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(0)->getTexture());
+                    }
+                    else if(explosionMask[i][j] == ExplosionType::RETURN) {
+                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(1)->getTexture());
+                    }
+                }
+
+            }
+        }
+
         if (!checkExplosion) {
             painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
         }

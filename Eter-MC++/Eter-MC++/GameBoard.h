@@ -75,6 +75,10 @@ public:
 
     void printExplosionMask();
 
+	CardTexture *GetExplosionBoardTexture();
+	CardTexture *GetExplosionSprite(const int& offset);
+	std::array<std::array<ExplosionType, 3>, 3> GetExplosionMask();
+
     void clear();
 protected:
     GameMode m_gameMode;
@@ -95,7 +99,8 @@ private:
 
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;
-    std::vector<CardTexture> m_explosions;
+    std::vector<CardTexture> m_explosionSprites;
+	CardTexture *m_explosionBoard;
 
     CardTexture *m_blueCardIllusion;
     CardTexture *m_redCardIllusion;

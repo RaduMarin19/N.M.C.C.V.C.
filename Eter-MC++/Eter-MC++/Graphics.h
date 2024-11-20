@@ -29,6 +29,7 @@ public:
     void drawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void drawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void drawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
+    void drawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
     SDL_Renderer* GetRenderer();
     void setEvent(const SDL_Event &event);
     void setMousePos(const Coordinates& pos);

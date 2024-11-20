@@ -385,6 +385,17 @@ void Graphics::drawCard(const PlayingCard& card, SDL_Texture* cardTexture)
     }
 }
 
+void Graphics::drawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
+    if (!texture) {
+        std::cerr << "Error: Texture has no valid texture!\n";
+        return;
+    }
+
+    if (SDL_RenderCopy(m_renderer, texture,NULL,&rect) != 0) {
+        std::cerr << "SDL_RenderCopy Error: " << SDL_GetError() << std::endl;
+    }
+}
+
 bool Graphics::isTrainingActive()
 {
     return g_config.trainingActive;

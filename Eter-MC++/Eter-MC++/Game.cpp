@@ -62,6 +62,7 @@ void Game::run() {
             }
 
             if (m_currentState == MODE_SELECTION && !drawThisFrame) {
+
                 //Draw the mode selection menu
                 painter.drawModeSelection();
 

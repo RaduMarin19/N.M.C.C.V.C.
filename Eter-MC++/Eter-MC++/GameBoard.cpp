@@ -2,7 +2,7 @@
 #include <iostream>
 
 GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
-m_blueCards{ 0 }, m_redCards{ 0 }, m_explosions{ 0 } {}
+m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 } {}
 
 void GameBoard::testPossiblePosition(short x, short y)
 {
@@ -219,6 +219,8 @@ void GameBoard::rotateExplosionMask() {
     }
 }
 
+
+
 void GameBoard::generateRandomExplosion() {
 
         static bool generated = false;
@@ -235,6 +237,7 @@ void GameBoard::generateRandomExplosion() {
                         if (generateExplosion) {
                             ++numEffects;
                             short explosionType = rand() % 21;
+                            std::cout << explosionType << '\n';
                             if (explosionType < 10) {
                                 m_explosionMask[i][j] = ExplosionType::RETURN;
                                 break;
@@ -416,6 +419,18 @@ void GameBoard::printExplosionMask() {
             }
         }
     }
+}
+
+CardTexture * GameBoard::GetExplosionBoardTexture() {
+    return this->m_explosionBoard;
+}
+
+CardTexture * GameBoard::GetExplosionSprite(const int& offset) {
+    return &this->m_explosionSprites[offset];
+}
+
+std::array<std::array<ExplosionType, 3>, 3> GameBoard::GetExplosionMask() {
+    return this->m_explosionMask;
 }
 
 CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
@@ -839,9 +854,10 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
     m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
-    for (int i = 1; i < 9; i++) {
-        m_explosions.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
+    for (int i = 0; i < 3; i++) {
+        m_explosionSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
+    m_explosionBoard = new CardTexture(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 4; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
@@ -864,9 +880,10 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_back.jpg");
     m_redCards.emplace_back(renderer, "Dependencies/textures/red_back.jpg");
 
-    for (int i = 1; i < 9; i++) {
-        m_explosions.emplace_back(renderer, "Dependencies/textures/explosion_" + std::to_string(i) + ".jpg");
+    for (int i = 0; i < 3; i++) {
+        m_explosionSprites.emplace_back(renderer, "Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
+    m_explosionBoard = new CardTexture(renderer, "Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 4; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
