@@ -918,13 +918,13 @@ bool GameBoard::didExplode() const
     return m_exploded;
 }
 
-bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& explodedBoardMask, int x, int y)
+bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& explodedBoardMask, int y, int x)
 {
-    for (int i = x - 1; i <= x + 1; ++i)
+    for (int i = y - 1; i <= y + 1; ++i)
     {
-        for (int j = y - 1; j <= y + 1; ++j)
+        for (int j = x - 1; j <= x + 1; ++j)
         {
-            if (i >= 0 && i <= 2 && j >= 0 && j <= 2 && i != x && j != y)
+            if (i >= 0 && i <= 2 && j >= 0 && j <= 2 && i != y && j != x)
             {
                 if (explodedBoardMask[i][j] != 0)
                     return true;
@@ -938,15 +938,45 @@ void GameBoard::updateBoardMask()
 {
 	for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-			if (m_positions.find({ m_maxX - i, m_maxY - j }) != m_positions.end())
-			    m_boardMask[i][j] = m_positions[{m_maxX - i, m_maxY - j}].size();
+			if (m_positions.find({ m_maxX - j, m_maxY - i }) != m_positions.end())
+			    m_boardMask[i][j] = m_positions[{ m_maxX - j, m_maxY - i }].size();
 			else
 				m_boardMask[i][j] = 0;
+}
+
+uint8_t explodedBoardRemains(std::array<std::array<uint8_t, 3>, 3> explodedBoardMask)
+{
+    int ct = 0;
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            if (explodedBoardMask[i][j] != 0)
+                ++ct;
+    return ct;
+
 }
 
 bool GameBoard::validateExplosion()
 {
     updateBoardMask();
+    std::cout << "m_boardMask\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+			std::cout << (int)m_boardMask[i][j] << " ";
+        }
+		std::cout << std::endl;
+    }
+    std::cout << "m_explosionMask\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            std::cout << (int)m_explosionMask[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
 	std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
 
 	for (int i = 0; i < 3; i++)
@@ -955,10 +985,13 @@ bool GameBoard::validateExplosion()
             {
                 if (m_explosionMask[i][j] == ExplosionType::HOLE)
                     explodedBoardMask[i][j] = 0;
-                else
+				else if (explodedBoardMask[i][j] > 0)
                     explodedBoardMask[i][j]--;
             }
     
+    if (explodedBoardRemains(explodedBoardMask) <= 1)
+        return true;
+
     for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
             if (explodedBoardMask[i][j] != 0)
