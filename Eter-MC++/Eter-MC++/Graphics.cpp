@@ -353,6 +353,22 @@ void Graphics::drawModeSelection() {
     SDL_RenderPresent(m_renderer);
 }
 
+void Graphics::drawTournamentModeSelection()
+{
+    //Prepare the context for drawing
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
+    //Draw our elements onto the screen, a text item and our buttons
+    drawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+
+    // Draw and check each button
+    drawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    drawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+
+    SDL_RenderPresent(m_renderer);
+}
+
 void Graphics::drawCard(const PlayingCard& card, SDL_Texture* cardTexture)
 {
     // Ensure the card has a valid texture

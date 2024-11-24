@@ -89,18 +89,36 @@ void Game::run() {
                     board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
-                else if (g_config.tournamentActive)
+                else if (painter.isTournamentActive())
                 {
                     m_currentState = TOURNAMENT;
-                    board.setGameMode(GameBoard::GameMode::Tournament);
-                    board.generatePlayerCards(GameBoard::GameMode::Tournament);
-                    board.setIsBluePlayer(true);
-                    drawThisFrame = true;
+					drawThisFrame = true;
                 }
                 else if (painter.isQuickMatchActive())
                 {
                     m_currentState = QUICK_MODE;
                     board.generatePlayerCards(GameBoard::GameMode::QuickMode);
+                    board.setIsBluePlayer(true);
+                    drawThisFrame = true;
+                }
+            }
+
+            if (m_currentState == TOURNAMENT && !drawThisFrame)
+            {
+                painter.drawTournamentModeSelection();
+                if (painter.isElementalActive())
+                {
+                    m_currentState = ELEMENTAL_BATTLE;
+                    board.setGameMode(GameBoard::GameMode::Elemental);
+                    board.generatePlayerCards(GameBoard::GameMode::Elemental);
+					board.setIsBluePlayer(true);
+                    drawThisFrame = true;
+                }
+                else if (painter.isMageDuelActive())
+                {
+                    m_currentState = MAGE_DUEL;
+                    board.setGameMode(GameBoard::GameMode::MageDuel);
+                    board.generatePlayerCards(GameBoard::GameMode::MageDuel);
                     board.setIsBluePlayer(true);
                     drawThisFrame = true;
                 }

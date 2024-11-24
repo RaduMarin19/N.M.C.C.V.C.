@@ -38,6 +38,7 @@ public:
     bool isMouseInRect(const SDL_Rect& rect) const;
     bool drawLoginPage();
     void drawModeSelection();
+	void drawTournamentModeSelection();
     void drawCard(const PlayingCard& card, SDL_Texture* cardTexture);
     bool isTrainingActive();
     bool isMageDuelActive();
