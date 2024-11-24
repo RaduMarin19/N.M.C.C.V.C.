@@ -137,6 +137,7 @@
     <ClCompile Include="ExplosionCard.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="Mage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameBoard.cpp" />
@@ -164,6 +165,8 @@
     <ClInclude Include="GameModeTraining.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="Mage.h" />
+    <ClInclude Include="MageType.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingCard.h" />
   </ItemGroup>

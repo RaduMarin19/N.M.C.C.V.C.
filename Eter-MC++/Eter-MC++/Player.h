@@ -1,8 +1,11 @@
 #pragma once
-#include<vector>
-#include<memory>
-#include<stdexcept>
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <stdexcept>
 #include "PlayingCard.h"
+#include "Mage.h"
+#include "MageType.h"
 
 class Player
 {
@@ -28,5 +31,6 @@ private:
 	bool m_isPlayingIllusion;
 	bool m_isGrabbingCard;
 	bool m_hasPlayedIllusion;
+	std::unordered_map<MageType, std::vector<std::vector<uint8_t>>> m_magesList; //every mage has his own ability
 };
 
