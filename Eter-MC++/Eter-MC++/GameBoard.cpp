@@ -618,9 +618,16 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCardsRed.emplace_back(cardRed);
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
         unsigned int currentCardOffset = 0;
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+        }
+
         std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
         for(auto &card : PlayingCardsBlue) {
             std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
@@ -663,8 +670,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             PlayingCardsRed.emplace_back(cardRed);
         }
 
-        for(int j = 0; j < 2; j++)
-            for(int i = 1; i <= 3; i++) {
+        for(int j = 0; j < 3; j++)
+            for(int i = 2; i <= 3; i++) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
@@ -684,25 +691,28 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
         PlayingCardsRed.emplace_back(cardRedEter);
 
-        PlayingCard cardBlueSpell({0, 0}, &m_blueCards[10], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlueSpell);
-
-        PlayingCard cardRedSpell({0, 0}, &m_redCards[10], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRedSpell);
-
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
-        unsigned int currentCardOffset = 0;
-        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
-        for(auto &card : PlayingCardsBlue) {
-            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
-            card.GetTexture()->getRect().x = m_playerHandPadding ;
-            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+        unsigned int totalPadding = m_playerHandPadding * 2; 
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding; 
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size()+1;
+        unsigned int currentCardOffset = 0; 
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size()+1;
+        }
+
+        std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
+
+        for (auto& card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding;
+            card.GetTexture()->getRect().y = currentCardOffset;
+            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding+ currentCardOffset) });
 
             currentCardOffset += availableSpacePerCard;
         }
+
 
         currentCardOffset = 0;
         for(auto &card : PlayingCardsRed) {
@@ -713,6 +723,12 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
             currentCardOffset += availableSpacePerCard;
         }
+
+        PlayingCard cardBlueSpell({ textureWidth+ m_playerHandPadding*3/2 , m_playerHandPadding }, & m_blueCards[10], 5, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueSpell);
+
+        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding*3/2 , m_playerHandPadding }, & m_redCards[10], 5, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedSpell);
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -758,9 +774,15 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCardsRed.emplace_back(cardRedEter);
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
         unsigned int currentCardOffset = 0;
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+        }
         std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
         for(auto &card : PlayingCardsBlue) {
             std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
