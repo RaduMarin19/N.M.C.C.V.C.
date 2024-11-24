@@ -724,10 +724,18 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             currentCardOffset += availableSpacePerCard;
         }
 
-        PlayingCard cardBlueSpell({ textureWidth+ m_playerHandPadding*3/2 , m_playerHandPadding }, & m_blueCards[10], 5, nextCardId(), BLUE);
+        std::random_device rd; // Sursa de entropie
+        std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
+        std::uniform_int_distribution<> distr(14, 37); // Distribuție uniformă 
+
+        // Generăm un index random 
+        int randomIndexBlue = distr(gen);
+        int randomIndexRed = distr(gen);
+
+        PlayingCard cardBlueSpell({ textureWidth+ m_playerHandPadding*3/2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(cardBlueSpell);
 
-        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding*3/2 , m_playerHandPadding }, & m_redCards[10], 5, nextCardId(), RED);
+        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding*3/2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
         PlayingCardsRed.emplace_back(cardRedSpell);
 
         //Initialize the two players with the newly generated decks
@@ -802,6 +810,20 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
             currentCardOffset += availableSpacePerCard;
         }
+
+        std::random_device rd; // Sursa de entropie
+        std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
+        std::uniform_int_distribution<> distr(6, 13); // Distribuție uniformă 
+
+        // Generăm un index random
+        int randomIndexBlue = distr(gen);
+        int randomIndexRed = distr(gen);
+
+        PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 6, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueSpell);
+
+        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 6, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedSpell);
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -881,12 +903,12 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     }
     m_explosionBoard = new CardTexture(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 24; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
@@ -907,12 +929,12 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     }
     m_explosionBoard = new CardTexture(renderer, "Dependencies/textures/explosion_blank.jpg");
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 24; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
