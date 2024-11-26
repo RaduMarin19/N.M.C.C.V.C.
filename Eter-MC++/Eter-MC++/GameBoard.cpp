@@ -2,12 +2,13 @@
 #include <iostream>
 
 GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
-m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 } {}
+m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 } {
+}
 
 void GameBoard::testPossiblePosition(short x, short y)
 {
     //If the board is at it's max size and our point is outside the bounds then it is not valid
-    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::tableSize - 1)) {
+    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::m_tableSize - 1)) {
         if (x < this->m_minX || x > this->m_maxX) {
             std::cout << x << " " << y << " is out of bounds" << std::endl;
             return;
@@ -18,7 +19,7 @@ void GameBoard::testPossiblePosition(short x, short y)
         return;  //cannot add a hole as a possible position
     }
 
-    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::tableSize - 1)) {
+    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::m_tableSize - 1)) {
         if (y < this->m_minY || y > this->m_maxY) {
             std::cout << x << " " << y << " is out of bounds" << std::endl;
             return;
@@ -31,8 +32,6 @@ void GameBoard::testPossiblePosition(short x, short y)
 }
 
 void GameBoard::checkStatus(GameState &gameState) {
-    if (gameState == TRAINING_MODE) {
-        
         /// verify rows
 
         for (int j = m_minY; j <= m_maxY; ++j)
@@ -54,12 +53,12 @@ void GameBoard::checkStatus(GameState &gameState) {
                     }
                 }
             }
-            if (redCardsInRow == 3)
+            if (redCardsInRow == m_tableSize)
             {
                 gameState = RED_PLAYER_WON;
                 return;
             }
-            if (blueCardsInRow == 3)
+            if (blueCardsInRow == m_tableSize)
             {
                 gameState = BLUE_PLAYER_WON;
                 return;
@@ -87,12 +86,12 @@ void GameBoard::checkStatus(GameState &gameState) {
                     }
                 }
             }
-            if (redCardsInColumn == 3)
+            if (redCardsInColumn == m_tableSize)
             {
                 gameState = RED_PLAYER_WON;
                 return;
             }
-            if (blueCardsInColumn == 3)
+            if (blueCardsInColumn == m_tableSize)
             {
                 gameState = BLUE_PLAYER_WON;
                 return;
@@ -105,7 +104,7 @@ void GameBoard::checkStatus(GameState &gameState) {
         bool redPlayerWon = true;
         bool bluePlayerWon = true;
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < m_tableSize; ++i)
         {
             if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
             {
@@ -138,7 +137,7 @@ void GameBoard::checkStatus(GameState &gameState) {
         redPlayerWon = true;
         bluePlayerWon = true;
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < m_tableSize; ++i)
         {
             if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
             {
@@ -198,7 +197,6 @@ void GameBoard::checkStatus(GameState &gameState) {
                 return;
             }
         }
-    }
 }
 
 void GameBoard::rotateExplosionMask() {
@@ -218,8 +216,6 @@ void GameBoard::rotateExplosionMask() {
         }
     }
 }
-
-
 
 void GameBoard::generateRandomExplosion() {
         static bool generated = false;
@@ -437,7 +433,7 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 
     //If the board size is at max size, erase all old entries that are out of bounds
     //TODO: this should be it's own function
-    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::tableSize - 1)) {
+    if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::m_tableSize - 1)) {
 
         auto it = this->m_possiblePositions.begin();
         while (it != this->m_possiblePositions.end()) {
@@ -458,7 +454,7 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 
     }
 
-    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::tableSize - 1)) {
+    if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::m_tableSize - 1)) {
         auto it = this->m_possiblePositions.begin();
         while (it != this->m_possiblePositions.end()) {
 
@@ -485,12 +481,12 @@ void GameBoard::returnCardToDeck(PlayingCard& card) {
 
 void GameBoard::setTable(short tableSize)
 {
-    this->tableSize = tableSize;
+    this->m_tableSize = tableSize;
 }
 
 short GameBoard::getTableSize() const
 {
-	return tableSize;
+	return m_tableSize;
 }
 
 void GameBoard::setGameMode(const GameMode& mode) {
@@ -792,7 +788,6 @@ bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &c
         card = PlayingCard->second.top();
         return true;
     } return false;
-
 }
 
 const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePositions() {
@@ -931,8 +926,8 @@ void GameBoard::updateBoardMask()
 {
 	for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-			if (m_positions.find({ m_maxX - j, m_maxY - i }) != m_positions.end())
-			    m_boardMask[i][j] = m_positions[{ m_maxX - j, m_maxY - i }].size();
+			if (m_positions.find({m_minX + j, m_minY + i }) != m_positions.end())
+			    m_boardMask[i][j] = m_positions[{ m_minX + j, m_minY + i }].size();
 			else
 				m_boardMask[i][j] = 0;
 }

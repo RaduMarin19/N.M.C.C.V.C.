@@ -86,7 +86,7 @@ protected:
 private:
 	unsigned short m_cardId{ 0 };
     short m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 };
-    short tableSize{ 3 }; // it varies between 3 and 4 depending on game mode
+    short m_tableSize{ 3 }; // it varies between 3 and 4 depending on game mode
 
 	static const unsigned int m_playerHandPadding {30};
 
