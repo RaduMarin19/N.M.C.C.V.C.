@@ -36,8 +36,7 @@ void GameBoard::checkStatus(GameState &gameState) {
 
         for (int j = m_minY; j <= m_maxY; ++j)
         {
-            int redCardsInRow = 0;
-            int blueCardsInRow = 0;
+            short stateRow = 0;
 
             for (int i = m_minX; i <= m_maxX; ++i)
             {
@@ -45,20 +44,20 @@ void GameBoard::checkStatus(GameState &gameState) {
                 {
                     if (m_positions.find({ i, j })->second.top().GetColor() == RED)
                     {
-                        redCardsInRow++;
+                        stateRow++;
                     }
                     else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
                     {
-                        blueCardsInRow++;
+                        stateRow--;
                     }
                 }
             }
-            if (redCardsInRow == m_tableSize)
+            if (stateRow == m_tableSize)
             {
                 gameState = RED_PLAYER_WON;
                 return;
             }
-            if (blueCardsInRow == m_tableSize)
+            if (stateRow == -m_tableSize)
             {
                 gameState = BLUE_PLAYER_WON;
                 return;
@@ -69,8 +68,7 @@ void GameBoard::checkStatus(GameState &gameState) {
 
         for (int i = m_minX; i <= m_maxX; ++i)
         {
-            int redCardsInColumn = 0;
-            int blueCardsInColumn = 0;
+            short stateCol = 0;
 
             for (int j = m_minY; j <= m_maxY; ++j)
             {
@@ -78,20 +76,20 @@ void GameBoard::checkStatus(GameState &gameState) {
                 {
                     if (m_positions.find({ i, j })->second.top().GetColor() == RED)
                     {
-                        redCardsInColumn++;
+                        stateCol++;
                     }
                     else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
                     {
-                        blueCardsInColumn++;
+                        stateCol--;
                     }
                 }
             }
-            if (redCardsInColumn == m_tableSize)
+            if (stateCol == m_tableSize)
             {
                 gameState = RED_PLAYER_WON;
                 return;
             }
-            if (blueCardsInColumn == m_tableSize)
+            if (stateCol == -m_tableSize)
             {
                 gameState = BLUE_PLAYER_WON;
                 return;

@@ -4,6 +4,7 @@
 void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentState, bool& drawThisFrame) {
     switch (currentState) {
     case TRAINING_MODE:
+        board.setTable(3);
         // Specific logic for TRAINING_MODE (if any)
         break;
 
