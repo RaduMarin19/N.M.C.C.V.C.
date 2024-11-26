@@ -222,7 +222,6 @@ void GameBoard::rotateExplosionMask() {
 
 
 void GameBoard::generateRandomExplosion() {
-
         static bool generated = false;
         if (!generated) {
             short maxEffects = rand() % 3 + 2;
@@ -230,88 +229,29 @@ void GameBoard::generateRandomExplosion() {
 
             m_explosionMask.fill({ ExplosionType::NONE, ExplosionType::NONE, ExplosionType::NONE });
 
-            while (numEffects <= maxEffects) {
-                for (short i = 0; i <= 2; ++i) {
-                    for (short j = 0; j <= 2; ++j) {
-                        bool generateExplosion = rand() % 2;
+            while (numEffects < maxEffects) {
+               short i = rand() % 3;
+               short j = rand() % 3;
+               bool generateExplosion = rand() % 2;
                         if (generateExplosion) {
                             ++numEffects;
                             short explosionType = rand() % 21;
                             std::cout << explosionType << '\n';
                             if (explosionType < 10) {
                                 m_explosionMask[i][j] = ExplosionType::RETURN;
-                                break;
                             }
                             else if (explosionType > 10) {
                                 m_explosionMask[i][j] = ExplosionType::DELETE;
-                                break;
                             }
                             else {
                                 m_explosionMask[i][j] = ExplosionType::HOLE;
-                                break;
                             }
 
-                            // Adaugă un mesaj de debug pentru a verifica valorile
                             std::cout << "Generated explosion at (" << (m_minX + i) << ", " << (m_minY + j) << ")" << std::endl;
-                            break;
                         }
-                    }
-                }
             }
             generated = true;
         }
-    
-
-
-    /*while(numEffects<=maxEffects)
-    for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
-        std::cout << it->first.GetX() << " " << it->first.GetY() << "\n";
-        bool generateExplosion = rand() % 2;
-        if (generateExplosion) {
-            numEffects++;
-            short explosionType = rand() % 21;
-            if (explosionType < 10) {
-                if (!it->second.empty()) {
-                    auto& card = it->second.top();
-                    if (card.GetColor() == BLUE) {
-                        returnCardToDeck(card);
-                        m_playerBlue.AddCard(card);
-                    }
-                    else {
-                        returnCardToDeck(card);
-                        m_playerRed.AddCard(card);
-                    }
-                    it->second.pop();
-                }
-                std::cout << "returned card to hand\n";
-                if (it->second.empty()) {
-                    m_possiblePositions.insert(it->first);
-                    m_positions.erase(it);
-                }
-                break;
-            }
-            else if (explosionType > 10) {
-                std::cout << "removed card from game\n";
-                if (!it->second.empty())
-                    it->second.pop();
-                if (it->second.empty()) {
-                    m_possiblePositions.insert(it->first);
-                    m_positions.erase(it);
-                }
-                break;
-            }
-            else {
-                while (!it->second.empty()) {
-                    it->second.pop();
-                }
-                m_holes.insert(it->first);
-                m_possiblePositions.erase(it->first);
-                m_positions.erase(it);
-                std::cout << "hole\n";
-                break;
-            }
-        }
-    }*/
 }
 
 
@@ -628,6 +568,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
 
+            card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
             currentCardOffset += availableSpacePerCard;
         }
 
@@ -637,6 +579,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
             card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             currentCardOffset += availableSpacePerCard;
         }
@@ -701,6 +645,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
 
+            card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
             currentCardOffset += availableSpacePerCard;
         }
 
@@ -710,6 +656,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
             card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+
+            card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             currentCardOffset += availableSpacePerCard;
         }
@@ -767,7 +715,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().x = m_playerHandPadding ;
             card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
-
+            card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
             currentCardOffset += availableSpacePerCard;
         }
 
@@ -777,6 +725,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
             card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+            card.SetInitialPosition({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             currentCardOffset += availableSpacePerCard;
         }

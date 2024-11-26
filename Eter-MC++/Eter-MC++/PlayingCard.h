@@ -19,6 +19,7 @@ public:
 	short GetValue() const;
 
 	void SetBoardPosition(Coordinates position);
+	void SetInitialPosition(Coordinates position);
 	void setValue(short value);
 
 	bool operator==(const PlayingCard& other) const;

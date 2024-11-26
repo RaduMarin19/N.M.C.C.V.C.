@@ -36,6 +36,10 @@ void PlayingCard::SetBoardPosition(Coordinates position) {
 	this->m_boardPosition = position;
 }
 
+void PlayingCard::SetInitialPosition(Coordinates position) {
+	m_initialPosition = position;
+}
+
 Coordinates PlayingCard::GetBoardPosition() const {
 	return m_boardPosition;
 }
