@@ -558,9 +558,16 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCardsRed.emplace_back(cardRed);
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
         unsigned int currentCardOffset = 0;
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+        }
+
         std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
         for(auto &card : PlayingCardsBlue) {
             std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
@@ -607,8 +614,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             PlayingCardsRed.emplace_back(cardRed);
         }
 
-        for(int j = 0; j < 2; j++)
-            for(int i = 1; i <= 3; i++) {
+        for(int j = 0; j < 3; j++)
+            for(int i = 2; i <= 3; i++) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
@@ -628,27 +635,30 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
         PlayingCardsRed.emplace_back(cardRedEter);
 
-        PlayingCard cardBlueSpell({0, 0}, &m_blueCards[10], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlueSpell);
-
-        PlayingCard cardRedSpell({0, 0}, &m_redCards[10], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRedSpell);
-
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
-        unsigned int currentCardOffset = 0;
-        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
-        for(auto &card : PlayingCardsBlue) {
-            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
-            card.GetTexture()->getRect().x = m_playerHandPadding ;
-            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+        unsigned int totalPadding = m_playerHandPadding * 2; 
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding; 
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size()+1;
+        unsigned int currentCardOffset = 0; 
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size()+1;
+        }
+
+        std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
+
+        for (auto& card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding;
+            card.GetTexture()->getRect().y = currentCardOffset;
+            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding+ currentCardOffset) });
 
             card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             currentCardOffset += availableSpacePerCard;
         }
+
 
         currentCardOffset = 0;
         for(auto &card : PlayingCardsRed) {
@@ -661,6 +671,20 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
             currentCardOffset += availableSpacePerCard;
         }
+
+        std::random_device rd; // Sursa de entropie
+        std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
+        std::uniform_int_distribution<> distr(14, 37); // Distribuție uniformă 
+
+        // Generăm un index random 
+        int randomIndexBlue = distr(gen);
+        int randomIndexRed = distr(gen);
+
+        PlayingCard cardBlueSpell({ textureWidth+ m_playerHandPadding*3/2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueSpell);
+
+        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding*3/2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedSpell);
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -706,9 +730,15 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         PlayingCardsRed.emplace_back(cardRedEter);
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int availableSpace = SCREEN_HEIGHT - m_playerHandPadding * 2;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size();
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
         unsigned int currentCardOffset = 0;
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+        }
         std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
         for(auto &card : PlayingCardsBlue) {
             std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
@@ -729,6 +759,20 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
             currentCardOffset += availableSpacePerCard;
         }
+
+        std::random_device rd; // Sursa de entropie
+        std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
+        std::uniform_int_distribution<> distr(6, 13); // Distribuție uniformă 
+
+        // Generăm un index random
+        int randomIndexBlue = distr(gen);
+        int randomIndexRed = distr(gen);
+
+        PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 6, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlueSpell);
+
+        PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 6, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRedSpell);
 
         //Initialize the two players with the newly generated decks
         Player playerBlue(PlayingCardsBlue);
@@ -808,12 +852,12 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     }
     m_explosionBoard = new CardTexture(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 24; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
@@ -834,12 +878,12 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     }
     m_explosionBoard = new CardTexture(renderer, "Dependencies/textures/explosion_blank.jpg");
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 24; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
@@ -867,13 +911,13 @@ bool GameBoard::didExplode() const
     return m_exploded;
 }
 
-bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& explodedBoardMask, int x, int y)
+bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& explodedBoardMask, int y, int x)
 {
-    for (int i = x - 1; i <= x + 1; ++i)
+    for (int i = y - 1; i <= y + 1; ++i)
     {
-        for (int j = y - 1; j <= y + 1; ++j)
+        for (int j = x - 1; j <= x + 1; ++j)
         {
-            if (i >= 0 && i <= 2 && j >= 0 && j <= 2 && i != x && j != y)
+            if (i >= 0 && i <= 2 && j >= 0 && j <= 2 && i != y && j != x)
             {
                 if (explodedBoardMask[i][j] != 0)
                     return true;
@@ -887,15 +931,45 @@ void GameBoard::updateBoardMask()
 {
 	for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-			if (m_positions.find({ m_maxX - i, m_maxY - j }) != m_positions.end())
-			    m_boardMask[i][j] = m_positions[{m_maxX - i, m_maxY - j}].size();
+			if (m_positions.find({ m_maxX - j, m_maxY - i }) != m_positions.end())
+			    m_boardMask[i][j] = m_positions[{ m_maxX - j, m_maxY - i }].size();
 			else
 				m_boardMask[i][j] = 0;
+}
+
+uint8_t explodedBoardRemains(std::array<std::array<uint8_t, 3>, 3> explodedBoardMask)
+{
+    int ct = 0;
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            if (explodedBoardMask[i][j] != 0)
+                ++ct;
+    return ct;
+
 }
 
 bool GameBoard::validateExplosion()
 {
     updateBoardMask();
+    std::cout << "m_boardMask\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+			std::cout << (int)m_boardMask[i][j] << " ";
+        }
+		std::cout << std::endl;
+    }
+    std::cout << "m_explosionMask\n";
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            std::cout << (int)m_explosionMask[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+
 	std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
 
 	for (int i = 0; i < 3; i++)
@@ -904,10 +978,13 @@ bool GameBoard::validateExplosion()
             {
                 if (m_explosionMask[i][j] == ExplosionType::HOLE)
                     explodedBoardMask[i][j] = 0;
-                else
+				else if (explodedBoardMask[i][j] > 0)
                     explodedBoardMask[i][j]--;
             }
     
+    if (explodedBoardRemains(explodedBoardMask) <= 1)
+        return true;
+
     for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
             if (explodedBoardMask[i][j] != 0)

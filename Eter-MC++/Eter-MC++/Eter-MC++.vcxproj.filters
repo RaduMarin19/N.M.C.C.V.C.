@@ -60,6 +60,9 @@
     <ClCompile Include="GameLogic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Coordinates.h">
@@ -114,6 +117,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameLogic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MageType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

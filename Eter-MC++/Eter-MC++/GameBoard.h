@@ -18,7 +18,7 @@
 #include <random>
 
 #define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 1000
+#define SCREEN_HEIGHT 750
 
 class GameBoard
 {
@@ -88,7 +88,7 @@ private:
     short m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 };
     short tableSize{ 3 }; // it varies between 3 and 4 depending on game mode
 
-	static const unsigned int m_playerHandPadding {50};
+	static const unsigned int m_playerHandPadding {30};
 
     std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
