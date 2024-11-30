@@ -1,6 +1,10 @@
 #include "GameLogic.h"
 
 void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentState, bool& drawThisFrame) {
+    
+    if (currentState == TOURNAMENT)
+        return;
+    
     if (currentState == TRAINING_MODE || currentState == QUICK_MODE)
         board.setTable(3);
     else

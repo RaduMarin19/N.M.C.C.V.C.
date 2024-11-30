@@ -307,6 +307,9 @@ void Graphics::resetGameModes()
 {
     g_config.elementalBattleActive = false;
     g_config.trainingActive = false;
+	g_config.mageDuelActive = false;
+	g_config.tournamentActive = false;
+	g_config.quickMatchActive = false;
 }
 
 bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
