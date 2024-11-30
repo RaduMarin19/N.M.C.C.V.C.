@@ -702,8 +702,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             PlayingCardsRed.emplace_back(cardRed);
         }
 
-        for(int j = 0; j < 2; j++)
-            for(int i = 1; i <= 3; i++) {
+        for(int j = 0; j < 3; j++)
+            for(int i = 2; i <= 3; i++) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
@@ -775,8 +775,67 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         Player playerRed(PlayingCardsRed);
         this->m_playerRed = playerRed;
     }
-    else if (mode == GameMode::Tournament) {
+    else if (mode == GameMode::QuickMode) {
+        //Initialize a deck for each player
+        std::vector<PlayingCard> PlayingCardsBlue;
+        std::vector<PlayingCard> PlayingCardsRed;
 
+        for (int j = 0; j < 2; j++)
+            for (int i = 1; i <= 3; i++) {
+                //Fill each deck with cards
+                PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
+                PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
+
+                PlayingCardsBlue.emplace_back(cardBlue);
+                PlayingCardsRed.emplace_back(cardRed);
+            }
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
+        PlayingCardsBlue.emplace_back(cardBlue);
+
+        PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
+        PlayingCardsRed.emplace_back(cardRed);
+
+        //Set how much space we have for our deck, the whole screen - padding top/bottom
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
+        unsigned int currentCardOffset = 0;
+
+        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+        }
+
+        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
+        for (auto& card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding;
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+            card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+            currentCardOffset += availableSpacePerCard;
+        }
+
+        currentCardOffset = 0;
+        for (auto& card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
+            card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+            card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+            currentCardOffset += availableSpacePerCard;
+        }
+
+        //Initialize the two players with the newly generated decks
+        Player playerBlue(PlayingCardsBlue);
+        this->m_playerBlue = playerBlue;
+
+        Player playerRed(PlayingCardsRed);
+        this->m_playerRed = playerRed;
     }
 }
 

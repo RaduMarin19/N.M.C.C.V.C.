@@ -24,6 +24,7 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
         break;
 
     case QUICK_MODE:
+		board.setTable(3);
         // Specific logic for QUICK_MODE (if any)
         break;
 
