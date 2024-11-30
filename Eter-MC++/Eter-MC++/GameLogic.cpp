@@ -1,86 +1,64 @@
 #include "GameLogic.h"
-#include "Graphics.h"
 
 void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentState, bool& drawThisFrame) {
-    switch (currentState) {
-    case TRAINING_MODE:
+    if (currentState == TRAINING_MODE || currentState == QUICK_MODE)
         board.setTable(3);
-        // Specific logic for TRAINING_MODE (if any)
-        break;
+    else
+		board.setTable(4);
 
-    case ELEMENTAL_BATTLE:
-        board.setTable(4);
-        // Specific logic for ELEMENTAL_BATTLE (if any)
-        break;
+    if (currentState == TRAINING_MODE || currentState == MAGE_DUEL || currentState == ELEMENTAL_BATTLE)
+    {
+        if (board.canUseExplosion() && board.didExplode() == false) {
+            static bool checkExplosion = false;
+            board.generateRandomExplosion();
 
-    case MAGE_DUEL:
-        board.setTable(4);
-        // Specific logic for MAGE_DUEL (if any)
-        break;
+            {
+                SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
+                painter.drawTexturedRect(explosionRect, board.GetExplosionBoardTexture()->getTexture());
+                auto explosionMask = board.GetExplosionMask();
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
+                        if (explosionMask[i][j] == ExplosionType::HOLE) {
+                            painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(2)->getTexture());
+                        }
+                        else if (explosionMask[i][j] == ExplosionType::DELETE) {
+                            painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(0)->getTexture());
+                        }
+                        else if (explosionMask[i][j] == ExplosionType::RETURN) {
+                            painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(1)->getTexture());
+                        }
+                    }
 
-    case TOURNAMENT:
-        board.setTable(4);
-        // Specific logic for TOURNAMENT (if any)
-        break;
+                }
+            }
 
-    case QUICK_MODE:
-		board.setTable(3);
-        // Specific logic for QUICK_MODE (if any)
-        break;
-
-    default:
-        break;
+            if (!checkExplosion) {
+                painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
+            }
+            if (checkExplosion) {
+                drawThisFrame = false;
+                bool exploded = false;
+                painter.drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+                bool rotate = false;
+                painter.drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
+                if (exploded) {
+                    if (board.validateExplosion())
+                        board.explode();
+                    else
+                        std::cout << "Explosion invalidates map!\n";
+                }
+                if (rotate) {
+                    board.rotateExplosionMask();
+                    std::cout << "----------------\n";
+                    board.printExplosionMask();
+                }
+            }
+        }
     }
 
     // Common logic for all modes
-    if (board.canUseExplosion() && board.didExplode() == false) {
-        static bool checkExplosion = false;
-        board.generateRandomExplosion();
-
-        {
-            SDL_Rect explosionRect { SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
-            painter.drawTexturedRect(explosionRect, board.GetExplosionBoardTexture()->getTexture());
-            auto explosionMask = board.GetExplosionMask();
-            for(int i = 0; i < 3; i++) {
-                for(int j = 0; j < 3; j++) {
-                    SDL_Rect spriteRect {explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32};
-                    if(explosionMask[i][j] == ExplosionType::HOLE) {
-                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(2)->getTexture());
-                    }
-                    else if(explosionMask[i][j] == ExplosionType::DELETE) {
-                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(0)->getTexture());
-                    }
-                    else if(explosionMask[i][j] == ExplosionType::RETURN) {
-                        painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(1)->getTexture());
-                    }
-                }
-
-            }
-        }
-
-        if (!checkExplosion) {
-            painter.drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
-        }
-        if (checkExplosion) {
-            drawThisFrame = false;
-            bool exploded = false;
-            painter.drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
-            bool rotate = false;
-            painter.drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
-            if (exploded) {
-                if (board.validateExplosion())
-                    board.explode();
-                else
-                    std::cout << "Explosion invalidates map!\n";
-            }
-            if (rotate) {
-                board.rotateExplosionMask();
-                std::cout << "----------------\n";
-                board.printExplosionMask();
-            }
-        }
-    }
-
+    
     if (board.getPlayerBlue()->HasPlayedIllusion() == false && board.isBluePlayer()) {
         painter.drawButton(board.getPlayerBlue()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
     }

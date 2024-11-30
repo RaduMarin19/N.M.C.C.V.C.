@@ -97,6 +97,7 @@ void Game::run() {
                 else if (painter.isQuickMatchActive())
                 {
                     m_currentState = QUICK_MODE;
+					board.setGameMode(GameBoard::GameMode::QuickMode);
                     board.generatePlayerCards(GameBoard::GameMode::QuickMode);
                     board.setIsBluePlayer(true);
                     drawThisFrame = true;
