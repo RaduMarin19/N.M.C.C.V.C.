@@ -5,12 +5,12 @@ Mage::Mage()
     std::random_device rd; // Sursa de entropie
     std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
     std::uniform_int_distribution<> distr(0, 7); // Distributie uniforma 
-
+    
     int typeIndex = distr(gen);
     m_mageType = static_cast<MageType>(typeIndex);
 }
 
-void Mage::playPower()
+void Mage::playPower(GameBoard& board)
 {
     switch (m_mageType)
     {
