@@ -1,6 +1,10 @@
 #include "PlayingCard.h"
 
-PlayingCard::PlayingCard(Coordinates position, short value) : 
+PlayingCard::PlayingCard()
+{
+}
+
+PlayingCard::PlayingCard(Coordinates position, short value) :
 	Card{ position }, 
 	m_value{ value },
 	m_isIllusion{false}

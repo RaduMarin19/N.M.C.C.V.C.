@@ -97,8 +97,8 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                     if (pushCard.isIllusion())
                     {
                         for (auto& card : board.GetPlayedPositions())
-                            if (card.second.top() == pushCard)
-                                card.second.top().SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
+                            if (card.second.back() == pushCard)
+                                card.second.back().SetIllussion(board.getPlayerBlue()->isPlayingIllusion());
                         board.getPlayerBlue()->SetHasPlayedIllusion();
                     }
                     board.checkStatus(currentState);
@@ -124,8 +124,8 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                     board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
                     if (pushCard.isIllusion()) {
                         for (auto& card : board.GetPlayedPositions())
-                            if (card.second.top() == pushCard)
-                                card.second.top().SetIllussion(board.getPlayerRed()->isPlayingIllusion());
+                            if (card.second.back() == pushCard)
+                                card.second.back().SetIllussion(board.getPlayerRed()->isPlayingIllusion());
                         board.getPlayerRed()->SetHasPlayedIllusion();
                     }
                     board.setIsBluePlayer(true);

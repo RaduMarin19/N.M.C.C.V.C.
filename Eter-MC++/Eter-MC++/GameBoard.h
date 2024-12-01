@@ -46,7 +46,7 @@ public:
     bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
     const std::unordered_set<Coordinates, Coordinates>& GetPossiblePositions();
     const std::vector<PlayingCard> GetPlayedCards() const;
-    std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates>& GetPlayedPositions();
+    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GetPlayedPositions();
 
     Player *getPlayerRed();
     Player *getPlayerBlue();
@@ -90,7 +90,7 @@ private:
 
 	static const unsigned int m_playerHandPadding {30};
 
-    std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates> m_positions;
+    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates> m_holes;
 

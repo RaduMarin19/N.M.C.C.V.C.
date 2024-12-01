@@ -42,11 +42,11 @@ void GameBoard::checkStatus(GameState &gameState) {
             {
                 if (m_positions.find({ i, j }) != m_positions.end())
                 {
-                    if (m_positions.find({ i, j })->second.top().GetColor() == RED)
+                    if (m_positions.find({ i, j })->second.back().GetColor() == RED)
                     {
                         stateRow++;
                     }
-                    else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
+                    else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
                     {
                         stateRow--;
                     }
@@ -74,11 +74,11 @@ void GameBoard::checkStatus(GameState &gameState) {
             {
                 if (m_positions.find({ i, j }) != m_positions.end())
                 {
-                    if (m_positions.find({ i, j })->second.top().GetColor() == RED)
+                    if (m_positions.find({ i, j })->second.back().GetColor() == RED)
                     {
                         stateCol++;
                     }
-                    else if (m_positions.find({ i, j })->second.top().GetColor() == BLUE)
+                    else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
                     {
                         stateCol--;
                     }
@@ -106,7 +106,7 @@ void GameBoard::checkStatus(GameState &gameState) {
         {
             if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
             {
-                if (m_positions.find({ indexI + i, indexJ + i })->second.top().GetColor() == BLUE)
+                if (m_positions.find({ indexI + i, indexJ + i })->second.back().GetColor() == BLUE)
                     redPlayerWon = false;
                 else
                     bluePlayerWon = false;
@@ -139,7 +139,7 @@ void GameBoard::checkStatus(GameState &gameState) {
         {
             if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
             {
-                if (m_positions.find({ indexI + i, indexJ - i })->second.top().GetColor() == BLUE)
+                if (m_positions.find({ indexI + i, indexJ - i })->second.back().GetColor() == BLUE)
                     redPlayerWon = false;
                 else
                     bluePlayerWon = false;
@@ -168,17 +168,17 @@ void GameBoard::checkStatus(GameState &gameState) {
         //checking to see if the enemy has any more cards
         if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
             for (auto& [coords, cardStack] : m_positions) {
-                if (cardStack.top().GetColor() == BLUE) {
-                    if (cardStack.top().isIllusion()) {
+                if (cardStack.back().GetColor() == BLUE) {
+                    if (cardStack.back().isIllusion()) {
                         blueScore += 1;
                     }
-                    else blueScore += cardStack.top().GetValue();
+                    else blueScore += cardStack.back().GetValue();
                 }
-                if (cardStack.top().GetColor() == RED) {
-                    if (cardStack.top().isIllusion()) {
+                if (cardStack.back().GetColor() == RED) {
+                    if (cardStack.back().isIllusion()) {
                         redScore += 1;
                     }
-                    else redScore += cardStack.top().GetValue();
+                    else redScore += cardStack.back().GetValue();
                 }
             }
             if (redScore > blueScore) {
@@ -262,7 +262,7 @@ void GameBoard::explode()
                 if (m_explosionMask[i][j] == ExplosionType::RETURN) {
 
                     if (!it->second.empty()) {
-                        auto& card = it->second.top();
+                        auto& card = it->second.back();
                         if (card.GetColor() == BLUE) {
                             returnCardToDeck(card);
                             m_playerBlue.AddCard(card);
@@ -271,7 +271,7 @@ void GameBoard::explode()
                             returnCardToDeck(card);
                             m_playerRed.AddCard(card);
                         }
-                        it->second.pop();
+                        it->second.pop_back();
                     }
                     std::cout << "returned card to hand\n";
                     if (it->second.empty()) {
@@ -283,7 +283,7 @@ void GameBoard::explode()
                 else if (m_explosionMask[i][j] == ExplosionType::DELETE) {
                     std::cout << "removed card from game\n";
                     if (!it->second.empty())
-                        it->second.pop();
+                        it->second.pop_back();
                     if (it->second.empty()) {
                         m_possiblePositions.insert(it->first);
                         m_positions.erase(it);
@@ -292,7 +292,7 @@ void GameBoard::explode()
                 }
                 else if (m_explosionMask[i][j] == ExplosionType::HOLE) {
                     while (!it->second.empty()) {
-                        it->second.pop();
+                        it->second.pop_back();
                     }
                     m_holes.insert(it->first);
                     m_possiblePositions.erase(it->first);
@@ -317,7 +317,7 @@ void GameBoard::updateBoardCenter() {
 
     //Also shift all played cards by said amount
     for (auto& [pos, cards] : m_positions) {
-        auto& card = cards.top();
+        auto& card = cards.back();
         card.SetCoordinates({static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight)});
     }
 }
@@ -387,8 +387,8 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 
     //If there is no card at the position create a new stack and add to it
     if (!m_positions.contains(newCardCoords)) {
-        std::stack<PlayingCard> cards;
-        cards.emplace(otherCard);
+        std::deque<PlayingCard> cards;
+        cards.emplace_back(otherCard);
         m_positions.emplace(newCardCoords, cards);
         updateBoardCenter();
     }
@@ -396,13 +396,13 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
     else {
         if (!otherCard.isIllusion()) { //if a card is a illusion you cannot add it to an existing stack
             auto it = m_positions.find(newCardCoords); 
-            if (it->second.top().GetValue() < otherCard.GetValue()) {
-                it->second.emplace(otherCard);
+            if (it->second.back().GetValue() < otherCard.GetValue()) {
+                it->second.emplace_back(otherCard);
                 updateBoardCenter();
             }
-            else if (it->second.top().isIllusion()) {
+            else if (it->second.back().isIllusion()) {
                 m_isBluePlayer = !m_isBluePlayer;
-                it->second.top().SetIllussion(false);
+                it->second.back().SetIllussion(false);
                 return REMOVED;
             }
             else return IN_HAND;
@@ -707,7 +707,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &card) const {
     auto PlayingCard = this->m_positions.find(coordinates);
     if(PlayingCard != this->m_positions.end()) {
-        card = PlayingCard->second.top();
+        card = PlayingCard->second.back();
         return true;
     } return false;
 }
@@ -720,12 +720,12 @@ const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;
 
     for(auto [k, v] : this->m_positions) {
-        playingCards.emplace_back(v.top());
+        playingCards.emplace_back(v.back());
     }
     return playingCards;
 }
 
-std::unordered_map<Coordinates, std::stack<PlayingCard>, Coordinates>& GameBoard::GetPlayedPositions()
+std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GameBoard::GetPlayedPositions()
 {
     return m_positions;
 }
