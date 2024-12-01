@@ -39,7 +39,6 @@ public:
 	short getTableSize() const;
 	void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);
-    void generateRandomExplosion();
 	GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
@@ -60,12 +59,10 @@ public:
     void printExplosionMask();
     std::shared_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
-    std::array<std::array<ExplosionType, 3>, 3> GetExplosionMask();
 
     std::shared_ptr<CardTexture>& getBlueIllusionTexture();
     std::shared_ptr<CardTexture>& getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
-    void rotateExplosionMask();
 
     void returnCardToDeck(PlayingCard& card);
 

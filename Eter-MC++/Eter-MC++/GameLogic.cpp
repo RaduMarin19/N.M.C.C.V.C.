@@ -20,7 +20,6 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
     {
         if (board.canUseExplosion() && board.didExplode() == false) {
             static bool checkExplosion = false;
-            //board.generateRandomExplosion();
 
             {
                 SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
@@ -54,10 +53,10 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                 bool rotate = false;
                 painter.drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
                 if (exploded) {
-                    if (board.validateExplosion())
+                    //if (board.validateExplosion())
                         board.explode();
-                    else
-                        std::cout << "Explosion invalidates map!\n";
+                    //else
+                    //   std::cout << "Explosion invalidates map!\n";
                 }
                 if (rotate) {
                     board.getExplosion()->rotateExplosion();

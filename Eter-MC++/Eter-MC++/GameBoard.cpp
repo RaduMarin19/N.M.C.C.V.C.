@@ -198,112 +198,44 @@ void GameBoard::checkStatus(GameState &gameState) {
         }
 }
 
-void GameBoard::rotateExplosionMask() {
-    int n = m_explosion->GetExplosionMask().size();
-
-    for (int i = 0; i < n / 2; i++) {
-
-        // Consider elements in group of 4 as P1, P2, P3 & P4 in current square
-        for (int j = i; j < n - i - 1; j++) {
-
-            // Swap elements in clockwise order
-            ExplosionType temp = m_explosion->GetExplosionMask()[i][j];
-            m_explosionMask[i][j] = m_explosionMask[n - 1 - j][i];                 // Move P4 to P1
-            m_explosionMask[n - 1 - j][i] = m_explosionMask[n - 1 - i][n - 1 - j]; // Move P3 to P4
-            m_explosionMask[n - 1 - i][n - 1 - j] = m_explosionMask[j][n - 1 - i]; // Move P2 to P3
-            m_explosionMask[j][n - 1 - i] = temp;                                  // Move P1 to P2
-        }
-    }
-}
-
-void GameBoard::generateRandomExplosion() {
-        // static bool generated = false;
-        // if (!generated) {
-        //     short maxEffects = rand() % 3 + 2;
-        //     short numEffects = 0;
-        //
-        //     m_explosionMask.fill({ ExplosionType::NONE, ExplosionType::NONE, ExplosionType::NONE });
-        //
-        //     while (numEffects < maxEffects) {
-        //        short i = rand() % 3;
-        //        short j = rand() % 3;
-        //        bool generateExplosion = rand() % 2;
-        //                 if (generateExplosion) {
-        //                     ++numEffects;
-        //                     short explosionType = rand() % 21;
-        //                     if (explosionType < 10) {
-        //                         m_explosionMask[i][j] = ExplosionType::RETURN;
-        //                     }
-        //                     else if (explosionType > 10) {
-        //                         m_explosionMask[i][j] = ExplosionType::DELETE;
-        //                     }
-        //                     else {
-        //                         m_explosionMask[i][j] = ExplosionType::HOLE;
-        //                     }
-        //
-        //                     std::cout << "Generated explosion at (" << (m_minX + i) << ", " << (m_minY + j) << ")" << std::endl;
-        //                 }
-        //     }
-        //     generated = true;
-        // }
-}
-
-
 void GameBoard::explode()
 {
-    short n = m_explosion->GetExplosionMask().size();
+    auto explosionEffects = m_explosion->GetExplosionMask();
+        for(int i = 0; i < m_tableSize; ++i) {
+            for(int j = 0; j < m_tableSize; ++j) {
+                if(explosionEffects[i][j] != ExplosionType::NONE) {
+                    short translatedX = m_maxX - i;
+                    short translatedY = m_maxY - j;
+                    std::cout << "expl effect at: " << translatedX << " " << translatedY << std::endl;
+                    if(explosionEffects[i][j] == ExplosionType::DELETE) {
+                        m_positions.erase({ translatedX, translatedY });
+                    }
+                    else if(explosionEffects[i][j] == ExplosionType::HOLE) {
+                        m_positions.erase({ translatedX, translatedY });
+                        m_possiblePositions.erase({ translatedX, translatedY });
+                    }
+                    else if(explosionEffects[i][j] == ExplosionType::RETURN) {
+                        auto it = m_positions.find({ translatedX, translatedY });
+                        if (it != m_positions.end()) {
+                            if(!it->second.empty()) {
+                                auto& card = it->second.back();
+                                std::cout << ((card.GetColor() == BLUE) ? "blue " : "red ") << card.GetValue() << std::endl;
+                                returnCardToDeck(card);
+                                if(card.GetColor() == BLUE) {
+                                    m_playerBlue.AddCard(card);
+                                }
+                                else if(card.GetColor() == RED) {
+                                    m_playerRed.AddCard(card);
+                                }
 
-    for (short i = 0; i < n; ++i) {
-        for (short j = 0; j < n; ++j) {
-            short mapX = m_minX + i;
-            short mapY = m_minY + j;
-            auto it = m_positions.find({ mapX, mapY });
-            if (it != m_positions.end()) {
-                if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::RETURN) {
+                                m_positions.erase({ translatedX, translatedY });
+                            }
+                        }
+                    }
+                }
 
-                    if (!it->second.empty()) {
-                        auto& card = it->second.back();
-                        if (card.GetColor() == BLUE) {
-                            returnCardToDeck(card);
-                            m_playerBlue.AddCard(card);
-                        }
-                        else {
-                            returnCardToDeck(card);
-                            m_playerRed.AddCard(card);
-                        }
-                        it->second.pop_back();
-                    }
-                    std::cout << "returned card to hand\n";
-                    if (it->second.empty()) {
-                        m_possiblePositions.insert(it->first);
-                        m_positions.erase(it);
-                    }
-                    break;
-                }
-                else if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::DELETE) {
-                    std::cout << "removed card from game\n";
-                    if (!it->second.empty())
-                        it->second.pop_back();
-                    if (it->second.empty()) {
-                        m_possiblePositions.insert(it->first);
-                        m_positions.erase(it);
-                    }
-                    break;
-                }
-                else if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::HOLE) {
-                    while (!it->second.empty()) {
-                        it->second.pop_back();
-                    }
-                    m_holes.insert(it->first);
-                    m_possiblePositions.erase(it->first);
-                    m_positions.erase(it);
-                    std::cout << "hole\n";
-                    break;
-                }
             }
         }
-    }
-    m_exploded = true;
 }
 
 void GameBoard::updateBoardCenter() {
@@ -372,9 +304,6 @@ CardTexture * GameBoard::GetExplosionSprite(const int& offset) {
     return &this->m_explosionSprites[offset];
 }
 
-std::array<std::array<ExplosionType, 3>, 3> GameBoard::GetExplosionMask() {
-    return this->m_explosionMask;
-}
 
 CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
