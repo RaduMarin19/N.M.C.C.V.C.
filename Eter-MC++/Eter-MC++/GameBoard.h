@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <variant>
 #include <random>
+#include "ExplosionCard.h"
 
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 750
@@ -51,9 +52,18 @@ public:
     Player *getPlayerRed();
     Player *getPlayerBlue();
 
-    CardTexture *getBlueIllusionTexture();
     bool canUseExplosion();
-    CardTexture *getRedIllusionTexture();
+    bool didExplode() const;
+    bool validateExplosion();
+    void explode();
+    void updateBoardMask();
+    void printExplosionMask();
+    std::shared_ptr<CardTexture>& GetExplosionBoardTexture();
+    CardTexture* GetExplosionSprite(const int& offset);
+    std::array<std::array<ExplosionType, 3>, 3> GetExplosionMask();
+
+    std::shared_ptr<CardTexture>& getBlueIllusionTexture();
+    std::shared_ptr<CardTexture>& getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
     void rotateExplosionMask();
 
@@ -62,22 +72,13 @@ public:
     void setIsBluePlayer(bool player);
     bool isBluePlayer();
 
-    bool didExplode() const;
+    
     bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
-    void updateBoardMask();
-	bool validateExplosion();
-    void explode();
-
+    
 	void updateBoardCenter();
 
 	unsigned int getCenterX();
 	unsigned int getCenterY();
-
-    void printExplosionMask();
-
-	CardTexture *GetExplosionBoardTexture();
-	CardTexture *GetExplosionSprite(const int& offset);
-	std::array<std::array<ExplosionType, 3>, 3> GetExplosionMask();
 
     void clear();
 protected:
@@ -100,10 +101,10 @@ private:
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosionSprites;
-	CardTexture *m_explosionBoard;
 
-    CardTexture *m_blueCardIllusion;
-    CardTexture *m_redCardIllusion;
+	std::shared_ptr<CardTexture> m_explosionBoard;
+    std::shared_ptr<CardTexture> m_blueCardIllusion;
+    std::shared_ptr<CardTexture> m_redCardIllusion;
 
     bool m_isBluePlayer;
     bool m_exploded = false;

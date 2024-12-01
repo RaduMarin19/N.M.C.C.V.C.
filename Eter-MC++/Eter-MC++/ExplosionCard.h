@@ -3,6 +3,7 @@
 #include <random>
 #include <unordered_map>
 
+template<size_t tableSize=3>
 class ExplosionCard
 {
 public:
@@ -14,11 +15,11 @@ public:
 	
 	ExplosionCard(uint16_t tableSize);
 
-	std::unordered_map<std::pair<int, int>, ExplosionType, pair_hash>& getAffectedPos();
+	std::array<std::array<ExplosionType, tableSize>, tableSize>& GetExplosionMask() const;
 
 	short getAffectedPosCounter() const;
 
 private:
 	short m_affectedPosCounter;
-	std::unordered_map<std::pair<int, int>, ExplosionType, pair_hash> m_affectedPositions; /// hashing function doesn't work
+	std::array<std::array<ExplosionType, tableSize>, tableSize> m_explosionMask;
 };

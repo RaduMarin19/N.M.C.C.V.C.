@@ -355,7 +355,7 @@ void GameBoard::printExplosionMask() {
     }
 }
 
-CardTexture * GameBoard::GetExplosionBoardTexture() {
+std::shared_ptr<CardTexture>& GameBoard::GetExplosionBoardTexture() {
     return this->m_explosionBoard;
 }
 
@@ -738,11 +738,11 @@ Player *GameBoard::getPlayerBlue() {
     return &m_playerBlue;
 }
 
-CardTexture * GameBoard::getBlueIllusionTexture() {
+std::shared_ptr<CardTexture>& GameBoard::getBlueIllusionTexture() {
     return this->m_blueCardIllusion;
 }
 
-CardTexture * GameBoard::getRedIllusionTexture() {
+std::shared_ptr<CardTexture>& GameBoard::getRedIllusionTexture() {
     return this->m_redCardIllusion;
 
 }
@@ -793,7 +793,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
-    m_explosionBoard = new CardTexture(renderer, "Dependencies/textures/explosion_blank.jpg");
+    m_explosionBoard = std::make_shared<CardTexture>(renderer, "Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
@@ -805,8 +805,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
     
-    m_blueCardIllusion = new CardTexture(renderer,"Dependencies/textures/blue_back.jpg");
-    m_redCardIllusion = new CardTexture(renderer,"Dependencies/textures/red_back.jpg");
+    m_blueCardIllusion = std::make_shared<CardTexture>(renderer,"Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = std::make_shared<CardTexture>(renderer,"Dependencies/textures/red_back.jpg");
 #endif
 
 }
