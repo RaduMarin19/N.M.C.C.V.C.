@@ -513,7 +513,7 @@ bool GameBoard::canUseExplosion() {
             if (m_positions.find({ i,j }) != m_positions.end())
                 xCount++;
         }
-        if (xCount == 3)
+        if (xCount == m_tableSize)
             row++;
     }
     short column = 0;
@@ -524,7 +524,7 @@ bool GameBoard::canUseExplosion() {
             if (m_positions.find({ i,j }) != m_positions.end())
                 yCount++;
         }
-        if (yCount == 3)
+        if (yCount == m_tableSize)
             column++;
     }
     return row+column>1;
