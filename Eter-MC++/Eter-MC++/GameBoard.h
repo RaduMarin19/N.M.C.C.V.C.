@@ -80,6 +80,9 @@ public:
 	unsigned int getCenterX();
 	unsigned int getCenterY();
 
+	ExplosionCard* getExplosion();
+	void initializeExplosion();
+
     void clear();
 protected:
     GameMode m_gameMode;
@@ -110,6 +113,8 @@ private:
     bool m_exploded = false;
     std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
     std::array<std::array<uint8_t, 3>, 3> m_boardMask;
+
+	ExplosionCard* m_explosion = nullptr;
 
 	unsigned int m_centerX;
 	unsigned int m_centerY;

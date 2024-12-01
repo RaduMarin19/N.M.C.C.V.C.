@@ -3,7 +3,6 @@
 #include <random>
 #include <unordered_map>
 
-template<size_t tableSize=3>
 class ExplosionCard
 {
 public:
@@ -12,14 +11,17 @@ public:
 			return std::hash<int>()(key.first) ^ (std::hash<int>()(key.second) << 1);
 		}
 	};
-	
-	ExplosionCard(uint16_t tableSize);
 
-	std::array<std::array<ExplosionType, tableSize>, tableSize>& GetExplosionMask() const;
+	ExplosionCard(short tableSize);
+
+	void initializeExplosionCard();
+
+	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
 	short getAffectedPosCounter() const;
 
 private:
+	short m_tableSize;
 	short m_affectedPosCounter;
-	std::array<std::array<ExplosionType, tableSize>, tableSize> m_explosionMask;
+	std::vector<std::vector<ExplosionType>> m_explosionMask;
 };

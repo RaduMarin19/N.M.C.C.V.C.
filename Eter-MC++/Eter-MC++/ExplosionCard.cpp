@@ -1,8 +1,17 @@
 ﻿#include "ExplosionCard.h"
 
-template<size_t tableSize>
-ExplosionCard<tableSize>::ExplosionCard(uint16_t tableSize)
-{
+#include <iostream>
+#include <ostream>
+
+
+ExplosionCard::ExplosionCard(short tableSize) {
+	m_tableSize = tableSize;
+
+
+	this->m_explosionMask.resize(tableSize);
+	for (int i = 0; i < tableSize; i++)
+		this->m_explosionMask[i].resize(tableSize);
+
 	//here goes the logic to create the explosion mask
 	//std::random_device seed;  // Seed
 	//std::mt19937 gen(seed()); // Mersenne Twister engine
@@ -36,13 +45,25 @@ ExplosionCard<tableSize>::ExplosionCard(uint16_t tableSize)
 	//}
 }
 
-template<size_t tableSize>
-std::array<std::array<ExplosionType, tableSize>, tableSize>& ExplosionCard<tableSize>::GetExplosionMask() const {
+void ExplosionCard::initializeExplosionCard() {
+	unsigned short maxIndex = this->m_tableSize * this->m_tableSize;
+	unsigned short numberEffects = (rand() % 3) + 2;
+	std::cout << maxIndex << " " << numberEffects << std::endl;
+
+	for(int i = 0; i < numberEffects; i++) {
+		unsigned short chosenIndex = rand() % maxIndex;
+		unsigned short chosenLine = chosenIndex / this->m_tableSize;
+		unsigned short chosenColumn = chosenIndex % this->m_tableSize;
+		std::cout << chosenLine << " " << chosenColumn << std::endl;
+	}
+
+}
+
+const std::vector<std::vector<ExplosionType>>& ExplosionCard::GetExplosionMask() const {
 	return m_explosionMask;
 }
 
-template<size_t tableSize>
-short ExplosionCard<tableSize>::getAffectedPosCounter() const
+short ExplosionCard::getAffectedPosCounter() const
 {
 	return m_affectedPosCounter;
 }

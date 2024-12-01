@@ -1,7 +1,12 @@
 #include "GameLogic.h"
 
 void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentState, bool& drawThisFrame) {
-    
+
+    if(board.getExplosion() == nullptr) {
+        std::cout << "generating expl\n";
+        board.initializeExplosion();
+    }
+
     if (currentState == TOURNAMENT)
         return;
     
