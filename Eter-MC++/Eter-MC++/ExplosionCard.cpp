@@ -48,13 +48,22 @@ ExplosionCard::ExplosionCard(short tableSize) {
 void ExplosionCard::initializeExplosionCard() {
 	unsigned short maxIndex = this->m_tableSize * this->m_tableSize;
 	unsigned short numberEffects = (rand() % 3) + 2;
-	std::cout << maxIndex << " " << numberEffects << std::endl;
+
 
 	for(int i = 0; i < numberEffects; i++) {
 		unsigned short chosenIndex = rand() % maxIndex;
 		unsigned short chosenLine = chosenIndex / this->m_tableSize;
 		unsigned short chosenColumn = chosenIndex % this->m_tableSize;
-		std::cout << chosenLine << " " << chosenColumn << std::endl;
+
+		unsigned short chosenEffect = rand() % 100;
+		//effect likelyhood - 0-44 return, 44-89 delete, 90-99 hole;
+		if(chosenEffect < 45) {
+			this->m_explosionMask[chosenLine][chosenColumn] = ExplosionType::RETURN;
+		}
+		else if (chosenEffect < 90) {
+			this->m_explosionMask[chosenLine][chosenColumn] = ExplosionType::DELETE;
+		}
+		else this->m_explosionMask[chosenLine][chosenColumn] = ExplosionType::HOLE;
 	}
 
 }
@@ -62,6 +71,24 @@ void ExplosionCard::initializeExplosionCard() {
 const std::vector<std::vector<ExplosionType>>& ExplosionCard::GetExplosionMask() const {
 	return m_explosionMask;
 }
+
+void ExplosionCard::rotateExplosion() {
+	//consider a rotation to be 90 degrees clockwise
+
+	//Transposing the matrix
+	for(int i=0; i<m_tableSize; i++) {
+		for(int j=i+1; j<m_tableSize; j++)
+			std::swap(m_explosionMask[i][j], m_explosionMask[j][i]);
+	}
+
+	//Reversing each row of the matrix
+	for(int i=0; i<m_tableSize; i++) {
+		for(int j=0; j<m_tableSize/2; j++) {
+			std::swap(m_explosionMask[i][j], m_explosionMask[i][m_tableSize-j-1]);
+		}
+	}
+}
+
 
 short ExplosionCard::getAffectedPosCounter() const
 {

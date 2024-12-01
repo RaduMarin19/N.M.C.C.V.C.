@@ -16,6 +16,8 @@ public:
 
 	void initializeExplosionCard();
 
+	void rotateExplosion();
+
 	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
 	short getAffectedPosCounter() const;

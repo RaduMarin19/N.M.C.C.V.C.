@@ -199,7 +199,7 @@ void GameBoard::checkStatus(GameState &gameState) {
 }
 
 void GameBoard::rotateExplosionMask() {
-    int n = m_explosionMask.size();
+    int n = m_explosion->GetExplosionMask().size();
 
     for (int i = 0; i < n / 2; i++) {
 
@@ -207,7 +207,7 @@ void GameBoard::rotateExplosionMask() {
         for (int j = i; j < n - i - 1; j++) {
 
             // Swap elements in clockwise order
-            ExplosionType temp = m_explosionMask[i][j];
+            ExplosionType temp = m_explosion->GetExplosionMask()[i][j];
             m_explosionMask[i][j] = m_explosionMask[n - 1 - j][i];                 // Move P4 to P1
             m_explosionMask[n - 1 - j][i] = m_explosionMask[n - 1 - i][n - 1 - j]; // Move P3 to P4
             m_explosionMask[n - 1 - i][n - 1 - j] = m_explosionMask[j][n - 1 - i]; // Move P2 to P3
@@ -217,41 +217,41 @@ void GameBoard::rotateExplosionMask() {
 }
 
 void GameBoard::generateRandomExplosion() {
-        static bool generated = false;
-        if (!generated) {
-            short maxEffects = rand() % 3 + 2;
-            short numEffects = 0;
-
-            m_explosionMask.fill({ ExplosionType::NONE, ExplosionType::NONE, ExplosionType::NONE });
-
-            while (numEffects < maxEffects) {
-               short i = rand() % 3;
-               short j = rand() % 3;
-               bool generateExplosion = rand() % 2;
-                        if (generateExplosion) {
-                            ++numEffects;
-                            short explosionType = rand() % 21;
-                            if (explosionType < 10) {
-                                m_explosionMask[i][j] = ExplosionType::RETURN;
-                            }
-                            else if (explosionType > 10) {
-                                m_explosionMask[i][j] = ExplosionType::DELETE;
-                            }
-                            else {
-                                m_explosionMask[i][j] = ExplosionType::HOLE;
-                            }
-
-                            std::cout << "Generated explosion at (" << (m_minX + i) << ", " << (m_minY + j) << ")" << std::endl;
-                        }
-            }
-            generated = true;
-        }
+        // static bool generated = false;
+        // if (!generated) {
+        //     short maxEffects = rand() % 3 + 2;
+        //     short numEffects = 0;
+        //
+        //     m_explosionMask.fill({ ExplosionType::NONE, ExplosionType::NONE, ExplosionType::NONE });
+        //
+        //     while (numEffects < maxEffects) {
+        //        short i = rand() % 3;
+        //        short j = rand() % 3;
+        //        bool generateExplosion = rand() % 2;
+        //                 if (generateExplosion) {
+        //                     ++numEffects;
+        //                     short explosionType = rand() % 21;
+        //                     if (explosionType < 10) {
+        //                         m_explosionMask[i][j] = ExplosionType::RETURN;
+        //                     }
+        //                     else if (explosionType > 10) {
+        //                         m_explosionMask[i][j] = ExplosionType::DELETE;
+        //                     }
+        //                     else {
+        //                         m_explosionMask[i][j] = ExplosionType::HOLE;
+        //                     }
+        //
+        //                     std::cout << "Generated explosion at (" << (m_minX + i) << ", " << (m_minY + j) << ")" << std::endl;
+        //                 }
+        //     }
+        //     generated = true;
+        // }
 }
 
 
 void GameBoard::explode()
 {
-    short n = m_explosionMask.size();
+    short n = m_explosion->GetExplosionMask().size();
 
     for (short i = 0; i < n; ++i) {
         for (short j = 0; j < n; ++j) {
@@ -259,7 +259,7 @@ void GameBoard::explode()
             short mapY = m_minY + j;
             auto it = m_positions.find({ mapX, mapY });
             if (it != m_positions.end()) {
-                if (m_explosionMask[i][j] == ExplosionType::RETURN) {
+                if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::RETURN) {
 
                     if (!it->second.empty()) {
                         auto& card = it->second.back();
@@ -280,7 +280,7 @@ void GameBoard::explode()
                     }
                     break;
                 }
-                else if (m_explosionMask[i][j] == ExplosionType::DELETE) {
+                else if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::DELETE) {
                     std::cout << "removed card from game\n";
                     if (!it->second.empty())
                         it->second.pop_back();
@@ -290,7 +290,7 @@ void GameBoard::explode()
                     }
                     break;
                 }
-                else if (m_explosionMask[i][j] == ExplosionType::HOLE) {
+                else if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::HOLE) {
                     while (!it->second.empty()) {
                         it->second.pop_back();
                     }
@@ -340,14 +340,14 @@ void GameBoard::initializeExplosion() {
 }
 
 void GameBoard::printExplosionMask() {
-    short n = m_explosionMask.size();
+    short n = m_explosion->GetExplosionMask().size();
     for (short i = 0; i < n; ++i) {
         for (short j = 0; j < n; ++j) {
             short mapX = m_minX + i;
             short mapY = m_minY + j;
 
             std::cout << mapX << " " << mapY << " explosion: ";
-            switch (m_explosionMask[i][j]) {
+            switch (m_explosion->GetExplosionMask()[i][j]) {
             case ExplosionType::RETURN:
                 std::cout << "RETURN\n";
                 break;
@@ -891,7 +891,7 @@ bool GameBoard::validateExplosion()
     {
         for (int j = 0; j < 3; ++j)
         {
-            std::cout << (int)m_explosionMask[i][j] << " ";
+            std::cout << (int)m_explosion->GetExplosionMask()[i][j] << " ";
         }
         std::cout << std::endl;
     }
@@ -900,9 +900,9 @@ bool GameBoard::validateExplosion()
 
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-            if (m_explosionMask[i][j] != ExplosionType::NONE)
+            if (m_explosion->GetExplosionMask()[i][j] != ExplosionType::NONE)
             {
-                if (m_explosionMask[i][j] == ExplosionType::HOLE)
+                if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::HOLE)
                     explodedBoardMask[i][j] = 0;
 				else if (explodedBoardMask[i][j] > 0)
                     explodedBoardMask[i][j]--;

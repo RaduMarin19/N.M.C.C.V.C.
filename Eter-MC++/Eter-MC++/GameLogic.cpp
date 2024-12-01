@@ -2,11 +2,6 @@
 
 void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentState, bool& drawThisFrame) {
 
-    if(board.getExplosion() == nullptr) {
-        std::cout << "generating expl\n";
-        board.initializeExplosion();
-    }
-
     if (currentState == TOURNAMENT)
         return;
     
@@ -15,18 +10,25 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
     else
 		board.setTable(4);
 
+
+    if(board.getExplosion() == nullptr) {
+        std::cout << "generating expl\n";
+        board.initializeExplosion();
+    }
+
     if (currentState == TRAINING_MODE || currentState == MAGE_DUEL || currentState == ELEMENTAL_BATTLE)
     {
         if (board.canUseExplosion() && board.didExplode() == false) {
             static bool checkExplosion = false;
-            board.generateRandomExplosion();
+            //board.generateRandomExplosion();
 
             {
                 SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
                 painter.drawTexturedRect(explosionRect, board.GetExplosionBoardTexture()->getTexture());
-                auto explosionMask = board.GetExplosionMask();
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
+                auto explosion = board.getExplosion();
+                auto explosionMask = explosion->GetExplosionMask();
+                for (int i = 0; i < board.getTableSize(); i++) {
+                    for (int j = 0; j < board.getTableSize(); j++) {
                         SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
                         if (explosionMask[i][j] == ExplosionType::HOLE) {
                             painter.drawTexturedRect(spriteRect, board.GetExplosionSprite(2)->getTexture());
@@ -58,7 +60,7 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                         std::cout << "Explosion invalidates map!\n";
                 }
                 if (rotate) {
-                    board.rotateExplosionMask();
+                    board.getExplosion()->rotateExplosion();
                     std::cout << "----------------\n";
                     board.printExplosionMask();
                 }
