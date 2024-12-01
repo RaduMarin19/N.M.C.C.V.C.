@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <iostream>
 
 #include "MageType.h"
 #include "GameBoard.h"

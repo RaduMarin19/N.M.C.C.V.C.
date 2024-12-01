@@ -47,6 +47,7 @@ public:
     const std::unordered_set<Coordinates, Coordinates>& GetPossiblePositions();
     const std::vector<PlayingCard> GetPlayedCards() const;
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GetPlayedPositions();
+    std::unordered_set<Coordinates, Coordinates>& GetHoles();
 
     Player *getPlayerRed();
     Player *getPlayerBlue();

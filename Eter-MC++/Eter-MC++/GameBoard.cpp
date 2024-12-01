@@ -668,6 +668,11 @@ std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GameBoard
     return m_positions;
 }
 
+std::unordered_set<Coordinates, Coordinates>& GameBoard::GetHoles()
+{
+    return m_holes;
+}
+
 Player *GameBoard::getPlayerRed() {
     return &m_playerRed;
 }
