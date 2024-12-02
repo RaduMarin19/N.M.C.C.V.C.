@@ -49,6 +49,9 @@ void ExplosionCard::initializeExplosionCard() {
 	unsigned short maxIndex = this->m_tableSize * this->m_tableSize;
 	unsigned short numberEffects = (rand() % 3) + 2;
 
+	for (int i = 0; i < m_explosionMask.size(); ++i) {
+		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
+	}
 
 	for(int i = 0; i < numberEffects; i++) {
 		unsigned short chosenIndex = rand() % maxIndex;

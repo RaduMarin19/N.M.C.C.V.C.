@@ -213,6 +213,7 @@ void GameBoard::explode()
                     else if(explosionEffects[i][j] == ExplosionType::HOLE) {
                         m_positions.erase({ translatedX, translatedY });
                         m_possiblePositions.erase({ translatedX, translatedY });
+                        m_holes.insert({ translatedX,translatedY });
                     }
                     else if(explosionEffects[i][j] == ExplosionType::RETURN) {
                         auto it = m_positions.find({ translatedX, translatedY });
@@ -236,6 +237,8 @@ void GameBoard::explode()
 
             }
         }
+
+    m_exploded = true;
 }
 
 void GameBoard::updateBoardCenter() {
@@ -440,6 +443,9 @@ void GameBoard::clear() {
     m_minY = 0;
     m_maxY = 0;
     m_playerRed.reset();
+    m_explosion->initializeExplosionCard();
+    m_holes.clear();
+   
 }
 
 bool GameBoard::canUseExplosion() {
