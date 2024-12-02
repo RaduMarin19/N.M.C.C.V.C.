@@ -58,11 +58,11 @@ public:
     void explode();
     void updateBoardMask();
     void printExplosionMask();
-    std::shared_ptr<CardTexture>& GetExplosionBoardTexture();
+    std::unique_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
 
-    std::shared_ptr<CardTexture>& getBlueIllusionTexture();
-    std::shared_ptr<CardTexture>& getRedIllusionTexture();
+    std::unique_ptr<CardTexture>& getBlueIllusionTexture();
+    std::unique_ptr<CardTexture>& getRedIllusionTexture();
     void checkStatus(GameState& gameMode);
 
     void returnCardToDeck(PlayingCard& card);
@@ -103,9 +103,9 @@ private:
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosionSprites;
 
-	std::shared_ptr<CardTexture> m_explosionBoard;
-    std::shared_ptr<CardTexture> m_blueCardIllusion;
-    std::shared_ptr<CardTexture> m_redCardIllusion;
+	std::unique_ptr<CardTexture> m_explosionBoard;
+    std::unique_ptr<CardTexture> m_blueCardIllusion;
+    std::unique_ptr<CardTexture> m_redCardIllusion;
 
     bool m_isBluePlayer;
     bool m_exploded = false;
