@@ -141,10 +141,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameBoard.cpp" />
-    <ClCompile Include="GameModeElemental.cpp" />
-    <ClCompile Include="GameModeMageDuel.cpp" />
-    <ClCompile Include="GameModeTournament.cpp" />
-    <ClCompile Include="GameModeTraining.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayingCard.cpp" />
   </ItemGroup>
@@ -159,10 +155,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
     <ClInclude Include="GameLogic.h" />
-    <ClInclude Include="GameModeElemental.h" />
-    <ClInclude Include="GameModeMageDuel.h" />
-    <ClInclude Include="GameModeTournament.h" />
-    <ClInclude Include="GameModeTraining.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Mage.h" />
