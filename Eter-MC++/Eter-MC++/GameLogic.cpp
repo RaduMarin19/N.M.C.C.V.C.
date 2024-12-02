@@ -22,7 +22,7 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
             static bool checkExplosion = false;
 
             {
-                SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth, SCREEN_HEIGHT - 200, 128, 128 };
+                SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth*3, SCREEN_HEIGHT- 500, 128, 128 };
                 painter.drawTexturedRect(explosionRect, board.GetExplosionBoardTexture()->getTexture());
                 auto explosion = board.getExplosion();
                 auto explosionMask = explosion->GetExplosionMask();
