@@ -10,7 +10,7 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
     else
 		board.setTable(4);
 
-
+    board.updateBoardCenter();
     if(board.getExplosion() == nullptr) {
         std::cout << "generating expl\n";
         board.initializeExplosion();

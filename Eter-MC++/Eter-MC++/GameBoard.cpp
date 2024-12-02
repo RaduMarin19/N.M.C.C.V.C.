@@ -331,7 +331,6 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
         std::deque<PlayingCard> cards;
         cards.emplace_back(otherCard);
         m_positions.emplace(newCardCoords, cards);
-        updateBoardCenter();
     }
     //Otherwise just add to the existing stack
     else {
@@ -339,7 +338,6 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
             auto it = m_positions.find(newCardCoords); 
             if (it->second.back().GetValue() < otherCard.GetValue()) {
                 it->second.emplace_back(otherCard);
-                updateBoardCenter();
             }
             else if (it->second.back().isIllusion()) {
                 m_isBluePlayer = !m_isBluePlayer;
