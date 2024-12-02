@@ -116,6 +116,10 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                     board.getPlayerBlue()->removeCard(*board.getPlayerBlue()->GetGrabbedCard());
                 }
 
+                //returning cards to deck if they are moved
+                for (PlayingCard& card : board.getPlayerBlue()->GetCards()) {
+                    board.returnCardToDeck(card);
+                }
             }
             else if (board.getPlayerRed()->isGrabbingCard() && !painter.isPressingLeftClick()) {
                 PlayingCard pushCard = *board.getPlayerRed()->GetGrabbedCard();
@@ -142,6 +146,11 @@ void HandleBoardState(GameBoard& board, Graphics& painter, GameState& currentSta
                 }
                 else if (status == REMOVED) {
                     board.getPlayerRed()->removeCard(*board.getPlayerRed()->GetGrabbedCard());
+                }
+
+                //returning cards to deck if they are moved
+                for (PlayingCard& card : board.getPlayerRed()->GetCards()) {
+                    board.returnCardToDeck(card);
                 }
             }
         }
