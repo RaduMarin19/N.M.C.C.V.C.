@@ -177,7 +177,7 @@ void Game::HandleBoardState() {
                 SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
                 m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->getTexture());
                 auto explosion = m_board->getExplosion();
-                auto explosionMask = explosion->GetExplosionMask();
+                decltype(auto) explosionMask = explosion->GetExplosionMask();
                 for (int i = 0; i < m_board->getTableSize(); i++) {
                     for (int j = 0; j < m_board->getTableSize(); j++) {
                         SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
@@ -259,7 +259,7 @@ void Game::HandleBoardState() {
                                 card.second.back().SetIllussion(m_board->getPlayerBlue()->isPlayingIllusion());
                         m_board->getPlayerBlue()->SetHasPlayedIllusion();
                     }
-                    m_board->checkStatus(m_currentState);
+                    m_board->CheckStatus(m_currentState);
                 }
                 else if (status == IN_HAND) {
                     m_board->returnCardToDeck(*m_board->getPlayerBlue()->GetGrabbedCard());
@@ -291,7 +291,7 @@ void Game::HandleBoardState() {
                         m_board->getPlayerRed()->SetHasPlayedIllusion();
                     }
                     m_board->setIsBluePlayer(true);
-                    m_board->checkStatus(m_currentState);
+                    m_board->CheckStatus(m_currentState);
                 }
                 else if (status == IN_HAND) {
                     m_board->returnCardToDeck(*m_board->getPlayerRed()->GetGrabbedCard());

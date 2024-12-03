@@ -222,7 +222,7 @@ void GameBoard::CheckStatus(GameState &gameState) {
 
 void GameBoard::explode()
 {
-    auto explosionEffects = m_explosion->GetExplosionMask();
+    decltype(auto) explosionEffects = m_explosion->GetExplosionMask();
         for(int i = 0; i < m_tableSize; ++i) {
             for(int j = 0; j < m_tableSize; ++j) {
                 if(explosionEffects[i][j] != ExplosionType::NONE) {
@@ -677,7 +677,7 @@ const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePosit
 const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;
 
-    for(auto [k, v] : this->m_positions) {
+    for(auto& [k, v] : this->m_positions) {
         playingCards.emplace_back(v.back());
     }
     return playingCards;
