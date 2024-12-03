@@ -3,15 +3,18 @@
 #include <algorithm>
 #include <utility>
 
-Player::Player() {}
-
-Player::Player(std::vector<PlayingCard> cards)
-{
-	//Move semantics, do not create an unnecessary copy of the player deck
-	m_cards = std::move(cards);
+Player::Player() {
 	m_isGrabbingCard = false;
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
+	m_grabbedCard = nullptr;
+}
+
+Player::Player(std::vector<PlayingCard>&& cards) : m_cards(std::move(cards)) {
+	m_isGrabbingCard = false;
+	m_hasPlayedIllusion = false;
+	m_isPlayingIllusion = false;
+	m_grabbedCard = nullptr;
 }
 
 void Player::SetGrabbedCard(PlayingCard* grabbedCard)

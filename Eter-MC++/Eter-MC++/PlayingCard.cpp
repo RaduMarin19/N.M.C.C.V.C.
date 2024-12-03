@@ -4,12 +4,6 @@ PlayingCard::PlayingCard()
 {
 }
 
-PlayingCard::PlayingCard(Coordinates position, short value) :
-	Card{ position }, 
-	m_value{ value },
-	m_isIllusion{false}
-	{}
-
 PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color) :
 	Card{coord,texture,id},
 	m_value{value},

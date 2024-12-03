@@ -483,14 +483,14 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
                 PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
 
-                PlayingCardsBlue.emplace_back(cardBlue);
-                PlayingCardsRed.emplace_back(cardRed);
+                PlayingCardsBlue.emplace_back(std::move(cardBlue));
+                PlayingCardsRed.emplace_back(std::move(cardRed));
             }
         PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
-        PlayingCardsBlue.emplace_back(cardBlue);
+        PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
         PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
-        PlayingCardsRed.emplace_back(cardRed);
+        PlayingCardsRed.emplace_back(std::move(cardRed));
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
         unsigned int totalPadding = m_playerHandPadding * 2;
@@ -498,7 +498,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
         unsigned int currentCardOffset = 0;
 
-        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        //checking if space allocated allows leaving bottom space
         if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
             availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
         }
@@ -528,11 +528,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         }
 
         //Initialize the two players with the newly generated decks
-        Player playerBlue(PlayingCardsBlue);
-        this->m_playerBlue = playerBlue;
-
-        Player playerRed(PlayingCardsRed);
-        this->m_playerRed = playerRed;
+        this->m_playerBlue = Player(std::move(PlayingCardsBlue));
+        this->m_playerRed = Player(std::move(PlayingCardsRed));
     }
     else if (mode == GameMode::Elemental||mode==GameMode::MageDuel) {
 
@@ -545,8 +542,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             //Fill each deck with cards
             PlayingCard cardBlue({0, 0}, &m_blueCards[1], i, nextCardId(), BLUE);
             PlayingCard cardRed({0, 0}, &m_redCards[1], i, nextCardId(), RED);
-            PlayingCardsBlue.emplace_back(cardBlue);
-            PlayingCardsRed.emplace_back(cardRed);
+            PlayingCardsBlue.emplace_back(std::move(cardBlue));
+            PlayingCardsRed.emplace_back(std::move(cardRed));
         }
 
         for(int j = 0; j < 3; j++)
@@ -554,20 +551,20 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
                 //Fill each deck with cards
                 PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
                 PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
-                PlayingCardsBlue.emplace_back(cardBlue);
-                PlayingCardsRed.emplace_back(cardRed);
+                PlayingCardsBlue.emplace_back(std::move(cardBlue));
+                PlayingCardsRed.emplace_back(std::move(cardRed));
             }
         PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
-        PlayingCardsBlue.emplace_back(cardBlue);
+        PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
         PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
-        PlayingCardsRed.emplace_back(cardRed);
+        PlayingCardsRed.emplace_back(std::move(cardRed));
 
         PlayingCard cardBlueEter({0, 0}, &m_blueCards[0], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(cardBlueEter);
+        PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
         PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(cardRedEter);
+        PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
         unsigned int totalPadding = m_playerHandPadding * 2; 
@@ -575,7 +572,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size()+1;
         unsigned int currentCardOffset = 0; 
 
-        // Calculăm dacă spațiul alocat fiecărei cărți permite lăsarea spațiului de jos
+        ////checking if space allocated allows leaving bottom space
         if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
             availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size()+1;
         }
@@ -616,10 +613,10 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             int randomIndexBlue = distr(gen);
             int randomIndexRed = distr(gen);
             PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
-            PlayingCardsBlue.emplace_back(cardBlueSpell);
+            PlayingCardsBlue.emplace_back(std::move(cardBlueSpell));
 
             PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
-            PlayingCardsRed.emplace_back(cardRedSpell);
+            PlayingCardsRed.emplace_back(std::move(cardRedSpell));
         }
         // Distribuție uniformă 
 		else if (mode==GameMode::MageDuel)
@@ -629,18 +626,15 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             int randomIndexBlue = distr(gen);
             int randomIndexRed = distr(gen);
             PlayingCard cardBlueMage({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
-            PlayingCardsBlue.emplace_back(cardBlueMage);
+            PlayingCardsBlue.emplace_back(std::move(cardBlueMage));
 
             PlayingCard cardRedMage({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
-            PlayingCardsRed.emplace_back(cardRedMage);
+            PlayingCardsRed.emplace_back(std::move(cardRedMage));
         }
 
         //Initialize the two players with the newly generated decks
-        Player playerBlue(PlayingCardsBlue);
-        this->m_playerBlue = playerBlue;
-
-        Player playerRed(PlayingCardsRed);
-        this->m_playerRed = playerRed;
+        this->m_playerBlue = Player(std::move(PlayingCardsBlue));
+        this->m_playerRed = Player(std::move(PlayingCardsRed));
     }
     
 }

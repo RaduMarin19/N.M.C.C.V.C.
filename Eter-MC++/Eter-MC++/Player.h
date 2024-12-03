@@ -10,7 +10,9 @@ class Player
 {
 public:
 	Player();
-	Player(std::vector<PlayingCard> cards);
+	Player(std::vector<PlayingCard>&& cards);
+	Player(Player&&) = default;
+	Player& operator=(Player&&) = default;
 
 	void SetGrabbedCard(PlayingCard* grabbedCard);
 	void AddCard(const PlayingCard& card);

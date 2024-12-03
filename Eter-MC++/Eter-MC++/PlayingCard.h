@@ -8,7 +8,6 @@ class PlayingCard : public Card
 {
 public:
 	PlayingCard();
-	PlayingCard(Coordinates position, short value);
 	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short, Color);
 	PlayingCard(const PlayingCard&);
 
