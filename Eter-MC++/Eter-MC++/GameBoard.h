@@ -6,6 +6,8 @@
 #include "GameState.h"
 #include "CardStatus.h"
 #include "ExplosionType.h"
+#include "ExplosionCard.h"
+#include "config.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -13,13 +15,10 @@
 #include <array>
 #include <vector>
 #include <time.h>
+#include <iostream>
 #include <cstdlib>
 #include <variant>
 #include <random>
-#include "ExplosionCard.h"
-
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 750
 
 class GameBoard
 {

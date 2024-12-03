@@ -5,13 +5,16 @@
 #else 
 #define FONT_PATH   "../../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
 #endif
+
+#include "Coordinates.h"
+#include "PlayingCard.h"
+#include "config.h"
+
+#include<iostream>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <string>
 #include <cstring>
-#include "Coordinates.h"
-#include "Game.h"
-#include "PlayingCard.h"
 
 inline struct {
     std::string playerName;

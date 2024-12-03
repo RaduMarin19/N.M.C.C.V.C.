@@ -135,7 +135,6 @@
     <ClCompile Include="CardTexture.cpp" />
     <ClCompile Include="Coordinates.cpp" />
     <ClCompile Include="ExplosionCard.cpp" />
-    <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Mage.cpp" />
     <ClCompile Include="main.cpp" />
@@ -149,12 +148,12 @@
     <ClInclude Include="CardStatus.h" />
     <ClInclude Include="CardTexture.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="Coordinates.h" />
     <ClInclude Include="ExplosionCard.h" />
     <ClInclude Include="ExplosionType.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
-    <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Mage.h" />

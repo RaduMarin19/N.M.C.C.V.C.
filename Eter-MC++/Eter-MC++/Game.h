@@ -4,10 +4,12 @@
 #include "GameBoard.h"
 #include "GameState.h"
 #include "CardStatus.h"
+#include "Graphics.h"
+
 #include <iostream>
 #include <algorithm>
-
 #include <SDL.h>
+#include <memory>
 #include <vector>
 
 
@@ -21,9 +23,13 @@ public:
 	void SetGameState(GameState state);
 	GameState GetGameState() const;
 	void run();
-
 private:
+
 	GameState m_currentState = WELCOME_SCREEN;
+	std::unique_ptr<GameBoard> m_board=nullptr;
+	std::shared_ptr<Graphics> m_painter=nullptr;
+	bool m_drawThisFrame;
+
+	void HandleBoardState();
 
 };
-

@@ -1,5 +1,4 @@
 ﻿#include "GameBoard.h"
-#include <iostream>
 
 GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
 m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 }, m_explosion{nullptr} {

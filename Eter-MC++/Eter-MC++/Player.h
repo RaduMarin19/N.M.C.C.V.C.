@@ -1,9 +1,10 @@
 #pragma once
+#include "PlayingCard.h"
+
 #include <vector>
 #include <unordered_map>
 #include <memory>
 #include <stdexcept>
-#include "PlayingCard.h"
 
 class Player
 {

@@ -2,6 +2,7 @@
 #include "Coordinates.h"
 #include "CardTexture.h"
 #include "Color.h"
+
 class Card
 {
 public:
