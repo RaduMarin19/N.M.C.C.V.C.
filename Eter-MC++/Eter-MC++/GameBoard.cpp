@@ -31,170 +31,193 @@ void GameBoard::testPossiblePosition(short x, short y)
         this->m_possiblePositions.emplace(x, y);
 }
 
-void GameBoard::checkStatus(GameState &gameState) {
-        /// verify rows
-
-        for (int j = m_minY; j <= m_maxY; ++j)
-        {
-            short stateRow = 0;
-
-            for (int i = m_minX; i <= m_maxX; ++i)
-            {
-                if (m_positions.find({ i, j }) != m_positions.end())
-                {
-                    if (m_positions.find({ i, j })->second.back().GetColor() == RED)
-                    {
-                        stateRow++;
-                    }
-                    else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
-                    {
-                        stateRow--;
-                    }
-                }
-            }
-            if (stateRow == m_tableSize)
-            {
-                gameState = RED_PLAYER_WON;
-                return;
-            }
-            if (stateRow == -m_tableSize)
-            {
-                gameState = BLUE_PLAYER_WON;
-                return;
-            }
-        }
-
-        /// verify columns
+bool GameBoard::CheckRows(GameState& gameState) {
+    for (int j = m_minY; j <= m_maxY; ++j)
+    {
+        short stateRow = 0;
 
         for (int i = m_minX; i <= m_maxX; ++i)
         {
-            short stateCol = 0;
-
-            for (int j = m_minY; j <= m_maxY; ++j)
+            if (m_positions.find({ i, j }) != m_positions.end())
             {
-                if (m_positions.find({ i, j }) != m_positions.end())
+                if (m_positions.find({ i, j })->second.back().GetColor() == RED)
                 {
-                    if (m_positions.find({ i, j })->second.back().GetColor() == RED)
-                    {
-                        stateCol++;
-                    }
-                    else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
-                    {
-                        stateCol--;
-                    }
+                    stateRow++;
+                }
+                else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
+                {
+                    stateRow--;
                 }
             }
-            if (stateCol == m_tableSize)
-            {
-                gameState = RED_PLAYER_WON;
-                return;
-            }
-            if (stateCol == -m_tableSize)
-            {
-                gameState = BLUE_PLAYER_WON;
-                return;
-            }
         }
-
-        int indexI = m_minX;
-        int indexJ = m_minY;
-
-        bool redPlayerWon = true;
-        bool bluePlayerWon = true;
-
-        for (int i = 0; i < m_tableSize; ++i)
-        {
-            if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
-            {
-                if (m_positions.find({ indexI + i, indexJ + i })->second.back().GetColor() == BLUE)
-                    redPlayerWon = false;
-                else
-                    bluePlayerWon = false;
-            }
-            else
-            {
-                redPlayerWon = false;
-                bluePlayerWon = false;
-            }
-        }
-
-        if(redPlayerWon == true)
+        if (stateRow == m_tableSize)
         {
             gameState = RED_PLAYER_WON;
-            return;
+            return true;
         }
-        if (bluePlayerWon == true)
+        if (stateRow == -m_tableSize)
         {
             gameState = BLUE_PLAYER_WON;
-            return;
+            return true;
         }
+    }
+    return false;
+}
 
-        indexI = m_minX;
-        indexJ = m_maxY;
+bool GameBoard::CheckColumns(GameState& gameState)
+{
+    for (int i = m_minX; i <= m_maxX; ++i)
+    {
+        short stateCol = 0;
 
-        redPlayerWon = true;
-        bluePlayerWon = true;
-
-        for (int i = 0; i < m_tableSize; ++i)
+        for (int j = m_minY; j <= m_maxY; ++j)
         {
-            if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
+            if (m_positions.find({ i, j }) != m_positions.end())
             {
-                if (m_positions.find({ indexI + i, indexJ - i })->second.back().GetColor() == BLUE)
-                    redPlayerWon = false;
-                else
-                    bluePlayerWon = false;
-            }
-            else
-            {
-                redPlayerWon = false;
-                bluePlayerWon = false;
+                if (m_positions.find({ i, j })->second.back().GetColor() == RED)
+                {
+                    stateCol++;
+                }
+                else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
+                {
+                    stateCol--;
+                }
             }
         }
-
-        if (redPlayerWon == true)
+        if (stateCol == m_tableSize)
         {
             gameState = RED_PLAYER_WON;
-            return;
+            return true;
         }
-        if (bluePlayerWon == true)
+        if (stateCol == -m_tableSize)
         {
             gameState = BLUE_PLAYER_WON;
-            return;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool GameBoard::CheckDiagonals(GameState& gameState)
+{
+    int indexI = m_minX;
+    int indexJ = m_minY;
+
+    bool redPlayerWon = true;
+    bool bluePlayerWon = true;
+
+    for (int i = 0; i < m_tableSize; ++i)
+    {
+        if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
+        {
+            if (m_positions.find({ indexI + i, indexJ + i })->second.back().GetColor() == BLUE)
+                redPlayerWon = false;
+            else
+                bluePlayerWon = false;
+        }
+        else
+        {
+            redPlayerWon = false;
+            bluePlayerWon = false;
+        }
+    }
+
+    if (redPlayerWon == true)
+    {
+        gameState = RED_PLAYER_WON;
+        return true;
+    }
+    if (bluePlayerWon == true)
+    {
+        gameState = BLUE_PLAYER_WON;
+        return true;
+    }
+
+    indexI = m_minX;
+    indexJ = m_maxY;
+
+    redPlayerWon = true;
+    bluePlayerWon = true;
+
+    for (int i = 0; i < m_tableSize; ++i)
+    {
+        if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
+        {
+            if (m_positions.find({ indexI + i, indexJ - i })->second.back().GetColor() == BLUE)
+                redPlayerWon = false;
+            else
+                bluePlayerWon = false;
+        }
+        else
+        {
+            redPlayerWon = false;
+            bluePlayerWon = false;
+        }
+    }
+
+    if (redPlayerWon == true)
+    {
+        gameState = RED_PLAYER_WON;
+        return true;
+    }
+    if (bluePlayerWon == true)
+    {
+        gameState = BLUE_PLAYER_WON;
+        return true;
+    }
+    return false;
+}
+
+bool GameBoard::CheckScore(GameState& gameState) {
+    int blueScore = 0;
+    int redScore = 0;
+
+    //checking to see if the enemy has any more cards
+    if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
+        for (auto& [coords, cardStack] : m_positions) {
+            if (cardStack.back().GetColor() == BLUE) {
+                if (cardStack.back().isIllusion()) {
+                    blueScore += 1;
+                }
+                else blueScore += cardStack.back().GetValue();
+            }
+            if (cardStack.back().GetColor() == RED) {
+                if (cardStack.back().isIllusion()) {
+                    redScore += 1;
+                }
+                else redScore += cardStack.back().GetValue();
+            }
+        }
+        if (redScore > blueScore) {
+            gameState = RED_PLAYER_WON;
+            return true;
+        }
+        if (redScore < blueScore) {
+            gameState = BLUE_PLAYER_WON;
+            return true;
         }
 
-        int blueScore = 0;
-        int redScore = 0;
-
-        //checking to see if the enemy has any more cards
-        if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
-            for (auto& [coords, cardStack] : m_positions) {
-                if (cardStack.back().GetColor() == BLUE) {
-                    if (cardStack.back().isIllusion()) {
-                        blueScore += 1;
-                    }
-                    else blueScore += cardStack.back().GetValue();
-                }
-                if (cardStack.back().GetColor() == RED) {
-                    if (cardStack.back().isIllusion()) {
-                        redScore += 1;
-                    }
-                    else redScore += cardStack.back().GetValue();
-                }
-            }
-            if (redScore > blueScore) {
-                gameState = RED_PLAYER_WON;
-                return;
-            }
-            if (redScore < blueScore) {
-                gameState = BLUE_PLAYER_WON;
-                return;
-            }
-
-            if (redScore == blueScore) {
-                gameState = TIE;
-                return;
-            }
+        if (redScore == blueScore) {
+            gameState = TIE;
+            return true;
         }
+    }
+    return false;
+}
+
+void GameBoard::CheckStatus(GameState &gameState) {
+        
+    if (CheckRows(gameState))
+        return;
+
+    if (CheckColumns(gameState))
+        return;
+
+    if (CheckDiagonals(gameState))
+        return;
+
+    if (CheckScore(gameState))
+        return;
 }
 
 void GameBoard::explode()

@@ -62,7 +62,7 @@ public:
 
     std::unique_ptr<CardTexture>& getBlueIllusionTexture();
     std::unique_ptr<CardTexture>& getRedIllusionTexture();
-    void checkStatus(GameState& gameMode);
+    void CheckStatus(GameState& gameMode);
 
     void returnCardToDeck(PlayingCard& card);
 
@@ -118,4 +118,8 @@ private:
 
 
     void testPossiblePosition(short x, short y);
+    bool CheckRows(GameState& gameState);
+    bool CheckColumns(GameState& gameState);
+    bool CheckDiagonals(GameState& gameState);
+    bool CheckScore(GameState& gameState);
 };
