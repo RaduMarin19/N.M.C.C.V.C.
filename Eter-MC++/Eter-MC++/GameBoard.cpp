@@ -730,7 +730,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
-    m_explosionBoard = std::make_shared<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
+    m_explosionBoard = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 8; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
@@ -742,8 +742,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
-    m_blueCardIllusion = std::make_shared<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
-    m_redCardIllusion = std::make_shared<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
+    m_blueCardIllusion = std::make_unique<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = std::make_unique<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
 #else
     for (int i = 0; i < 5; i++) {

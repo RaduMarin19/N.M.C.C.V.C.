@@ -114,14 +114,6 @@ add_executable(N_M_C_C_V_C_
     Eter-MC++/Eter-MC++/Game.h
     Eter-MC++/Eter-MC++/GameBoard.cpp
     Eter-MC++/Eter-MC++/GameBoard.h
-    Eter-MC++/Eter-MC++/GameModeElemental.cpp
-    Eter-MC++/Eter-MC++/GameModeElemental.h
-    Eter-MC++/Eter-MC++/GameModeMageDuel.cpp
-    Eter-MC++/Eter-MC++/GameModeMageDuel.h
-    Eter-MC++/Eter-MC++/GameModeTournament.cpp
-    Eter-MC++/Eter-MC++/GameModeTournament.h
-    Eter-MC++/Eter-MC++/GameModeTraining.cpp
-    Eter-MC++/Eter-MC++/GameModeTraining.h
     Eter-MC++/Eter-MC++/main.cpp
     Eter-MC++/Eter-MC++/Player.cpp
     Eter-MC++/Eter-MC++/Player.h
@@ -135,7 +127,6 @@ add_executable(N_M_C_C_V_C_
         Eter-MC++/Eter-MC++/CardStatus.h
         Eter-MC++/Eter-MC++/ExplosionCard.cpp
         Eter-MC++/Eter-MC++/ExplosionCard.h
-        Eter-MC++/Eter-MC++/ExplosionType.h
-        Eter-MC++/Eter-MC++/GameLogic.cpp)
+        Eter-MC++/Eter-MC++/ExplosionType.h)
 
 target_link_libraries(N_M_C_C_V_C_ ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRAY} SDL2_ttf::SDL2_ttf -lSDL2_image)
