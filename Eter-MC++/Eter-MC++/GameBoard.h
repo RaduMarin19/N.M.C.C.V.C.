@@ -67,15 +67,15 @@ public:
     void returnCardToDeck(PlayingCard& card);
 
     void setIsBluePlayer(bool player);
-    bool isBluePlayer();
+    bool isBluePlayer() const;
 
     
     bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
     
 	void updateBoardCenter();
 
-	unsigned int getCenterX();
-	unsigned int getCenterY();
+	unsigned int getCenterX() const;
+	unsigned int getCenterY() const;
 
 	ExplosionCard* getExplosion();
 	void initializeExplosion();

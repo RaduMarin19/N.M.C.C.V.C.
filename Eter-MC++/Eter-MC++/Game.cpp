@@ -231,7 +231,7 @@ void Game::HandleBoardState() {
     }
     //Draw the board, with the possible positions and played cards;
     for (const auto& possiblePosition : m_board->GetPossiblePositions()) {
-        SDL_Rect renderRect;
+        SDL_Rect renderRect{};
         renderRect.x = m_board->getCenterX() - (possiblePosition.GetX() * textureWidth);
         renderRect.y = m_board->getCenterY() - (possiblePosition.GetY() * textureHeight);
         renderRect.w = textureWidth;
@@ -332,7 +332,7 @@ void Game::HandleBoardState() {
     //Iterate each players' cards and draw them onto the screen
     //This is where all the in game logic will go
     for (auto& card : m_board->getPlayerBlue()->GetCards()) {
-        SDL_Rect cardRect;
+        SDL_Rect cardRect{};
         cardRect.x = card.GetCoordinates().GetX();
         cardRect.y = card.GetCoordinates().GetY();
         cardRect.w = textureWidth;
@@ -362,7 +362,7 @@ void Game::HandleBoardState() {
         }
     }
     for (auto& card : m_board->getPlayerRed()->GetCards()) {
-        SDL_Rect cardRect;
+        SDL_Rect cardRect{};
         cardRect.x = card.GetCoordinates().GetX();
         cardRect.y = card.GetCoordinates().GetY();
         cardRect.w = textureWidth;

@@ -279,11 +279,11 @@ void GameBoard::updateBoardCenter() {
     }
 }
 
-unsigned int GameBoard::getCenterX() {
+unsigned int GameBoard::getCenterX() const {
     return this->m_centerX;
 }
 
-unsigned int GameBoard::getCenterY() {
+unsigned int GameBoard::getCenterY() const{
     return this->m_centerY;
 }
 
@@ -782,7 +782,7 @@ void GameBoard::setIsBluePlayer(bool player) {
     this->m_isBluePlayer = player;
 }
 
-bool GameBoard::isBluePlayer() {
+bool GameBoard::isBluePlayer() const {
     return this->m_isBluePlayer;
 }
 
