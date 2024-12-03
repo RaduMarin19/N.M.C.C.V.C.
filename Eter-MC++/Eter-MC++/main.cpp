@@ -1,6 +1,5 @@
 #include "Game.h"
 
-
 int main(int argc, char* argv[])
 {
 	//Initialize main game object
