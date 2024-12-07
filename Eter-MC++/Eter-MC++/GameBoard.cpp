@@ -710,15 +710,7 @@ std::unique_ptr<CardTexture>& GameBoard::getRedIllusionTexture() {
 
 }
 
-GameBoard::GameBoard(SDL_Renderer* renderer)
-{
-    //First possible position will always be 0,0
-    this->m_possiblePositions.emplace(0, 0);
-
-    this->m_centerX = SCREEN_WIDTH / 2 - textureWidth / 2;
-    this->m_centerY = SCREEN_HEIGHT / 2 - textureHeight / 2;
-
-    //Load all card textures into memory
+void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 #if defined linux
     for (int i = 0; i < 5; i++) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
@@ -742,8 +734,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
-    m_blueCardIllusion = std::make_unique<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
-    m_redCardIllusion = std::make_unique<CardTexture>(renderer,"../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
+    m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
 #else
     for (int i = 0; i < 5; i++) {
@@ -767,11 +759,22 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
         m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
-    
-    m_blueCardIllusion = std::make_unique<CardTexture>(renderer,"Dependencies/textures/blue_back.jpg");
-    m_redCardIllusion = std::make_unique<CardTexture>(renderer,"Dependencies/textures/red_back.jpg");
-#endif
 
+    m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = std::make_unique<CardTexture>(renderer, "Dependencies/textures/red_back.jpg");
+#endif
+}
+
+GameBoard::GameBoard(SDL_Renderer* renderer)
+{
+    //First possible position will always be 0,0
+    this->m_possiblePositions.emplace(0, 0);
+
+    this->m_centerX = SCREEN_WIDTH / 2 - textureWidth / 2;
+    this->m_centerY = SCREEN_HEIGHT / 2 - textureHeight / 2;
+    //Load all card textures into memory
+
+    LoadTextures(renderer);
 }
 
 unsigned short GameBoard::nextCardId() {

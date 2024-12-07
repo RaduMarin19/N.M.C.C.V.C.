@@ -69,7 +69,6 @@ public:
     void setIsBluePlayer(bool player);
     bool isBluePlayer() const;
 
-    
     bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
     
 	void updateBoardCenter();
@@ -116,10 +115,11 @@ private:
 	unsigned int m_centerX;
 	unsigned int m_centerY;
 
-
     void testPossiblePosition(short x, short y);
     bool CheckRows(GameState& gameState);
     bool CheckColumns(GameState& gameState);
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
+
+    void LoadTextures(SDL_Renderer* renderer);
 };

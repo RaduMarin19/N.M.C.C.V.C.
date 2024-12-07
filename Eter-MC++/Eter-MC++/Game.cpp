@@ -152,6 +152,42 @@ void Game::run() {
     }
 }
 
+void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+    PlayingCard* pushCard = player.GetGrabbedCard();
+    pushCard->SetBoardPosition(possiblePosition);
+    pushCard->SetCoordinates({ renderRect.x, renderRect.y });
+    if (player.HasPlayedIllusion() == false && player.isPlayingIllusion()) {
+        pushCard->SetIllussion(true);
+        player.SetHasPlayedIllusion();
+    }
+
+    CardStatus status = m_board->pushNewCard(*pushCard);
+
+    if (status == ON_BOARD) {
+        player.removeCard(*pushCard);
+        m_board->setIsBluePlayer(!m_board->isBluePlayer());
+        if (pushCard->isIllusion())
+        {
+            for (auto& card : m_board->GetPlayedPositions())
+                if (card.second.back() == *pushCard)
+                    card.second.back().SetIllussion(player.isPlayingIllusion());
+           player.SetHasPlayedIllusion();
+        }
+        m_board->CheckStatus(m_currentState);
+    }
+    else if (status == IN_HAND) {
+        m_board->returnCardToDeck(*pushCard);
+    }
+    else if (status == REMOVED) {
+       player.removeCard(*pushCard);
+    }
+
+    //returning cards to deck if they are moved
+    for (PlayingCard& card : player.GetCards()) {
+        m_board->returnCardToDeck(card);
+    }
+}
+
 void Game::HandleBoardState() {
 
     if (m_currentState == TOURNAMENT)
@@ -241,69 +277,10 @@ void Game::HandleBoardState() {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
             if (m_board->isBluePlayer() && m_board->getPlayerBlue()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
-                PlayingCard pushCard = *m_board->getPlayerBlue()->GetGrabbedCard();
-                pushCard.SetBoardPosition(possiblePosition);
-                pushCard.SetCoordinates({ renderRect.x, renderRect.y });
-                if (m_board->getPlayerBlue()->HasPlayedIllusion() == false && m_board->getPlayerBlue()->isPlayingIllusion())
-                    pushCard.SetIllussion(true);
-
-                CardStatus status = m_board->pushNewCard(pushCard);
-
-                if (status == ON_BOARD) {
-                    m_board->getPlayerBlue()->removeCard(*m_board->getPlayerBlue()->GetGrabbedCard());
-                    m_board->setIsBluePlayer(false);
-                    if (pushCard.isIllusion())
-                    {
-                        for (auto& card : m_board->GetPlayedPositions())
-                            if (card.second.back() == pushCard)
-                                card.second.back().SetIllussion(m_board->getPlayerBlue()->isPlayingIllusion());
-                        m_board->getPlayerBlue()->SetHasPlayedIllusion();
-                    }
-                    m_board->CheckStatus(m_currentState);
-                }
-                else if (status == IN_HAND) {
-                    m_board->returnCardToDeck(*m_board->getPlayerBlue()->GetGrabbedCard());
-                }
-                else if (status == REMOVED) {
-                    m_board->getPlayerBlue()->removeCard(*m_board->getPlayerBlue()->GetGrabbedCard());
-                }
-
-                //returning cards to deck if they are moved
-                for (PlayingCard& card : m_board->getPlayerBlue()->GetCards()) {
-                    m_board->returnCardToDeck(card);
-                }
+                PlayerTurn(*m_board->getPlayerBlue(),renderRect,possiblePosition);
             }
             else if (m_board->getPlayerRed()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
-                PlayingCard pushCard = *m_board->getPlayerRed()->GetGrabbedCard();
-                pushCard.SetBoardPosition(possiblePosition);
-                pushCard.SetCoordinates({ renderRect.x, renderRect.y });
-                if (m_board->getPlayerRed()->HasPlayedIllusion() == false && m_board->getPlayerRed()->isPlayingIllusion())
-                    pushCard.SetIllussion(true);
-
-                CardStatus status = m_board->pushNewCard(pushCard);
-
-                if (status == ON_BOARD) {
-                    m_board->getPlayerRed()->removeCard(*m_board->getPlayerRed()->GetGrabbedCard());
-                    if (pushCard.isIllusion()) {
-                        for (auto& card : m_board->GetPlayedPositions())
-                            if (card.second.back() == pushCard)
-                                card.second.back().SetIllussion(m_board->getPlayerRed()->isPlayingIllusion());
-                        m_board->getPlayerRed()->SetHasPlayedIllusion();
-                    }
-                    m_board->setIsBluePlayer(true);
-                    m_board->CheckStatus(m_currentState);
-                }
-                else if (status == IN_HAND) {
-                    m_board->returnCardToDeck(*m_board->getPlayerRed()->GetGrabbedCard());
-                }
-                else if (status == REMOVED) {
-                    m_board->getPlayerRed()->removeCard(*m_board->getPlayerRed()->GetGrabbedCard());
-                }
-
-                //returning cards to deck if they are moved
-                for (PlayingCard& card : m_board->getPlayerRed()->GetCards()) {
-                    m_board->returnCardToDeck(card);
-                }
+                PlayerTurn(*m_board->getPlayerRed(), renderRect, possiblePosition);
             }
         }
         else {

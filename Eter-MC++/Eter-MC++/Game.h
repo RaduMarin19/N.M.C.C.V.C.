@@ -31,5 +31,5 @@ private:
 	bool m_drawThisFrame;
 
 	void HandleBoardState();
-
+	void PlayerTurn(Player& player,SDL_Rect& rect,const Coordinates& possiblePosition);
 };
