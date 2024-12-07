@@ -18,16 +18,21 @@
 class Game
 {
 public:
-	Game();
+	
+	static Game& GetInstance();
 
 	void SetGameState(GameState state);
 	GameState GetGameState() const;
 	void run();
+
 private:
 
+	Game();
+	static Game gameInstance;
+
 	GameState m_currentState = WELCOME_SCREEN;
-	std::unique_ptr<GameBoard> m_board=nullptr;
-	std::shared_ptr<Graphics> m_painter=nullptr;
+	std::unique_ptr<GameBoard> m_board = nullptr;
+	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
 
 	void HandleBoardState();

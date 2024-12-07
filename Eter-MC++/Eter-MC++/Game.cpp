@@ -1,11 +1,17 @@
 ﻿#include "Game.h"
 
+Game Game::gameInstance;
+
 Game::Game()
     : m_currentState(WELCOME_SCREEN) {
-    m_painter = std::make_shared<Graphics>();
+    m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
 }
 
+Game& Game::GetInstance()
+{
+    return gameInstance;
+}
 
 void Game::SetGameState(GameState state)
 {
