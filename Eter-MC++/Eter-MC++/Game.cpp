@@ -1,4 +1,5 @@
 ﻿#include "Game.h"
+#include <thread>
 
 Game Game::gameInstance;
 
@@ -137,6 +138,7 @@ void Game::run() {
                     drawThisFrame = true;
                     m_painter->resetGameModes();
                     m_board->clear();
+                    m_explosionTurn = false;
                 }
             }
             
@@ -171,7 +173,6 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
 
     if (status == ON_BOARD) {
         player.removeCard(*pushCard);
-        m_board->setIsBluePlayer(!m_board->isBluePlayer());
         if (pushCard->isIllusion())
         {
             for (auto& card : m_board->GetPlayedPositions())
@@ -180,6 +181,12 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
            player.SetHasPlayedIllusion();
         }
         m_board->CheckStatus(m_currentState);
+        if (m_board->canUseExplosion()) {
+            m_explosionTurn = true;
+        }
+        else{
+            m_board->setIsBluePlayer(!m_board->isBluePlayer());
+        }
     }
     else if (status == IN_HAND) {
         m_board->returnCardToDeck(*pushCard);
@@ -193,69 +200,6 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
         m_board->returnCardToDeck(card);
     }
 }
-
-void Game::ExplosionTurn(){
-    static bool checkExplosion = false;
-    static bool keepTurn = true;
-
-    if (keepTurn) {
-        m_board->setIsBluePlayer(!m_board->isBluePlayer());
-        keepTurn = false;
-    }
-
-    bool dontExplode = false;
-    m_painter->drawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t explode!", 14);
-
-    if (dontExplode) {
-        m_board->setIsBluePlayer(!m_board->isBluePlayer());
-        return;
-    }
-
-    if (!checkExplosion) {
-        m_painter->drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
-    }
-    if (checkExplosion) {
-        {
-            SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
-            m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->getTexture());
-            auto explosion = m_board->getExplosion();
-            decltype(auto) explosionMask = explosion->GetExplosionMask();
-            for (int i = 0; i < m_board->getTableSize(); i++) {
-                for (int j = 0; j < m_board->getTableSize(); j++) {
-                    SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
-                    if (explosionMask[i][j] == ExplosionType::HOLE) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->getTexture());
-                    }
-                    else if (explosionMask[i][j] == ExplosionType::DELETE) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->getTexture());
-                    }
-                    else if (explosionMask[i][j] == ExplosionType::RETURN) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->getTexture());
-                    }
-                }
-
-            }
-        }
-        m_drawThisFrame = false;
-        bool exploded = false;
-        m_painter->drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
-        bool rotate = false;
-        m_painter->drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
-        
-        if (exploded) {
-            //if (board.validateExplosion())
-            m_board->explode();
-            //else
-            //   std::cout << "Explosion invalidates map!\n";
-        }
-        if (rotate) {
-            m_board->getExplosion()->rotateExplosion();
-            std::cout << "----------------\n";
-            m_board->printExplosionMask();
-        }
-    }
-}
-
 
 void Game::HandleBoardState() {
 
@@ -273,14 +217,7 @@ void Game::HandleBoardState() {
         m_board->initializeExplosion();
     }
 
-    if (m_currentState == TRAINING_MODE || m_currentState == MAGE_DUEL || m_currentState == ELEMENTAL_BATTLE)
-    {
-        if (m_board->canUseExplosion())
-            ExplosionTurn();    
-    }
-
     // Common logic for all modes
-
 
     //drawing the play illusion buttons
     if (m_board->getPlayerBlue()->HasPlayedIllusion() == false && m_board->isBluePlayer()) {
@@ -298,6 +235,13 @@ void Game::HandleBoardState() {
     //This is where all the in game logic will go
     DrawPlayersCards(m_board->getPlayerBlue(), m_board->isBluePlayer());
     DrawPlayersCards(m_board->getPlayerRed(), !m_board->isBluePlayer());
+
+    if (m_explosionTurn){
+        if (ExplosionTurn() == true) {
+            m_explosionTurn = false;
+            m_board->setIsBluePlayer(!m_board->isBluePlayer());
+        }
+    }
 
     if (!m_painter->isPressingLeftClick() && (m_board->getPlayerRed()->isGrabbingCard() || m_board->getPlayerBlue()->isGrabbingCard())) {
         //std::cout << "Player stopped grabbing a card\n";
@@ -347,31 +291,38 @@ void Game::DrawBoard() {
     }
 }
 
+void Game::HandleCardMovement(Player* player,PlayingCard& card) {
+    SDL_Rect cardRect{};
+    cardRect.x = card.GetCoordinates().GetX();
+    cardRect.y = card.GetCoordinates().GetY();
+    cardRect.w = textureWidth;
+    cardRect.h = textureHeight;
+    if (m_painter->isMouseInRect(cardRect)) {
+        SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
+        SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
+        if (m_painter->isPressingLeftClick() && !player->isGrabbingCard()) {
+            player->SetIsGrabbingCard(true);
+            player->SetGrabbedCard(&card);
+        }
+        if (player->isGrabbingCard()) {
+            if (player->GetGrabbedCard()->GetId() == card.GetId()) {
+                //std::cout << "Player blue is grabbing a card\n";
+                Coordinates mousePos = m_painter->getMousePos();
+                mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
+                mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
+                card.SetCoordinates(mousePos);
+            }
+        }
+    }
+}
+
 void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
     for (auto& card : player->GetCards()) {
-        SDL_Rect cardRect{};
-        cardRect.x = card.GetCoordinates().GetX();
-        cardRect.y = card.GetCoordinates().GetY();
-        cardRect.w = textureWidth;
-        cardRect.h = textureHeight;
+        
         if (isPlayersTurn) {
             m_painter->drawCard(card, card.GetTexture()->getTexture());
-            if (m_painter->isMouseInRect(cardRect)) {
-                SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
-                SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
-                if (m_painter->isPressingLeftClick() && !player->isGrabbingCard()) {
-                    player->SetIsGrabbingCard(true);
-                    player->SetGrabbedCard(&card);
-                }
-                if (player->isGrabbingCard()) {
-                    if (player->GetGrabbedCard()->GetId() == card.GetId()) {
-                        //std::cout << "Player blue is grabbing a card\n";
-                        Coordinates mousePos = m_painter->getMousePos();
-                        mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
-                        mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
-                        card.SetCoordinates(mousePos);
-                    }
-                }
+            if (!m_explosionTurn) {
+                HandleCardMovement(player, card);
             }
         }
         else {
@@ -380,3 +331,60 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
     }
 }
 
+bool Game::ExplosionTurn(){
+    static bool checkExplosion = false;
+    bool dontExplode = false;
+    m_painter->drawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t explode!", 14);
+
+    if (dontExplode) {
+        checkExplosion = false;
+        return true;
+    }
+
+    if (!checkExplosion) {
+        m_painter->drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
+    }
+    if (checkExplosion) {
+        {
+            SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
+            m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->getTexture());
+            auto explosion = m_board->getExplosion();
+            decltype(auto) explosionMask = explosion->GetExplosionMask();
+            for (int i = 0; i < m_board->getTableSize(); i++) {
+                for (int j = 0; j < m_board->getTableSize(); j++) {
+                    SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
+                    if (explosionMask[i][j] == ExplosionType::HOLE) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->getTexture());
+                    }
+                    else if (explosionMask[i][j] == ExplosionType::DELETE) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->getTexture());
+                    }
+                    else if (explosionMask[i][j] == ExplosionType::RETURN) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->getTexture());
+                    }
+                }
+
+            }
+        }
+        m_drawThisFrame = false;
+        bool exploded = false;
+        m_painter->drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+        static bool rotate = false;
+        m_painter->drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
+        
+        if (exploded) {
+            //if (board.validateExplosion())
+            m_board->explode();
+            //else
+            //   std::cout << "Explosion invalidates map!\n";
+            return true;
+        }
+        if (rotate) {
+            m_board->getExplosion()->rotateExplosion();
+            std::cout << "----------------\n";
+            m_board->printExplosionMask();
+            rotate = false;
+        }
+    }
+    return false;
+}

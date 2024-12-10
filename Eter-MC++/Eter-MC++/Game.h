@@ -34,11 +34,13 @@ private:
 	std::unique_ptr<GameBoard> m_board = nullptr;
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
+	bool m_explosionTurn = false;
 
 	void DrawPlayersCards(Player* player,bool isPlayersTurn);
 	void DrawBoard();
 
 	void HandleBoardState();
+	void HandleCardMovement(Player* player, PlayingCard& card);
 	void PlayerTurn(Player& player,SDL_Rect& rect,const Coordinates& possiblePosition);
-	void ExplosionTurn();
+	bool ExplosionTurn();
 };
