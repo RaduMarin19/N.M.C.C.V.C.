@@ -1,17 +1,15 @@
 ﻿#include "Game.h"
 #include <thread>
 
-Game Game::gameInstance;
-
 Game::Game()
     : m_currentState(WELCOME_SCREEN) {
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
-    m_board->initializeExplosion();
 }
 
 Game& Game::GetInstance()
 {
+    static Game gameInstance;
     return gameInstance;
 }
 

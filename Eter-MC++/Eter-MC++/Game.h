@@ -28,7 +28,6 @@ public:
 private:
 
 	Game();
-	static Game gameInstance;
 
 	GameState m_currentState = WELCOME_SCREEN;
 	std::unique_ptr<GameBoard> m_board = nullptr;

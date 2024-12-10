@@ -32,7 +32,6 @@ public:
         QuickMode
     };
 
-    GameBoard();
     CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
 	short getTableSize() const;

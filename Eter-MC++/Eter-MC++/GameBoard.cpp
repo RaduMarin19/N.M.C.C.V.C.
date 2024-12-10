@@ -1,10 +1,5 @@
 ﻿#include "GameBoard.h"
 
-GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
-m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 }{
-    //this constructor doesnt get called ???
-}
-
 void GameBoard::testPossiblePosition(short x, short y)
 {
     //If the board is at it's max size and our point is outside the bounds then it is not valid
@@ -783,6 +778,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     //Load all card textures into memory
 
     LoadTextures(renderer);
+    initializeExplosion();
 }
 
 unsigned short GameBoard::nextCardId() {
