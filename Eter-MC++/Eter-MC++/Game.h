@@ -35,6 +35,10 @@ private:
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
 
+	void DrawPlayersCards(Player* player,bool isPlayersTurn);
+	void DrawBoard();
+
 	void HandleBoardState();
 	void PlayerTurn(Player& player,SDL_Rect& rect,const Coordinates& possiblePosition);
+	void ExplosionTurn();
 };

@@ -18,6 +18,6 @@ public:
 
 private:
 	SDL_Rect m_rect;
-	SDL_Texture* m_texture;
+	SDL_Texture* m_texture=nullptr;
 };
 

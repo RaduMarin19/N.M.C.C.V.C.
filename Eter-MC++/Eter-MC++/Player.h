@@ -14,6 +14,9 @@ public:
 	Player(Player&&) = default;
 	Player& operator=(Player&&) = default;
 
+	void SetIllusionTexture(std::shared_ptr<CardTexture> texture);
+	const CardTexture& GetIllusionTexture() const;
+
 	void SetGrabbedCard(PlayingCard* grabbedCard);
 	void AddCard(const PlayingCard& card);
 	void removeCard(const PlayingCard& card);
@@ -28,6 +31,8 @@ public:
 
 private:
 	std::vector<PlayingCard> m_cards;
+	std::shared_ptr<CardTexture> m_cardIllusion;
+
 	PlayingCard *m_grabbedCard;
 	bool m_isPlayingIllusion;
 	bool m_isGrabbingCard;

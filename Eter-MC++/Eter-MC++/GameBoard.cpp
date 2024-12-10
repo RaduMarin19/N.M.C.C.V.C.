@@ -469,6 +469,9 @@ void GameBoard::clear() {
 }
 
 bool GameBoard::canUseExplosion() {
+    if (m_exploded)
+        return false;
+
     short row = 0;
     short xCount = 0;
     for (int i = m_minX; i <= m_maxX; i++) {
@@ -553,6 +556,9 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         //Initialize the two players with the newly generated decks
         this->m_playerBlue = Player(std::move(PlayingCardsBlue));
         this->m_playerRed = Player(std::move(PlayingCardsRed));
+
+        m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
+        m_playerRed.SetIllusionTexture(m_redCardIllusion);
     }
     else if (mode == GameMode::Elemental||mode==GameMode::MageDuel) {
 
@@ -658,6 +664,8 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         //Initialize the two players with the newly generated decks
         this->m_playerBlue = Player(std::move(PlayingCardsBlue));
         this->m_playerRed = Player(std::move(PlayingCardsRed));
+        m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
+        m_playerRed.SetIllusionTexture(m_redCardIllusion);
     }
     
 }
@@ -701,12 +709,12 @@ Player *GameBoard::getPlayerBlue() {
     return &m_playerBlue;
 }
 
-std::unique_ptr<CardTexture>& GameBoard::getBlueIllusionTexture() {
-    return this->m_blueCardIllusion;
+const CardTexture& GameBoard::getBlueIllusionTexture() const {
+    return *m_blueCardIllusion;
 }
 
-std::unique_ptr<CardTexture>& GameBoard::getRedIllusionTexture() {
-    return this->m_redCardIllusion;
+const CardTexture& GameBoard::getRedIllusionTexture() const {
+    return *m_redCardIllusion;
 
 }
 
@@ -760,8 +768,8 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
         m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
-    m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");
-    m_redCardIllusion = std::make_unique<CardTexture>(renderer, "Dependencies/textures/red_back.jpg");
+    m_blueCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");
+    m_redCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/red_back.jpg");
 #endif
 }
 

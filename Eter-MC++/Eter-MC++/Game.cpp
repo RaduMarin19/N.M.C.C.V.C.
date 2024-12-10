@@ -194,6 +194,69 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
     }
 }
 
+void Game::ExplosionTurn(){
+    static bool checkExplosion = false;
+    static bool keepTurn = true;
+
+    if (keepTurn) {
+        m_board->setIsBluePlayer(!m_board->isBluePlayer());
+        keepTurn = false;
+    }
+
+    bool dontExplode = false;
+    m_painter->drawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t explode!", 14);
+
+    if (dontExplode) {
+        m_board->setIsBluePlayer(!m_board->isBluePlayer());
+        return;
+    }
+
+    if (!checkExplosion) {
+        m_painter->drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
+    }
+    if (checkExplosion) {
+        {
+            SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
+            m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->getTexture());
+            auto explosion = m_board->getExplosion();
+            decltype(auto) explosionMask = explosion->GetExplosionMask();
+            for (int i = 0; i < m_board->getTableSize(); i++) {
+                for (int j = 0; j < m_board->getTableSize(); j++) {
+                    SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
+                    if (explosionMask[i][j] == ExplosionType::HOLE) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->getTexture());
+                    }
+                    else if (explosionMask[i][j] == ExplosionType::DELETE) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->getTexture());
+                    }
+                    else if (explosionMask[i][j] == ExplosionType::RETURN) {
+                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->getTexture());
+                    }
+                }
+
+            }
+        }
+        m_drawThisFrame = false;
+        bool exploded = false;
+        m_painter->drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+        bool rotate = false;
+        m_painter->drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
+        
+        if (exploded) {
+            //if (board.validateExplosion())
+            m_board->explode();
+            //else
+            //   std::cout << "Explosion invalidates map!\n";
+        }
+        if (rotate) {
+            m_board->getExplosion()->rotateExplosion();
+            std::cout << "----------------\n";
+            m_board->printExplosionMask();
+        }
+    }
+}
+
+
 void Game::HandleBoardState() {
 
     if (m_currentState == TOURNAMENT)
@@ -212,66 +275,38 @@ void Game::HandleBoardState() {
 
     if (m_currentState == TRAINING_MODE || m_currentState == MAGE_DUEL || m_currentState == ELEMENTAL_BATTLE)
     {
-        if (m_board->canUseExplosion() && m_board->didExplode() == false) {
-            static bool checkExplosion = false;
-
-            {
-                SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
-                m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->getTexture());
-                auto explosion = m_board->getExplosion();
-                decltype(auto) explosionMask = explosion->GetExplosionMask();
-                for (int i = 0; i < m_board->getTableSize(); i++) {
-                    for (int j = 0; j < m_board->getTableSize(); j++) {
-                        SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
-                        if (explosionMask[i][j] == ExplosionType::HOLE) {
-                            m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->getTexture());
-                        }
-                        else if (explosionMask[i][j] == ExplosionType::DELETE) {
-                            m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->getTexture());
-                        }
-                        else if (explosionMask[i][j] == ExplosionType::RETURN) {
-                            m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->getTexture());
-                        }
-                    }
-
-                }
-            }
-
-            if (!checkExplosion) {
-                m_painter->drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
-            }
-            if (checkExplosion) {
-                m_drawThisFrame = false;
-                bool exploded = false;
-                m_painter->drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
-                bool rotate = false;
-                m_painter->drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
-                if (exploded) {
-                    //if (board.validateExplosion())
-                    m_board->explode();
-                    //else
-                    //   std::cout << "Explosion invalidates map!\n";
-                }
-                if (rotate) {
-                    m_board->getExplosion()->rotateExplosion();
-                    std::cout << "----------------\n";
-                    m_board->printExplosionMask();
-                }
-            }
-        }
+        if (m_board->canUseExplosion())
+            ExplosionTurn();    
     }
 
     // Common logic for all modes
 
+
+    //drawing the play illusion buttons
     if (m_board->getPlayerBlue()->HasPlayedIllusion() == false && m_board->isBluePlayer()) {
         m_painter->drawButton(m_board->getPlayerBlue()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
     }
 
     if (m_board->getPlayerRed()->HasPlayedIllusion() == false && !m_board->isBluePlayer()) {
         m_painter->drawButton(m_board->getPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
-
     }
+
     //Draw the board, with the possible positions and played cards;
+    DrawBoard();
+
+    //Iterate each players' cards and draw them onto the screen
+    //This is where all the in game logic will go
+    DrawPlayersCards(m_board->getPlayerBlue(), m_board->isBluePlayer());
+    DrawPlayersCards(m_board->getPlayerRed(), !m_board->isBluePlayer());
+
+    if (!m_painter->isPressingLeftClick() && (m_board->getPlayerRed()->isGrabbingCard() || m_board->getPlayerBlue()->isGrabbingCard())) {
+        //std::cout << "Player stopped grabbing a card\n";
+        m_board->getPlayerRed()->SetIsGrabbingCard(false);
+        m_board->getPlayerBlue()->SetIsGrabbingCard(false);
+    }
+}
+
+void Game::DrawBoard() {
     for (const auto& possiblePosition : m_board->GetPossiblePositions()) {
         SDL_Rect renderRect{};
         renderRect.x = m_board->getCenterX() - (possiblePosition.GetX() * textureWidth);
@@ -283,7 +318,7 @@ void Game::HandleBoardState() {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
             if (m_board->isBluePlayer() && m_board->getPlayerBlue()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
-                PlayerTurn(*m_board->getPlayerBlue(),renderRect,possiblePosition);
+                PlayerTurn(*m_board->getPlayerBlue(), renderRect, possiblePosition);
             }
             else if (m_board->getPlayerRed()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
                 PlayerTurn(*m_board->getPlayerRed(), renderRect, possiblePosition);
@@ -293,17 +328,16 @@ void Game::HandleBoardState() {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 255, 255);
         }
         SDL_RenderDrawRect(m_painter->GetRenderer(), &renderRect);
-
     }
 
     for (const auto& cards = m_board->GetPlayedCards(); const auto & card : cards) {
         if (card.isIllusion())
         {
             if (card.GetColor() == BLUE)
-                m_painter->drawCard(card, m_board->getBlueIllusionTexture()->getTexture());
+                m_painter->drawCard(card, m_board->getPlayerBlue()->GetIllusionTexture().getTexture());
             else if (card.GetColor() == RED)
             {
-                m_painter->drawCard(card, m_board->getRedIllusionTexture()->getTexture());
+                m_painter->drawCard(card, m_board->getPlayerRed()->GetIllusionTexture().getTexture());
             }
         }
         else
@@ -311,26 +345,26 @@ void Game::HandleBoardState() {
             m_painter->drawCard(card, card.GetTexture()->getTexture());
         }
     }
+}
 
-    //Iterate each players' cards and draw them onto the screen
-    //This is where all the in game logic will go
-    for (auto& card : m_board->getPlayerBlue()->GetCards()) {
+void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
+    for (auto& card : player->GetCards()) {
         SDL_Rect cardRect{};
         cardRect.x = card.GetCoordinates().GetX();
         cardRect.y = card.GetCoordinates().GetY();
         cardRect.w = textureWidth;
         cardRect.h = textureHeight;
-        if (m_board->isBluePlayer()) {
+        if (isPlayersTurn) {
             m_painter->drawCard(card, card.GetTexture()->getTexture());
             if (m_painter->isMouseInRect(cardRect)) {
                 SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
                 SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
-                if (m_painter->isPressingLeftClick() && !m_board->getPlayerBlue()->isGrabbingCard()) {
-                    m_board->getPlayerBlue()->SetIsGrabbingCard(true);
-                    m_board->getPlayerBlue()->SetGrabbedCard(&card);
+                if (m_painter->isPressingLeftClick() && !player->isGrabbingCard()) {
+                    player->SetIsGrabbingCard(true);
+                    player->SetGrabbedCard(&card);
                 }
-                if (m_board->getPlayerBlue()->isGrabbingCard()) {
-                    if (m_board->getPlayerBlue()->GetGrabbedCard()->GetId() == card.GetId()) {
+                if (player->isGrabbingCard()) {
+                    if (player->GetGrabbedCard()->GetId() == card.GetId()) {
                         //std::cout << "Player blue is grabbing a card\n";
                         Coordinates mousePos = m_painter->getMousePos();
                         mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
@@ -341,44 +375,8 @@ void Game::HandleBoardState() {
             }
         }
         else {
-            m_painter->drawCard(card, m_board->getBlueIllusionTexture()->getTexture());
+            m_painter->drawCard(card, player->GetIllusionTexture().getTexture());
         }
-    }
-    for (auto& card : m_board->getPlayerRed()->GetCards()) {
-        SDL_Rect cardRect{};
-        cardRect.x = card.GetCoordinates().GetX();
-        cardRect.y = card.GetCoordinates().GetY();
-        cardRect.w = textureWidth;
-        cardRect.h = textureHeight;
-        if (!m_board->isBluePlayer()) {
-            m_painter->drawCard(card, card.GetTexture()->getTexture());
-            if (m_painter->isMouseInRect(cardRect)) {
-                SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
-                SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
-
-                if (m_painter->isPressingLeftClick() && !m_board->getPlayerRed()->isGrabbingCard()) {
-                    m_board->getPlayerRed()->SetIsGrabbingCard(true);
-                    m_board->getPlayerRed()->SetGrabbedCard(&card);
-                }
-                if (m_board->getPlayerRed()->isGrabbingCard()) {
-                    if (m_board->getPlayerRed()->GetGrabbedCard()->GetId() == card.GetId()) {
-                        //std::cout << "Player red is grabbing a card\n";
-                        Coordinates mousePos = m_painter->getMousePos();
-                        mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
-                        mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
-                        card.SetCoordinates(mousePos);
-                    }
-                }
-            }
-        }
-        else {
-            m_painter->drawCard(card, m_board->getRedIllusionTexture()->getTexture());
-        }
-    }
-    if (!m_painter->isPressingLeftClick() && (m_board->getPlayerRed()->isGrabbingCard() || m_board->getPlayerBlue()->isGrabbingCard())) {
-        //std::cout << "Player stopped grabbing a card\n";
-        m_board->getPlayerRed()->SetIsGrabbingCard(false);
-        m_board->getPlayerBlue()->SetIsGrabbingCard(false);
     }
 }
 

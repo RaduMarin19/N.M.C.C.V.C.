@@ -60,8 +60,8 @@ public:
     std::unique_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
 
-    std::unique_ptr<CardTexture>& getBlueIllusionTexture();
-    std::unique_ptr<CardTexture>& getRedIllusionTexture();
+    const CardTexture& getBlueIllusionTexture() const;
+    const CardTexture& getRedIllusionTexture() const;
     void CheckStatus(GameState& gameMode);
 
     void returnCardToDeck(PlayingCard& card);
@@ -102,8 +102,8 @@ private:
     std::vector<CardTexture> m_explosionSprites;
 
 	std::unique_ptr<CardTexture> m_explosionBoard;
-    std::unique_ptr<CardTexture> m_blueCardIllusion;
-    std::unique_ptr<CardTexture> m_redCardIllusion;
+    std::shared_ptr<CardTexture> m_blueCardIllusion;
+    std::shared_ptr<CardTexture> m_redCardIllusion;
 
     bool m_isBluePlayer;
     bool m_exploded = false;

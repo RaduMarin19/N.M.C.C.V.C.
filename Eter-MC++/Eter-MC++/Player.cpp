@@ -17,6 +17,16 @@ Player::Player(std::vector<PlayingCard>&& cards) : m_cards(std::move(cards)) {
 	m_grabbedCard = nullptr;
 }
 
+void Player::SetIllusionTexture(std::shared_ptr<CardTexture> texture)
+{
+	m_cardIllusion = texture;
+}
+
+const CardTexture& Player::GetIllusionTexture() const
+{
+	return *m_cardIllusion;
+}
+
 void Player::SetGrabbedCard(PlayingCard* grabbedCard)
 {
 	m_grabbedCard = grabbedCard;
