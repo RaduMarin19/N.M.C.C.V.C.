@@ -7,6 +7,7 @@ Game::Game()
     : m_currentState(WELCOME_SCREEN) {
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
+    m_board->initializeExplosion();
 }
 
 Game& Game::GetInstance()
@@ -212,10 +213,6 @@ void Game::HandleBoardState() {
         m_board->setTable(4);
 
     m_board->updateBoardCenter();
-    if (m_board->getExplosion() == nullptr) {
-        std::cout << "generating expl\n";
-        m_board->initializeExplosion();
-    }
 
     // Common logic for all modes
 

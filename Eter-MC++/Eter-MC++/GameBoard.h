@@ -110,7 +110,7 @@ private:
     std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
     std::array<std::array<uint8_t, 3>, 3> m_boardMask;
 
-	ExplosionCard* m_explosion = nullptr;
+	std::unique_ptr<ExplosionCard> m_explosion;
 
 	unsigned int m_centerX;
 	unsigned int m_centerY;

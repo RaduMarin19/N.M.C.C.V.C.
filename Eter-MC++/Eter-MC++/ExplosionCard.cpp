@@ -46,19 +46,19 @@ ExplosionCard::ExplosionCard(short tableSize) {
 }
 
 void ExplosionCard::initializeExplosionCard() {
-	unsigned short maxIndex = this->m_tableSize * this->m_tableSize;
-	unsigned short numberEffects = (rand() % 3) + 2;
+	unsigned short maxIndex = this->m_tableSize * this->m_tableSize-1;
+	unsigned short numberEffects = Random::Get(2,4);
 
 	for (int i = 0; i < m_explosionMask.size(); ++i) {
 		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
 	}
 
 	for(int i = 0; i < numberEffects; i++) {
-		unsigned short chosenIndex = rand() % maxIndex;
+		unsigned short chosenIndex = Random::Get(0, maxIndex);
 		unsigned short chosenLine = chosenIndex / this->m_tableSize;
 		unsigned short chosenColumn = chosenIndex % this->m_tableSize;
 
-		unsigned short chosenEffect = rand() % 100;
+		unsigned short chosenEffect = Random::Get(0, 99);
 		//effect likelyhood - 0-44 return, 44-89 delete, 90-99 hole;
 		if(chosenEffect < 45) {
 			this->m_explosionMask[chosenLine][chosenColumn] = ExplosionType::RETURN;

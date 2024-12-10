@@ -1,8 +1,8 @@
 ﻿#include "GameBoard.h"
 
 GameBoard::GameBoard() : m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 }, m_positions{}, m_possiblePositions{},
-m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 }, m_explosion{nullptr} {
-    m_explosion = nullptr;
+m_blueCards{ 0 }, m_redCards{ 0 }, m_explosionSprites{ 0 }{
+    //this constructor doesnt get called ???
 }
 
 void GameBoard::testPossiblePosition(short x, short y)
@@ -288,11 +288,11 @@ unsigned int GameBoard::getCenterY() const{
 }
 
 ExplosionCard* GameBoard::getExplosion() {
-    return m_explosion;
+    return m_explosion.get();
 }
 
 void GameBoard::initializeExplosion() {
-    m_explosion = new ExplosionCard(m_tableSize);
+    m_explosion = std::make_unique<ExplosionCard>(m_tableSize);
     m_explosion->initializeExplosionCard();
 }
 

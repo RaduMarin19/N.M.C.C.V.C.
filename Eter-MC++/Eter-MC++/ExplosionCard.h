@@ -1,6 +1,6 @@
 #include "ExplosionType.h"
+#include "Random.h"
 
-#include <random>
 #include <unordered_map>
 
 class ExplosionCard
