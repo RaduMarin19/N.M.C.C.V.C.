@@ -11,19 +11,17 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <list>
 #include <stack>
 #include <array>
 #include <vector>
-#include <time.h>
 #include <iostream>
 #include <cstdlib>
-#include <variant>
-#include <random>
 
 class GameBoard
 {
 public:
-	enum GameMode : short
+    enum GameMode : short
     {
         Training,
         MageDuel,
@@ -34,10 +32,10 @@ public:
 
     CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
-	short getTableSize() const;
-	void setGameMode(const GameMode& mode);
+    short getTableSize() const;
+    void setGameMode(const GameMode& mode);
     void generatePlayerCards(const GameMode& mode);
-	GameBoard(SDL_Renderer* renderer);
+    GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
 
@@ -47,8 +45,8 @@ public:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GetPlayedPositions();
     std::unordered_set<Coordinates, Coordinates>& GetHoles();
 
-    Player *getPlayerRed();
-    Player *getPlayerBlue();
+    Player* getPlayerRed();
+    Player* getPlayerBlue();
 
     bool canUseExplosion();
     bool didExplode() const;
@@ -69,29 +67,32 @@ public:
     bool isBluePlayer() const;
 
     bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
-    
-	void updateBoardCenter();
 
-	unsigned int getCenterX() const;
-	unsigned int getCenterY() const;
+    void updateBoardCenter();
 
-	ExplosionCard* getExplosion();
-	void initializeExplosion();
+    unsigned int getCenterX() const;
+    unsigned int getCenterY() const;
+
+    ExplosionCard* getExplosion();
+    void initializeExplosion();
 
     void clear();
 protected:
     GameMode m_gameMode;
 
 private:
-	unsigned short m_cardId{ 0 };
+    unsigned short m_cardId{ 0 };
     short m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 };
     short m_tableSize{ 3 }; // it varies between 3 and 4 depending on game mode
 
-	static const unsigned int m_playerHandPadding {30};
+    static const unsigned int m_playerHandPadding{ 30 };
 
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates> m_positions;
     std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates> m_holes;
+
+    std::list<PlayingCard> m_blueRemovedCards;
+    std::list<PlayingCard> m_redRemovedCards;
 
     Player m_playerBlue;
     Player m_playerRed;
@@ -100,7 +101,7 @@ private:
     std::vector<CardTexture> m_redCards;
     std::vector<CardTexture> m_explosionSprites;
 
-	std::unique_ptr<CardTexture> m_explosionBoard;
+    std::unique_ptr<CardTexture> m_explosionBoard;
     std::shared_ptr<CardTexture> m_blueCardIllusion;
     std::shared_ptr<CardTexture> m_redCardIllusion;
 
@@ -109,16 +110,20 @@ private:
     std::array<std::array<ExplosionType, 3>, 3> m_explosionMask;
     std::array<std::array<uint8_t, 3>, 3> m_boardMask;
 
-	std::unique_ptr<ExplosionCard> m_explosion;
+    std::unique_ptr<ExplosionCard> m_explosion;
 
-	unsigned int m_centerX;
-	unsigned int m_centerY;
+    unsigned int m_centerX;
+    unsigned int m_centerY;
 
     void testPossiblePosition(short x, short y);
     bool CheckRows(GameState& gameState);
     bool CheckColumns(GameState& gameState);
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
+
+    void DeleteCardAtPosition(const Coordinates& boardPosition);
+    void CreateHoleAtPosition(const Coordinates& boardPosition);
+    void ReturnCardAtPosition(const Coordinates& boardPosition);
 
     void LoadTextures(SDL_Renderer* renderer);
 };

@@ -10,7 +10,7 @@ void GameBoard::testPossiblePosition(short x, short y)
         }
     }
 
-    if (m_holes.find({ x,y }) != m_holes.end()){
+    if (m_holes.find({ x,y }) != m_holes.end()) {
         return;  //cannot add a hole as a possible position
     }
 
@@ -200,8 +200,8 @@ bool GameBoard::CheckScore(GameState& gameState) {
     return false;
 }
 
-void GameBoard::CheckStatus(GameState &gameState) {
-        
+void GameBoard::CheckStatus(GameState& gameState) {
+
     if (CheckRows(gameState))
         return;
 
@@ -215,45 +215,82 @@ void GameBoard::CheckStatus(GameState &gameState) {
         return;
 }
 
+void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
+    if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
+    {
+        PlayingCard& card = m_positions[boardPosition].back();
+        card.SetIllussion(false);    //if its a illusion it loses the property
+        if (card.GetColor() == BLUE)
+            m_blueRemovedCards.emplace_back(std::move(card));           //put the card in the deleted stack of each respective player
+        else
+            m_redRemovedCards.emplace_back(std::move(card));
+        m_positions[boardPosition].pop_back();
+        if (m_positions[boardPosition].size() == 0)
+            m_positions.erase(boardPosition);           //if there isnt any card in the deque anymore then remove the position
+    }
+}
+
+void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
+    if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
+    {
+        m_positions[boardPosition].back().SetIllussion(false);
+
+        for (PlayingCard& card : m_positions[boardPosition]) {
+            if (card.GetColor() == BLUE)
+                m_blueRemovedCards.emplace_back(std::move(card));           //put the card in the deleted stack of each respective player
+            else
+                m_redRemovedCards.emplace_back(std::move(card));
+        }
+
+        m_positions.erase(boardPosition);
+        m_possiblePositions.erase(boardPosition);
+        m_holes.insert(boardPosition);
+    }
+}
+
+void GameBoard::ReturnCardAtPosition(const Coordinates& boardPosition) {
+    auto it = m_positions.find(boardPosition);
+    if (it != m_positions.end()) {
+        if (!it->second.empty()) {
+            PlayingCard& card = it->second.back();
+            returnCardToDeck(card);
+            if (card.GetColor() == BLUE) {
+                m_playerBlue.AddCard(card);
+            }                                   //adding the card to the hand of the respective player
+            else if (card.GetColor() == RED) {
+                m_playerRed.AddCard(card);
+            }
+
+            m_positions[boardPosition].pop_back();
+            if (m_positions[boardPosition].size() == 0)      //if there isnt any card in the deque anymore then remove the position
+                m_positions.erase(boardPosition);
+        }
+    }
+}
+
 void GameBoard::explode()
 {
     decltype(auto) explosionEffects = m_explosion->GetExplosionMask();
-        for(int i = 0; i < m_tableSize; ++i) {
-            for(int j = 0; j < m_tableSize; ++j) {
-                if(explosionEffects[i][j] != ExplosionType::NONE) {
-                    short translatedX = m_maxX - i;
-                    short translatedY = m_maxY - j;
-                    std::cout << "expl effect at: " << translatedX << " " << translatedY << std::endl;
-                    if(explosionEffects[i][j] == ExplosionType::DELETE) {
-                        m_positions.erase({ translatedX, translatedY });
-                    }
-                    else if(explosionEffects[i][j] == ExplosionType::HOLE) {
-                        m_positions.erase({ translatedX, translatedY });
-                        m_possiblePositions.erase({ translatedX, translatedY });
-                        m_holes.insert({ translatedX,translatedY });
-                    }
-                    else if(explosionEffects[i][j] == ExplosionType::RETURN) {
-                        auto it = m_positions.find({ translatedX, translatedY });
-                        if (it != m_positions.end()) {
-                            if(!it->second.empty()) {
-                                auto& card = it->second.back();
-                                std::cout << ((card.GetColor() == BLUE) ? "blue " : "red ") << card.GetValue() << std::endl;
-                                returnCardToDeck(card);
-                                if(card.GetColor() == BLUE) {
-                                    m_playerBlue.AddCard(card);
-                                }
-                                else if(card.GetColor() == RED) {
-                                    m_playerRed.AddCard(card);
-                                }
-
-                                m_positions.erase({ translatedX, translatedY });
-                            }
-                        }
-                    }
+    for (int i = 0; i < m_tableSize; ++i) {
+        for (int j = 0; j < m_tableSize; ++j) {
+            if (explosionEffects[i][j] != ExplosionType::NONE) {
+                short translatedX = m_maxX - i;
+                short translatedY = m_maxY - j;
+                Coordinates position{ translatedX,translatedY };
+                std::cout << "expl effect at: " << translatedX << " " << translatedY << std::endl;
+                if (explosionEffects[i][j] == ExplosionType::DELETE) {
+                    DeleteCardAtPosition(position);
                 }
-
+                else if (explosionEffects[i][j] == ExplosionType::HOLE) {
+                    CreateHoleAtPosition(position);
+                }
+                else if (explosionEffects[i][j] == ExplosionType::RETURN) {
+                    ReturnCardAtPosition(position);
+                }
             }
+
         }
+    }
 
     m_exploded = true;
 }
@@ -261,16 +298,16 @@ void GameBoard::explode()
 void GameBoard::updateBoardCenter() {
 
     //Difference between max and min on each axis (how large is the board and in which direction it spans)
-    unsigned int offsetX = (m_maxX + m_minX)*-1;
-    unsigned int offsetY = (m_maxY + m_minY)*-1;
+    unsigned int offsetX = (m_maxX + m_minX) * -1;
+    unsigned int offsetY = (m_maxY + m_minY) * -1;
     //Offset the center by the needed amount so the middle square is always at WIDTH,HEIGHT/2
-    m_centerX = (SCREEN_WIDTH / 2 - textureWidth / 2) - ( (textureWidth / 2) * offsetX);
-    m_centerY = (SCREEN_HEIGHT / 2 - textureHeight / 2) - ( (textureHeight / 2) * offsetY);
+    m_centerX = (SCREEN_WIDTH / 2 - textureWidth / 2) - ((textureWidth / 2) * offsetX);
+    m_centerY = (SCREEN_HEIGHT / 2 - textureHeight / 2) - ((textureHeight / 2) * offsetY);
 
     //Also shift all played cards by said amount
     for (auto& [pos, cards] : m_positions) {
         auto& card = cards.back();
-        card.SetCoordinates({static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight)});
+        card.SetCoordinates({ static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight) });
     }
 }
 
@@ -278,7 +315,7 @@ unsigned int GameBoard::getCenterX() const {
     return this->m_centerX;
 }
 
-unsigned int GameBoard::getCenterY() const{
+unsigned int GameBoard::getCenterY() const {
     return this->m_centerY;
 }
 
@@ -320,14 +357,14 @@ std::unique_ptr<CardTexture>& GameBoard::GetExplosionBoardTexture() {
     return this->m_explosionBoard;
 }
 
-CardTexture * GameBoard::GetExplosionSprite(const int& offset) {
+CardTexture* GameBoard::GetExplosionSprite(const int& offset) {
     return &this->m_explosionSprites[offset];
 }
 
 
 CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
 {
-	Coordinates newCardCoords = otherCard.GetBoardPosition();
+    Coordinates newCardCoords = otherCard.GetBoardPosition();
 
 
     //Update minimum and maximum board coordinates
@@ -352,7 +389,7 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
     //Otherwise just add to the existing stack
     else {
         if (!otherCard.isIllusion()) { //if a card is a illusion you cannot add it to an existing stack
-            auto it = m_positions.find(newCardCoords); 
+            auto it = m_positions.find(newCardCoords);
             if (it->second.back().GetValue() < otherCard.GetValue()) {
                 it->second.emplace_back(otherCard);
             }
@@ -370,15 +407,15 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
         << newCardCoords.GetX() << ", "
         << newCardCoords.GetY() << ")" << std::endl;
 
-        //Check horizontally for new possible positions
+    //Check horizontally for new possible positions
     this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
     this->testPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
 
-	    //Check vertically for new possible positions
+    //Check vertically for new possible positions
     this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() - 1);
     this->testPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() + 1);
 
-	    //Check diagonally for new possible positions
+    //Check diagonally for new possible positions
     this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() - 1);
     this->testPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() + 1);
 
@@ -392,7 +429,7 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
         auto it = this->m_possiblePositions.begin();
         while (it != this->m_possiblePositions.end()) {
 
-           
+
             if (it->GetX() < this->m_minX) {
                 it = this->m_possiblePositions.erase(it);
                 continue;
@@ -412,7 +449,7 @@ CardStatus GameBoard::pushNewCard(const PlayingCard& otherCard)
         auto it = this->m_possiblePositions.begin();
         while (it != this->m_possiblePositions.end()) {
 
-            
+
             if (it->GetY() < this->m_minY) {
                 it = this->m_possiblePositions.erase(it);
                 continue;
@@ -440,7 +477,7 @@ void GameBoard::setTable(short tableSize)
 
 short GameBoard::getTableSize() const
 {
-	return m_tableSize;
+    return m_tableSize;
 }
 
 void GameBoard::setGameMode(const GameMode& mode) {
@@ -460,7 +497,7 @@ void GameBoard::clear() {
     m_playerRed.reset();
     m_explosion->initializeExplosionCard();
     m_holes.clear();
-   
+
 }
 
 bool GameBoard::canUseExplosion() {
@@ -489,28 +526,28 @@ bool GameBoard::canUseExplosion() {
         if (yCount == m_tableSize)
             column++;
     }
-    return row+column>1;
+    return row + column > 1;
 }
 
-void GameBoard::generatePlayerCards(const GameMode &mode) {
-    if(mode == GameMode::Training||mode==GameMode::QuickMode) {
+void GameBoard::generatePlayerCards(const GameMode& mode) {
+    if (mode == GameMode::Training || mode == GameMode::QuickMode) {
         //Initialize a deck for each player
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
-        for(int j = 0; j < 2; j++)
-            for(int i = 1; i <= 3; i++) {
+        for (int j = 0; j < 2; j++)
+            for (int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
-                PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
+                PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
+                PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
 
                 PlayingCardsBlue.emplace_back(std::move(cardBlue));
                 PlayingCardsRed.emplace_back(std::move(cardRed));
             }
-        PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
-        PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
+        PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
         PlayingCardsRed.emplace_back(std::move(cardRed));
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
@@ -525,11 +562,11 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         }
 
         std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
-        for(auto &card : PlayingCardsBlue) {
-            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
-            card.GetTexture()->getRect().x = m_playerHandPadding ;
+        for (auto& card : PlayingCardsBlue) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
+            card.GetTexture()->getRect().x = m_playerHandPadding;
             card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
@@ -537,11 +574,11 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         }
 
         currentCardOffset = 0;
-        for(auto &card : PlayingCardsRed) {
-            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+        for (auto& card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
             card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
-            card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
@@ -555,50 +592,50 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
     }
-    else if (mode == GameMode::Elemental||mode==GameMode::MageDuel) {
+    else if (mode == GameMode::Elemental || mode == GameMode::MageDuel) {
 
-                //Initialize a deck for each player
+        //Initialize a deck for each player
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
 
         for (int i = 0; i < 2; i++) {
             //Fill each deck with cards
-            PlayingCard cardBlue({0, 0}, &m_blueCards[1], i, nextCardId(), BLUE);
-            PlayingCard cardRed({0, 0}, &m_redCards[1], i, nextCardId(), RED);
+            PlayingCard cardBlue({ 0, 0 }, &m_blueCards[1], i, nextCardId(), BLUE);
+            PlayingCard cardRed({ 0, 0 }, &m_redCards[1], i, nextCardId(), RED);
             PlayingCardsBlue.emplace_back(std::move(cardBlue));
             PlayingCardsRed.emplace_back(std::move(cardRed));
         }
 
-        for(int j = 0; j < 3; j++)
-            for(int i = 2; i <= 3; i++) {
+        for (int j = 0; j < 3; j++)
+            for (int i = 2; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({0,  0}, &m_blueCards[i], i, nextCardId(),BLUE);
-                PlayingCard cardRed({0, 0}, &m_redCards[i], i, nextCardId(),RED);
+                PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
+                PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
                 PlayingCardsBlue.emplace_back(std::move(cardBlue));
                 PlayingCardsRed.emplace_back(std::move(cardRed));
             }
-        PlayingCard cardBlue({0, 0}, &m_blueCards[4], 4, nextCardId(),BLUE);
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
-        PlayingCard cardRed({0, 0}, &m_redCards[4], 4, nextCardId(),RED);
+        PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
         PlayingCardsRed.emplace_back(std::move(cardRed));
 
-        PlayingCard cardBlueEter({0, 0}, &m_blueCards[0], 5, nextCardId(), BLUE);
+        PlayingCard cardBlueEter({ 0, 0 }, &m_blueCards[0], 5, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
-        PlayingCard cardRedEter({0, 0}, &m_redCards[0], 5, nextCardId(), RED);
+        PlayingCard cardRedEter({ 0, 0 }, &m_redCards[0], 5, nextCardId(), RED);
         PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int totalPadding = m_playerHandPadding * 2; 
-        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding; 
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size()+1;
-        unsigned int currentCardOffset = 0; 
+        unsigned int totalPadding = m_playerHandPadding * 2;
+        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
+        unsigned int currentCardOffset = 0;
 
         ////checking if space allocated allows leaving bottom space
         if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
-            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size()+1;
+            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
         }
 
         std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
@@ -607,7 +644,7 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
             std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
             card.GetTexture()->getRect().x = m_playerHandPadding;
             card.GetTexture()->getRect().y = currentCardOffset;
-            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding+ currentCardOffset) });
+            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
@@ -616,11 +653,11 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
 
         currentCardOffset = 0;
-        for(auto &card : PlayingCardsRed) {
-            std::cout << "Initialized card with x:"<< m_playerHandPadding <<" y:"<< m_playerHandPadding + currentCardOffset <<"\n";
+        for (auto& card : PlayingCardsRed) {
+            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
             card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
-            card.GetTexture()->getRect().y =  m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({(SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset)});
+            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+            card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
             card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
@@ -629,30 +666,30 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
 
         std::random_device rd; // Sursa de entropie
         std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
-        
+
         if (mode == GameMode::Elemental)
         {
             std::uniform_int_distribution<> distr(14, 37);
             // Generăm un index random 
             int randomIndexBlue = distr(gen);
             int randomIndexRed = distr(gen);
-            PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
+            PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
             PlayingCardsBlue.emplace_back(std::move(cardBlueSpell));
 
-            PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
+            PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], 5, nextCardId(), RED);
             PlayingCardsRed.emplace_back(std::move(cardRedSpell));
         }
         // Distribuție uniformă 
-		else if (mode==GameMode::MageDuel)
+        else if (mode == GameMode::MageDuel)
         {
             std::uniform_int_distribution<> distr(6, 13); // Distribuție uniformă
             // Generăm un index random 
             int randomIndexBlue = distr(gen);
             int randomIndexRed = distr(gen);
-            PlayingCard cardBlueMage({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
+            PlayingCard cardBlueMage({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
             PlayingCardsBlue.emplace_back(std::move(cardBlueMage));
 
-            PlayingCard cardRedMage({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, & m_redCards[randomIndexRed], 5, nextCardId(), RED);
+            PlayingCard cardRedMage({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], 5, nextCardId(), RED);
             PlayingCardsRed.emplace_back(std::move(cardRedMage));
         }
 
@@ -662,25 +699,25 @@ void GameBoard::generatePlayerCards(const GameMode &mode) {
         m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
     }
-    
+
 }
 
-bool GameBoard::getCardAtPosition(const Coordinates &coordinates, PlayingCard &card) const {
+bool GameBoard::getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const {
     auto PlayingCard = this->m_positions.find(coordinates);
-    if(PlayingCard != this->m_positions.end()) {
+    if (PlayingCard != this->m_positions.end()) {
         card = PlayingCard->second.back();
         return true;
     } return false;
 }
 
-const std::unordered_set<Coordinates, Coordinates> & GameBoard::GetPossiblePositions() {
+const std::unordered_set<Coordinates, Coordinates>& GameBoard::GetPossiblePositions() {
     return this->m_possiblePositions;
 }
 
 const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;
 
-    for(auto& [k, v] : this->m_positions) {
+    for (auto& [k, v] : this->m_positions) {
         playingCards.emplace_back(v.back());
     }
     return playingCards;
@@ -696,11 +733,11 @@ std::unordered_set<Coordinates, Coordinates>& GameBoard::GetHoles()
     return m_holes;
 }
 
-Player *GameBoard::getPlayerRed() {
+Player* GameBoard::getPlayerRed() {
     return &m_playerRed;
 }
 
-Player *GameBoard::getPlayerBlue() {
+Player* GameBoard::getPlayerBlue() {
     return &m_playerBlue;
 }
 
@@ -811,17 +848,17 @@ bool GameBoard::verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& ex
             }
         }
     }
-	return false;
+    return false;
 }
 
 void GameBoard::updateBoardMask()
 {
-	for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-			if (m_positions.find({m_minX + j, m_minY + i }) != m_positions.end())
-			    m_boardMask[i][j] = m_positions[{ m_minX + j, m_minY + i }].size();
-			else
-				m_boardMask[i][j] = 0;
+            if (m_positions.find({ m_minX + j, m_minY + i }) != m_positions.end())
+                m_boardMask[i][j] = m_positions[{ m_minX + j, m_minY + i }].size();
+            else
+                m_boardMask[i][j] = 0;
 }
 
 uint8_t explodedBoardRemains(std::array<std::array<uint8_t, 3>, 3> explodedBoardMask)
@@ -843,9 +880,9 @@ bool GameBoard::validateExplosion()
     {
         for (int j = 0; j < 3; ++j)
         {
-			std::cout << (int)m_boardMask[i][j] << " ";
+            std::cout << (int)m_boardMask[i][j] << " ";
         }
-		std::cout << std::endl;
+        std::cout << std::endl;
     }
     std::cout << "m_explosionMask\n";
     for (int i = 0; i < 3; ++i)
@@ -857,23 +894,23 @@ bool GameBoard::validateExplosion()
         std::cout << std::endl;
     }
 
-	std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
+    std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
 
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
             if (m_explosion->GetExplosionMask()[i][j] != ExplosionType::NONE)
             {
                 if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::HOLE)
                     explodedBoardMask[i][j] = 0;
-				else if (explodedBoardMask[i][j] > 0)
+                else if (explodedBoardMask[i][j] > 0)
                     explodedBoardMask[i][j]--;
             }
-    
+
     if (explodedBoardRemains(explodedBoardMask) <= 1)
         return true;
 
     for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 3; j++)
             if (explodedBoardMask[i][j] != 0)
                 return verifyNeighbours(explodedBoardMask, i, j);
     return false;
