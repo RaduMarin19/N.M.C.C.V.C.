@@ -10,7 +10,7 @@ public:
 
 	static Random& GetInstance();
 
-	static int Get(int min, int max);
+	static int Get(int min, int max); //usage: Random::Get(min,max) -> returns a number between [min,max]
 
 private:
 	Random();
