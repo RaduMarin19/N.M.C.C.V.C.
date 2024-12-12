@@ -36,12 +36,12 @@ CardTexture& CardTexture::operator=(const CardTexture &oth) {
 	return *this;
 }
 
-SDL_Texture* CardTexture::getTexture() const
+SDL_Texture* CardTexture::GetTexture() const
 {
 	return m_texture;
 }
 
-SDL_Rect& CardTexture::getRect()
+SDL_Rect& CardTexture::GetRect()
 {
 	return m_rect;
 }

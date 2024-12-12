@@ -14,13 +14,13 @@ public:
 
 	ExplosionCard(short tableSize);
 
-	void initializeExplosionCard();
+	void InitializeExplosionCard();
 
-	void rotateExplosion();
+	void RotateExplosion();
 
 	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
-	short getAffectedPosCounter() const;
+	short GetAffectedPosCounter() const;
 
 private:
 	short m_tableSize;

@@ -32,14 +32,14 @@ public:
     using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
 public:
 
-    CardStatus pushNewCard(const PlayingCard& otherCard);
-    void setTable(short tableSize);
-    short getTableSize() const;
-    void setGameMode(const GameMode& mode);
-    void generatePlayerCards(const GameMode& mode);
+    CardStatus PushNewCard(const PlayingCard& otherCard);
+    void SetTable(short tableSize);
+    short GetTableSize() const;
+    void SetGameMode(const GameMode& mode);
+    void GeneratePlayerCards(const GameMode& mode);
     GameBoard(SDL_Renderer* renderer);
 
-    unsigned short nextCardId();
+    unsigned short NextCardId();
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
 
     const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
@@ -47,15 +47,15 @@ public:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
 
-    Player* getPlayerRed();
-    Player* getPlayerBlue();
+    Player* GetPlayerRed();
+    Player* GetPlayerBlue();
 
-    bool canUseExplosion();
-    bool didExplode() const;
-    bool validateExplosion();
-    void explode();
-    void updateBoardMask();
-    void printExplosionMask();
+    bool CanUseExplosion();
+    bool DidExplode() const;
+    bool ValidateExplosion();
+    void Explode();
+    void UpdateBoardMask();
+    void PrintExplosionMask();
     std::unique_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
 
@@ -63,27 +63,27 @@ public:
     void ReturnCoveredCards();
     void RemoveSpell(SpellCard* spell);
 
-    const CardTexture& getBlueIllusionTexture() const;
-    const CardTexture& getRedIllusionTexture() const;
+    const CardTexture& GetBlueIllusionTexture() const;
+    const CardTexture& GetRedIllusionTexture() const;
     void CheckStatus(GameState& gameMode);
 
-    void returnCardToDeck(PlayingCard& card);
+    void ReturnCardToDeck(PlayingCard& card);
 
-    void setIsBluePlayer(bool player);
-    bool isBluePlayer() const;
+    void SetIsBluePlayer(bool player);
+    bool IsBluePlayer() const;
 
-    bool verifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
+    bool VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
 
-    void updateBoardCenter();
+    void UpdateBoardCenter();
 
-    unsigned int getCenterX() const;
-    unsigned int getCenterY() const;
+    unsigned int GetCenterX() const;
+    unsigned int GetCenterY() const;
 
-    ExplosionCard* getExplosion();
+    ExplosionCard* GetExplosion();
     SpellsType& GetSpells();
-    void initializeExplosion();
+    void InitializeExplosion();
 
-    void clear();
+    void Clear();
 protected:
     GameMode m_gameMode;
 
@@ -125,7 +125,7 @@ private:
     unsigned int m_centerX;
     unsigned int m_centerY;
 
-    void testPossiblePosition(short x, short y);
+    void TestPossiblePosition(short x, short y);
     bool CheckRows(GameState& gameState);
     bool CheckColumns(GameState& gameState);
     bool CheckDiagonals(GameState& gameState);

@@ -24,7 +24,7 @@ public:
 
 	void SetGameState(GameState state);
 	GameState GetGameState() const;
-	void run();
+	void Run();
 
 
 private:

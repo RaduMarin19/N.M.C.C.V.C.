@@ -45,7 +45,7 @@ ExplosionCard::ExplosionCard(short tableSize) {
 	//}
 }
 
-void ExplosionCard::initializeExplosionCard() {
+void ExplosionCard::InitializeExplosionCard() {
 	unsigned short maxIndex = this->m_tableSize * this->m_tableSize-1;
 	unsigned short numberEffects = Random::Get(2,4);
 
@@ -75,7 +75,7 @@ const std::vector<std::vector<ExplosionType>>& ExplosionCard::GetExplosionMask()
 	return m_explosionMask;
 }
 
-void ExplosionCard::rotateExplosion() {
+void ExplosionCard::RotateExplosion() {
 	//consider a rotation to be 90 degrees clockwise
 
 	//Transposing the matrix
@@ -93,7 +93,7 @@ void ExplosionCard::rotateExplosion() {
 }
 
 
-short ExplosionCard::getAffectedPosCounter() const
+short ExplosionCard::GetAffectedPosCounter() const
 {
 	return m_affectedPosCounter;
 }

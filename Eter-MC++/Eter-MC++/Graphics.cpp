@@ -381,7 +381,7 @@ void Graphics::drawCard(const Card& card, SDL_Texture* cardTexture)
     }
 
     // Get the texture and source rectangle from the card
-    SDL_Rect srcRect = card.GetTexture()->getRect();
+    SDL_Rect srcRect = card.GetTexture()->GetRect();
 
     // Get the card's position
     Coordinates cardPos = card.GetCoordinates();
