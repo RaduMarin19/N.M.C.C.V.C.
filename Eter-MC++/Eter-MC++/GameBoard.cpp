@@ -529,9 +529,8 @@ bool GameBoard::canUseExplosion() {
     return row + column > 1;
 }
 
-void GameBoard::generatePlayerCards(const GameMode& mode) {
-    if (mode == GameMode::Training || mode == GameMode::QuickMode) {
-        //Initialize a deck for each player
+void GameBoard::GenerateTrainingCards() {
+    //Initialize a deck for each player
         std::vector<PlayingCard> PlayingCardsBlue;
         std::vector<PlayingCard> PlayingCardsRed;
 
@@ -591,113 +590,100 @@ void GameBoard::generatePlayerCards(const GameMode& mode) {
 
         m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+void GameBoard::GenerateElementalCards() {
+    //Initialize a deck for each player
+    std::vector<PlayingCard> PlayingCardsBlue;
+    std::vector<PlayingCard> PlayingCardsRed;
+
+
+    for (int i = 0; i < 2; i++) {
+        //Fill each deck with cards
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[1], i, nextCardId(), BLUE);
+        PlayingCard cardRed({ 0, 0 }, &m_redCards[1], i, nextCardId(), RED);
+        PlayingCardsBlue.emplace_back(std::move(cardBlue));
+        PlayingCardsRed.emplace_back(std::move(cardRed));
     }
-    else if (mode == GameMode::Elemental || mode == GameMode::MageDuel) {
 
-        //Initialize a deck for each player
-        std::vector<PlayingCard> PlayingCardsBlue;
-        std::vector<PlayingCard> PlayingCardsRed;
-
-
-        for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 3; j++)
+        for (int i = 2; i <= 3; i++) {
             //Fill each deck with cards
-            PlayingCard cardBlue({ 0, 0 }, &m_blueCards[1], i, nextCardId(), BLUE);
-            PlayingCard cardRed({ 0, 0 }, &m_redCards[1], i, nextCardId(), RED);
+            PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
+            PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
             PlayingCardsBlue.emplace_back(std::move(cardBlue));
             PlayingCardsRed.emplace_back(std::move(cardRed));
         }
+    PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
+    PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
-        for (int j = 0; j < 3; j++)
-            for (int i = 2; i <= 3; i++) {
-                //Fill each deck with cards
-                PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
-                PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
-                PlayingCardsBlue.emplace_back(std::move(cardBlue));
-                PlayingCardsRed.emplace_back(std::move(cardRed));
-            }
-        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(std::move(cardBlue));
+    PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
+    PlayingCardsRed.emplace_back(std::move(cardRed));
 
-        PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(std::move(cardRed));
+    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCards[0], 5, nextCardId(), BLUE);
+    PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
-        PlayingCard cardBlueEter({ 0, 0 }, &m_blueCards[0], 5, nextCardId(), BLUE);
-        PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
+    PlayingCard cardRedEter({ 0, 0 }, &m_redCards[0], 5, nextCardId(), RED);
+    PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
-        PlayingCard cardRedEter({ 0, 0 }, &m_redCards[0], 5, nextCardId(), RED);
-        PlayingCardsRed.emplace_back(std::move(cardRedEter));
+    //Set how much space we have for our deck, the whole screen - padding top/bottom
+    unsigned int totalPadding = m_playerHandPadding * 2;
+    unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+    unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
+    unsigned int currentCardOffset = 0;
 
-        //Set how much space we have for our deck, the whole screen - padding top/bottom
-        unsigned int totalPadding = m_playerHandPadding * 2;
-        unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
-        unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
-        unsigned int currentCardOffset = 0;
+    ////checking if space allocated allows leaving bottom space
+    if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+        availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+    }
 
-        ////checking if space allocated allows leaving bottom space
-        if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
-            availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
-        }
+    std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
 
-        std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
+    for (auto& card : PlayingCardsBlue) {
+        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
+        card.GetTexture()->getRect().x = m_playerHandPadding;
+        card.GetTexture()->getRect().y = currentCardOffset;
+        card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
-        for (auto& card : PlayingCardsBlue) {
-            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
-            card.GetTexture()->getRect().x = m_playerHandPadding;
-            card.GetTexture()->getRect().y = currentCardOffset;
-            card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+        card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
-            card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
-
-            currentCardOffset += availableSpacePerCard;
-        }
+        currentCardOffset += availableSpacePerCard;
+    }
 
 
-        currentCardOffset = 0;
-        for (auto& card : PlayingCardsRed) {
-            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
-            card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
-            card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
-            card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+    currentCardOffset = 0;
+    for (auto& card : PlayingCardsRed) {
+        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
+        card.GetTexture()->getRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+        card.GetTexture()->getRect().y = m_playerHandPadding + currentCardOffset;
+        card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
-            card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+        card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
 
-            currentCardOffset += availableSpacePerCard;
-        }
+        currentCardOffset += availableSpacePerCard;
+    }
+    int randomIndexBlue = Random::Get(14,37);
+    int randomIndexRed = Random::Get(14, 37);
+    SpellCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], nextCardId());
 
-        std::random_device rd; // Sursa de entropie
-        std::mt19937 gen(rd()); // Generator bazat pe Mersenne Twister
+    SpellCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], nextCardId());
 
-        if (mode == GameMode::Elemental)
-        {
-            std::uniform_int_distribution<> distr(14, 37);
-            // Generăm un index random 
-            int randomIndexBlue = distr(gen);
-            int randomIndexRed = distr(gen);
-            PlayingCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
-            PlayingCardsBlue.emplace_back(std::move(cardBlueSpell));
+    //Initialize the two players with the newly generated decks
+    this->m_playerBlue = Player(std::move(PlayingCardsBlue));
+    this->m_playerRed = Player(std::move(PlayingCardsRed));
 
-            PlayingCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], 5, nextCardId(), RED);
-            PlayingCardsRed.emplace_back(std::move(cardRedSpell));
-        }
-        // Distribuție uniformă 
-        else if (mode == GameMode::MageDuel)
-        {
-            std::uniform_int_distribution<> distr(6, 13); // Distribuție uniformă
-            // Generăm un index random 
-            int randomIndexBlue = distr(gen);
-            int randomIndexRed = distr(gen);
-            PlayingCard cardBlueMage({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], 5, nextCardId(), BLUE);
-            PlayingCardsBlue.emplace_back(std::move(cardBlueMage));
+    m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
+    m_playerRed.SetIllusionTexture(m_redCardIllusion);
 
-            PlayingCard cardRedMage({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], 5, nextCardId(), RED);
-            PlayingCardsRed.emplace_back(std::move(cardRedMage));
-        }
 
-        //Initialize the two players with the newly generated decks
-        this->m_playerBlue = Player(std::move(PlayingCardsBlue));
-        this->m_playerRed = Player(std::move(PlayingCardsRed));
-        m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
-        m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+void GameBoard::generatePlayerCards(const GameMode& mode) {
+    if (mode == GameMode::Training || mode == GameMode::QuickMode) {
+        GenerateTrainingCards();
+    }
+    else if (mode == GameMode::Elemental || mode == GameMode::MageDuel) {
+        GenerateElementalCards();
     }
 
 }
@@ -710,7 +696,7 @@ bool GameBoard::getCardAtPosition(const Coordinates& coordinates, PlayingCard& c
     } return false;
 }
 
-const std::unordered_set<Coordinates, Coordinates>& GameBoard::GetPossiblePositions() {
+const std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetPossiblePositions() {
     return this->m_possiblePositions;
 }
 
@@ -723,12 +709,12 @@ const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     return playingCards;
 }
 
-std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GameBoard::GetPlayedPositions()
+std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GameBoard::GetPlayedPositions()
 {
     return m_positions;
 }
 
-std::unordered_set<Coordinates, Coordinates>& GameBoard::GetHoles()
+std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetHoles()
 {
     return m_holes;
 }

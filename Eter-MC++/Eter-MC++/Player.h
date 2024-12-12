@@ -1,5 +1,6 @@
 #pragma once
 #include "PlayingCard.h"
+#include "SpellCard.h"
 
 #include <vector>
 #include <unordered_map>
@@ -19,6 +20,7 @@ public:
 
 	void SetGrabbedCard(PlayingCard* grabbedCard);
 	void AddCard(const PlayingCard& card);
+	void SetSpellCard(SpellCard&& spellCard);
 	void removeCard(const PlayingCard& card);
 	std::vector<PlayingCard>& GetCards();
 	PlayingCard *GetGrabbedCard() const;
@@ -31,6 +33,7 @@ public:
 
 private:
 	std::vector<PlayingCard> m_cards;
+	//SpellCard m_spellCard;
 	std::shared_ptr<CardTexture> m_cardIllusion;
 
 	PlayingCard *m_grabbedCard;

@@ -7,11 +7,6 @@ Coordinates::Coordinates(int x, int y) : m_x{ x }, m_y{ y } {}
 
 Coordinates::Coordinates(const Coordinates& other) : m_x{ other.m_x }, m_y{ other.m_y } {}
 
-size_t Coordinates::operator()(const Coordinates& key) const
-{
-	return std::hash<int>()(key.m_x) ^ std::hash<int>()(key.m_y);
-}
-
 bool Coordinates::operator==(const Coordinates& other) const
 {
 	return (m_x == other.m_x && m_y == other.m_y);

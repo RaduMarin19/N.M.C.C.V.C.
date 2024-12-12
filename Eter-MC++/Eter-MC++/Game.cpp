@@ -69,23 +69,23 @@ void Game::run() {
                 //Check which button the player has pressed, and initialize the cards accordingly
                 if (m_painter->isTrainingActive()) {
                     m_currentState = TRAINING_MODE;
-                    m_board->generatePlayerCards(GameBoard::GameMode::Training);
+                    m_board->generatePlayerCards(GameMode::Training);
                     m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->isElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
-                    m_board->setGameMode(GameBoard::GameMode::Elemental);
-                    m_board->generatePlayerCards(GameBoard::GameMode::Elemental);
+                    m_board->setGameMode(GameMode::Elemental);
+                    m_board->generatePlayerCards(GameMode::Elemental);
 					m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->isMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
-                    m_board->setGameMode(GameBoard::GameMode::MageDuel);
-                    m_board->generatePlayerCards(GameBoard::GameMode::MageDuel);
+                    m_board->setGameMode(GameMode::MageDuel);
+                    m_board->generatePlayerCards(GameMode::MageDuel);
                     m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
@@ -97,8 +97,8 @@ void Game::run() {
                 else if (m_painter->isQuickMatchActive())
                 {
                     m_currentState = QUICK_MODE;
-					m_board->setGameMode(GameBoard::GameMode::QuickMode);
-                    m_board->generatePlayerCards(GameBoard::GameMode::QuickMode);
+					m_board->setGameMode(GameMode::QuickMode);
+                    m_board->generatePlayerCards(GameMode::QuickMode);
                     m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
@@ -110,16 +110,16 @@ void Game::run() {
                 if (m_painter->isElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
-                    m_board->setGameMode(GameBoard::GameMode::Elemental);
-                    m_board->generatePlayerCards(GameBoard::GameMode::Elemental);
+                    m_board->setGameMode(GameMode::Elemental);
+                    m_board->generatePlayerCards(GameMode::Elemental);
 					m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->isMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
-                    m_board->setGameMode(GameBoard::GameMode::MageDuel);
-                    m_board->generatePlayerCards(GameBoard::GameMode::MageDuel);
+                    m_board->setGameMode(GameMode::MageDuel);
+                    m_board->generatePlayerCards(GameMode::MageDuel);
                     m_board->setIsBluePlayer(true);
                     drawThisFrame = true;
                 }

@@ -143,6 +143,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayingCard.cpp" />
     <ClCompile Include="Random.cpp" />
+    <ClCompile Include="SpellCard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Card.h" />
@@ -151,10 +152,12 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="Coordinates.h" />
+    <ClInclude Include="ElementalType.h" />
     <ClInclude Include="ExplosionCard.h" />
     <ClInclude Include="ExplosionType.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
+    <ClInclude Include="GameMode.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Mage.h" />
@@ -162,6 +165,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingCard.h" />
     <ClInclude Include="Random.h" />
+    <ClInclude Include="SpellCard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

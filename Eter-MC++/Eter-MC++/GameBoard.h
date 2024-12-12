@@ -7,7 +7,12 @@
 #include "CardStatus.h"
 #include "ExplosionType.h"
 #include "ExplosionCard.h"
+#include "Random.h"
 #include "config.h"
+#include "SpellCard.h"
+#include "ElementalType.h"
+#include "MageType.h"
+#include "GameMode.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -17,18 +22,14 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <variant>
 
 class GameBoard
 {
 public:
-    enum GameMode : short
-    {
-        Training,
-        MageDuel,
-        Elemental,
-        Tournament,
-        QuickMode
-    };
+    using SpellType = std::variant<std::monostate, MageType, ElementalType>;  //no value for training - other types for specific gamemodes
+
+public:
 
     CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
@@ -40,10 +41,10 @@ public:
     unsigned short nextCardId();
 
     bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
-    const std::unordered_set<Coordinates, Coordinates>& GetPossiblePositions();
+    const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
     const std::vector<PlayingCard> GetPlayedCards() const;
-    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates>& GetPlayedPositions();
-    std::unordered_set<Coordinates, Coordinates>& GetHoles();
+    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
+    std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
 
     Player* getPlayerRed();
     Player* getPlayerBlue();
@@ -87,15 +88,18 @@ private:
 
     static const unsigned int m_playerHandPadding{ 30 };
 
-    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates> m_positions;
-    std::unordered_set<Coordinates, Coordinates> m_possiblePositions;
-    std::unordered_set<Coordinates, Coordinates> m_holes;
+    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash> m_positions;
+    std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
+    std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
 
     std::list<PlayingCard> m_blueRemovedCards;
     std::list<PlayingCard> m_redRemovedCards;
 
     Player m_playerBlue;
     Player m_playerRed;
+
+    SpellType m_bluePlayerSpell;
+    SpellType m_RedPlayerSpell;
 
     std::vector<CardTexture> m_blueCards;
     std::vector<CardTexture> m_redCards;
@@ -126,4 +130,7 @@ private:
     void ReturnCardAtPosition(const Coordinates& boardPosition);
 
     void LoadTextures(SDL_Renderer* renderer);
+
+    void GenerateTrainingCards();
+    void GenerateElementalCards();
 };

@@ -37,6 +37,11 @@ void Player::AddCard(const PlayingCard& card)
 	m_cards.emplace_back(card);
 }
 
+void Player::SetSpellCard(SpellCard&& spellCard)
+{
+	//m_spellCard = std::move(spellCard);
+}
+
 void Player::removeCard(const PlayingCard& card) {
 	//Find the given card in the player deck
 	auto it = std::remove_if(m_cards.begin(), m_cards.end(),
