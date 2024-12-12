@@ -10,14 +10,11 @@
 class SpellCard : public Card
 {
 public:
-	using SpellType = std::variant<MageType, ElementalType>;  //no value for training - other types for specific gamemodes
-
-public:
-	SpellCard(const Coordinates& position, CardTexture* texture,SpellType spell, unsigned short id);
-	SpellType GetSpell() const;
-	void SetSpell(SpellType spell, CardTexture* texture);
+	SpellCard(const Coordinates& position, CardTexture* texture,ElementalType spell, unsigned short id);
+	ElementalType GetSpell() const;
+	void SetSpell(ElementalType spell, CardTexture* texture);
 
 private:
-	SpellType m_spell;
+	ElementalType m_spell;
 };
 
