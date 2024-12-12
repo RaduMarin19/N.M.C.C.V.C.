@@ -325,7 +325,7 @@ ExplosionCard* GameBoard::getExplosion() {
     return m_explosion.get();
 }
 
-std::optional<std::pair<SpellCard, SpellCard>>& GameBoard::GetSpells()
+GameBoard::SpellsType& GameBoard::GetSpells()
 {
     return m_spells;
 }
@@ -366,6 +366,43 @@ std::unique_ptr<CardTexture>& GameBoard::GetExplosionBoardTexture() {
 
 CardTexture* GameBoard::GetExplosionSprite(const int& offset) {
     return &this->m_explosionSprites[offset];
+}
+
+bool GameBoard::RemoveIllusion(const Coordinates& boardPosition)
+{
+    auto cards = m_positions.find(boardPosition);
+    if (cards != m_positions.end()) {
+        auto& card = cards->second.back();
+        if (card.isIllusion())
+        {
+            card.SetIllussion(false);
+            return true;
+        }
+    }
+    return false;
+}
+
+void GameBoard::RemoveSpell(SpellCard* spell)
+{
+    if (!m_spells.has_value()) {
+        return;
+    }
+
+    auto& spells = m_spells.value();
+
+    if (spell == spells.first.get()) {
+        spells.first.reset();
+    }
+    else if (spell == spells.second.get()) {
+        spells.second.reset();
+    }
+    else {
+        throw std::out_of_range("Invalid spell ID");
+    }
+
+    if (!spells.first && !spells.second) {
+        m_spells.reset();
+    }
 }
 
 
@@ -669,19 +706,19 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = Random::Get(0, 23);
+    int randomIndex1 = 2/*Random::Get(0, 23)*/;
     int randomIndex2 = Random::Get(0, 23);
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
 
-    SpellCard cardSpell1({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+    std::unique_ptr<SpellCard> cardSpell1= std::make_unique<SpellCard>(SpellCard({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
         &m_elementalCardTextures[randomIndex1], spell1,
-        nextCardId());
+        nextCardId()));
 
-    SpellCard cardSpell2({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+    std::unique_ptr<SpellCard> cardSpell2 = std::make_unique<SpellCard>(SpellCard({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
         &m_elementalCardTextures[randomIndex2], spell2,
-        nextCardId());
+        nextCardId()));
 
     m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 
@@ -703,14 +740,6 @@ void GameBoard::generatePlayerCards(const GameMode& mode) {
         GenerateElementalCards();
     }
 
-}
-
-bool GameBoard::getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const {
-    auto PlayingCard = this->m_positions.find(coordinates);
-    if (PlayingCard != this->m_positions.end()) {
-        card = PlayingCard->second.back();
-        return true;
-    } return false;
 }
 
 const std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetPossiblePositions() {
@@ -819,6 +848,18 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 
 unsigned short GameBoard::nextCardId() {
     return ++GameBoard::m_cardId;
+}
+
+const Color GameBoard::GetCardColorAtPosition(const Coordinates& boardPosition) const
+{
+    auto it = m_positions.find(boardPosition);
+    if (it != m_positions.end())
+    {
+        return it->second.back().GetColor();
+    }
+    else {
+        throw std::runtime_error("Invalid Position");
+    }
 }
 
 void GameBoard::setIsBluePlayer(bool player) {

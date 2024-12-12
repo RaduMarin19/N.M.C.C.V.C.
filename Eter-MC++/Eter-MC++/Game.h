@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "CardStatus.h"
 #include "Graphics.h"
+#include "ElementalType.h"
 
 #include <iostream>
 #include <algorithm>

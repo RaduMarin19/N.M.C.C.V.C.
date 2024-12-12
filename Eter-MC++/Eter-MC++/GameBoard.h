@@ -26,6 +26,9 @@
 
 class GameBoard
 {
+
+public:
+    using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
 public:
 
     CardStatus pushNewCard(const PlayingCard& otherCard);
@@ -36,8 +39,8 @@ public:
     GameBoard(SDL_Renderer* renderer);
 
     unsigned short nextCardId();
+    const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
 
-    bool getCardAtPosition(const Coordinates& coordinates, PlayingCard& card) const;
     const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
     const std::vector<PlayingCard> GetPlayedCards() const;
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
@@ -54,6 +57,9 @@ public:
     void printExplosionMask();
     std::unique_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
+
+    bool RemoveIllusion(const Coordinates& boardPosition);
+    void RemoveSpell(SpellCard* spell);
 
     const CardTexture& getBlueIllusionTexture() const;
     const CardTexture& getRedIllusionTexture() const;
@@ -72,7 +78,7 @@ public:
     unsigned int getCenterY() const;
 
     ExplosionCard* getExplosion();
-    std::optional<std::pair<SpellCard, SpellCard>>& GetSpells();
+    SpellsType& GetSpells();
     void initializeExplosion();
 
     void clear();
@@ -92,7 +98,7 @@ private:
 
     std::list<PlayingCard> m_blueRemovedCards;
     std::list<PlayingCard> m_redRemovedCards;
-    std::optional<std::pair<SpellCard, SpellCard>> m_spells;
+    SpellsType m_spells;
 
     Player m_playerBlue;
     Player m_playerRed;

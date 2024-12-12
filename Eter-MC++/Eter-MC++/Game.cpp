@@ -194,8 +194,20 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     }
 }
 
-void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     spellCard->SetCoordinates({ renderRect.x, renderRect.y });
+
+    ElementalType spell = spellCard->GetSpell();
+
+    switch (spell) {
+        case ElementalType::FIRE:
+            Color playerColor = player.GetCards().back().GetColor();
+            if(m_board->GetCardColorAtPosition(possiblePosition)!=playerColor)
+            {
+                if (m_board->RemoveIllusion(possiblePosition))
+                    m_board->RemoveSpell(spellCard);
+            }
+    }
 }
 
 void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
@@ -206,7 +218,8 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
             PlayRegularCard(player, playingCard, renderRect, possiblePosition);
         }
         else if (SpellCard* spellCard = dynamic_cast<SpellCard*>(pushCard)) {
-            PlaySpellCard(player, spellCard,renderRect,possiblePosition);
+            if (spellCard) 
+                PlaySpellCard(player, spellCard,renderRect,possiblePosition);
         }
     }
     
@@ -351,8 +364,10 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
 
         if (spells) {
             auto& [spellCard1, spellCard2] = *spells;
-            DrawAndHandleCard(player, spellCard1);
-            DrawAndHandleCard(player, spellCard2);
+            if(spellCard1!=nullptr)
+            DrawAndHandleCard(player, *spellCard1);
+            if (spellCard2!=nullptr)
+            DrawAndHandleCard(player, *spellCard2);
         }
     }
 }
