@@ -22,6 +22,11 @@ public:
 
 	short GetAffectedPosCounter() const;
 
+	ExplosionCard(const ExplosionCard&) = delete;                 
+	ExplosionCard& operator=(const ExplosionCard&) = delete;       
+	ExplosionCard(ExplosionCard&&) = default;                     
+	ExplosionCard& operator=(ExplosionCard&&) = default;
+
 private:
 	short m_tableSize;
 	short m_affectedPosCounter;

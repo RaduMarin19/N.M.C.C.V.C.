@@ -16,6 +16,12 @@ public:
 	Coordinates();
 	Coordinates(int x, int y);
 	Coordinates(const Coordinates& other);
+
+	Coordinates& operator=(const Coordinates& other) = default; 
+	Coordinates(Coordinates&& other) noexcept = default;  
+	Coordinates& operator=(Coordinates&& other) noexcept = default; 
+	~Coordinates() = default;
+
 	bool operator==(const Coordinates& other) const;
 	int GetX() const;
 	int GetY() const;
