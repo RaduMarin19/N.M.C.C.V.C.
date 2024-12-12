@@ -25,6 +25,7 @@ public:
 	GameState GetGameState() const;
 	void run();
 
+
 private:
 
 	Game();
@@ -39,7 +40,9 @@ private:
 	void DrawBoard();
 
 	void HandleBoardState();
-	void HandleCardMovement(Player* player, PlayingCard& card);
+	void HandleCardMovement(Player* player, Card& card);
 	void PlayerTurn(Player& player,SDL_Rect& rect,const Coordinates& possiblePosition);
+	void PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
+	void PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	bool ExplosionTurn();
 };

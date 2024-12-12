@@ -159,8 +159,7 @@ void Game::run() {
     }
 }
 
-void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
-    PlayingCard* pushCard = player.GetGrabbedCard();
+void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     pushCard->SetBoardPosition(possiblePosition);
     pushCard->SetCoordinates({ renderRect.x, renderRect.y });
     if (player.HasPlayedIllusion() == false && player.isPlayingIllusion()) {
@@ -177,13 +176,13 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
             for (auto& card : m_board->GetPlayedPositions())
                 if (card.second.back() == *pushCard)
                     card.second.back().SetIllussion(player.isPlayingIllusion());
-           player.SetHasPlayedIllusion();
+            player.SetHasPlayedIllusion();
         }
         m_board->CheckStatus(m_currentState);
         if (m_board->canUseExplosion()) {
             m_explosionTurn = true;
         }
-        else{
+        else {
             m_board->setIsBluePlayer(!m_board->isBluePlayer());
         }
     }
@@ -191,9 +190,26 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
         m_board->returnCardToDeck(*pushCard);
     }
     else if (status == REMOVED) {
-       player.removeCard(*pushCard);
+        player.removeCard(*pushCard);
     }
+}
 
+void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+    spellCard->SetCoordinates({ renderRect.x, renderRect.y });
+}
+
+void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+    Card* pushCard = player.GetGrabbedCard();
+
+    if (pushCard) {
+        if (PlayingCard* playingCard = dynamic_cast<PlayingCard*>(pushCard)) {
+            PlayRegularCard(player, playingCard, renderRect, possiblePosition);
+        }
+        else if (SpellCard* spellCard = dynamic_cast<SpellCard*>(pushCard)) {
+            PlaySpellCard(player, spellCard,renderRect,possiblePosition);
+        }
+    }
+    
     //returning cards to deck if they are moved
     for (PlayingCard& card : player.GetCards()) {
         m_board->returnCardToDeck(card);
@@ -230,6 +246,8 @@ void Game::HandleBoardState() {
     //This is where all the in game logic will go
     DrawPlayersCards(m_board->getPlayerBlue(), m_board->isBluePlayer());
     DrawPlayersCards(m_board->getPlayerRed(), !m_board->isBluePlayer());
+
+
 
     if (m_explosionTurn){
         if (ExplosionTurn() == true) {
@@ -286,7 +304,7 @@ void Game::DrawBoard() {
     }
 }
 
-void Game::HandleCardMovement(Player* player,PlayingCard& card) {
+void Game::HandleCardMovement(Player* player,Card& card) {
     SDL_Rect cardRect{};
     cardRect.x = card.GetCoordinates().GetX();
     cardRect.y = card.GetCoordinates().GetY();
@@ -312,8 +330,7 @@ void Game::HandleCardMovement(Player* player,PlayingCard& card) {
 }
 
 void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
-    for (auto& card : player->GetCards()) {
-        
+    auto DrawAndHandleCard = [&](Player* player, Card& card) {
         if (isPlayersTurn) {
             m_painter->drawCard(card, card.GetTexture()->getTexture());
             if (!m_explosionTurn) {
@@ -322,6 +339,20 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
         }
         else {
             m_painter->drawCard(card, player->GetIllusionTexture().getTexture());
+        }
+    };
+
+    for (auto& card : player->GetCards()) {
+        
+        DrawAndHandleCard(player, card);
+    }
+    if (isPlayersTurn) {
+        decltype(auto) spells = m_board->GetSpells();
+
+        if (spells) {
+            auto& [spellCard1, spellCard2] = *spells;
+            DrawAndHandleCard(player, spellCard1);
+            DrawAndHandleCard(player, spellCard2);
         }
     }
 }

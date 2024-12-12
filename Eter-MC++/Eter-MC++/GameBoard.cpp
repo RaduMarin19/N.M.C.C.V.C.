@@ -311,6 +311,8 @@ void GameBoard::updateBoardCenter() {
     }
 }
 
+
+
 unsigned int GameBoard::getCenterX() const {
     return this->m_centerX;
 }
@@ -321,6 +323,11 @@ unsigned int GameBoard::getCenterY() const {
 
 ExplosionCard* GameBoard::getExplosion() {
     return m_explosion.get();
+}
+
+std::optional<std::pair<SpellCard, SpellCard>>& GameBoard::GetSpells()
+{
+    return m_spells;
 }
 
 void GameBoard::initializeExplosion() {
@@ -662,13 +669,21 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndexBlue = Random::Get(0,23);
-    int randomIndexRed = Random::Get(0, 23);
-    SpellCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_elementalCardTextures[randomIndexBlue], nextCardId());
-    m_playerBlue.SetSpellCard(cardBlueSpell);
+    int randomIndex1 = Random::Get(0, 23);
+    int randomIndex2 = Random::Get(0, 23);
 
-    SpellCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCardTextures[randomIndexRed], nextCardId());
-    m_playerBlue.SetSpellCard(cardBlueSpell);
+    ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
+    ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
+
+    SpellCard cardSpell1({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+        &m_elementalCardTextures[randomIndex1], spell1,
+        nextCardId());
+
+    SpellCard cardSpell2({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+        &m_elementalCardTextures[randomIndex2], spell2,
+        nextCardId());
+
+    m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 
     //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(std::move(PlayingCardsBlue));

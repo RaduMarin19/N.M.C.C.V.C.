@@ -11,6 +11,8 @@ public:
 	Card(const Card& other);
 	Card(const Coordinates& position, CardTexture* texture,unsigned short id);
 
+	virtual ~Card() = default; //for polimorphism
+
 	Coordinates GetInitialPosition() const;
 	Coordinates GetCoordinates() const;
 	unsigned short GetId() const;

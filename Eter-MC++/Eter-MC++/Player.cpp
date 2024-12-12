@@ -25,7 +25,7 @@ const CardTexture& Player::GetIllusionTexture() const
 	return *m_cardIllusion;
 }
 
-void Player::SetGrabbedCard(PlayingCard* grabbedCard)
+void Player::SetGrabbedCard(Card* grabbedCard)
 {
 	m_grabbedCard = grabbedCard;
 }
@@ -33,11 +33,6 @@ void Player::SetGrabbedCard(PlayingCard* grabbedCard)
 void Player::AddCard(const PlayingCard& card)
 {
 	m_cards.emplace_back(card);
-}
-
-void Player::SetSpellCard(SpellCard& spellCard)
-{
-	m_spellCard = std::move(spellCard);
 }
 
 void Player::removeCard(const PlayingCard& card) {
@@ -61,7 +56,7 @@ std::vector<PlayingCard>& Player::GetCards()
 	return m_cards;
 }
 
-PlayingCard *Player::GetGrabbedCard() const
+Card *Player::GetGrabbedCard() const
 {
 		return m_grabbedCard;
 }

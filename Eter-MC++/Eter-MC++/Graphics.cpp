@@ -372,7 +372,7 @@ void Graphics::drawTournamentModeSelection()
     SDL_RenderPresent(m_renderer);
 }
 
-void Graphics::drawCard(const PlayingCard& card, SDL_Texture* cardTexture)
+void Graphics::drawCard(const Card& card, SDL_Texture* cardTexture)
 {
     // Ensure the card has a valid texture
     if (!card.GetTexture() || !cardTexture) {

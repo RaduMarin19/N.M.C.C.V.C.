@@ -27,9 +27,6 @@
 class GameBoard
 {
 public:
-    
-
-public:
 
     CardStatus pushNewCard(const PlayingCard& otherCard);
     void setTable(short tableSize);
@@ -75,6 +72,7 @@ public:
     unsigned int getCenterY() const;
 
     ExplosionCard* getExplosion();
+    std::optional<std::pair<SpellCard, SpellCard>>& GetSpells();
     void initializeExplosion();
 
     void clear();
@@ -94,6 +92,7 @@ private:
 
     std::list<PlayingCard> m_blueRemovedCards;
     std::list<PlayingCard> m_redRemovedCards;
+    std::optional<std::pair<SpellCard, SpellCard>> m_spells;
 
     Player m_playerBlue;
     Player m_playerRed;

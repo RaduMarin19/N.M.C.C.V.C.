@@ -1,5 +1,6 @@
 #pragma once
 #include "PlayingCard.h"
+#include "Card.h"
 #include "SpellCard.h"
 #include "MageType.h"
 #include "ElementalType.h"
@@ -15,8 +16,7 @@
 
 class Player
 {
-public:
-	using SpellType = std::variant<std::monostate, MageType, ElementalType>;  //no value for training - other types for specific gamemodes
+
 
 public:
 	Player();
@@ -27,12 +27,11 @@ public:
 	void SetIllusionTexture(std::shared_ptr<CardTexture> texture);
 	const CardTexture& GetIllusionTexture() const;
 
-	void SetGrabbedCard(PlayingCard* grabbedCard);
+	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
-	void SetSpellCard(SpellCard& spellCard);
 	void removeCard(const PlayingCard& card);
 	std::vector<PlayingCard>& GetCards();
-	PlayingCard *GetGrabbedCard() const;
+	Card *GetGrabbedCard() const;
 	bool isGrabbingCard() const;
 	void SetIsGrabbingCard(bool isGrabbingCard);
 	void SetHasPlayedIllusion();
@@ -42,11 +41,9 @@ public:
 
 private:
 	std::vector<PlayingCard> m_cards;
-	std::optional<SpellCard> m_spellCard;
-	SpellType m_spell;
 	std::shared_ptr<CardTexture> m_cardIllusion;
 
-	PlayingCard *m_grabbedCard;
+	Card *m_grabbedCard;
 	bool m_isPlayingIllusion;
 	bool m_isGrabbingCard;
 	bool m_hasPlayedIllusion;
