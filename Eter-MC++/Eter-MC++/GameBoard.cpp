@@ -248,18 +248,23 @@ void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
     }
 }
 
-void GameBoard::ReturnCardAtPosition(const Coordinates& boardPosition) {
+void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
+    returnCardToDeck(card);
+    if (card.GetColor() == BLUE) {
+        m_playerBlue.AddCard(card);
+    }                                   //adding the card to the hand of the respective player
+    else if (card.GetColor() == RED) {
+        m_playerRed.AddCard(card);
+    }
+    
+}
+
+void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
     auto it = m_positions.find(boardPosition);
     if (it != m_positions.end()) {
         if (!it->second.empty()) {
             PlayingCard& card = it->second.back();
-            returnCardToDeck(card);
-            if (card.GetColor() == BLUE) {
-                m_playerBlue.AddCard(card);
-            }                                   //adding the card to the hand of the respective player
-            else if (card.GetColor() == RED) {
-                m_playerRed.AddCard(card);
-            }
+            ReturnCardAtPosition(card);
 
             m_positions[boardPosition].pop_back();
             if (m_positions[boardPosition].size() == 0)      //if there isnt any card in the deque anymore then remove the position
@@ -285,7 +290,7 @@ void GameBoard::explode()
                     CreateHoleAtPosition(position);
                 }
                 else if (explosionEffects[i][j] == ExplosionType::RETURN) {
-                    ReturnCardAtPosition(position);
+                    ReturnTopCardAtPosition(position);
                 }
             }
 
@@ -380,6 +385,17 @@ bool GameBoard::RemoveIllusion(const Coordinates& boardPosition)
         }
     }
     return false;
+}
+
+void GameBoard::ReturnCoveredCards()
+{
+    for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
+        auto& deck = it->second;
+        while (deck.size() > 1) {
+            ReturnCardAtPosition(deck.front());
+            deck.pop_front();
+        }
+    }
 }
 
 void GameBoard::RemoveSpell(SpellCard* spell)
@@ -707,7 +723,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 2/*Random::Get(0, 23)*/;
-    int randomIndex2 = Random::Get(0, 23);
+    int randomIndex2 = 7/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);

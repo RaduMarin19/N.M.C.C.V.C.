@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Coordinates.h"
+#include "Color.h"
 #include "PlayingCard.h"
 #include "CardTexture.h"
 #include "Player.h"
@@ -59,6 +60,7 @@ public:
     CardTexture* GetExplosionSprite(const int& offset);
 
     bool RemoveIllusion(const Coordinates& boardPosition);
+    void ReturnCoveredCards();
     void RemoveSpell(SpellCard* spell);
 
     const CardTexture& getBlueIllusionTexture() const;
@@ -131,7 +133,9 @@ private:
 
     void DeleteCardAtPosition(const Coordinates& boardPosition);
     void CreateHoleAtPosition(const Coordinates& boardPosition);
-    void ReturnCardAtPosition(const Coordinates& boardPosition);
+    void ReturnTopCardAtPosition(const Coordinates& boardPosition);
+
+    void ReturnCardAtPosition(PlayingCard& card);
 
     void LoadTextures(SDL_Renderer* renderer);
 

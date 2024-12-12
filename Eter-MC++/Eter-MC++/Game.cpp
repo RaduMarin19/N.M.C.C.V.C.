@@ -200,13 +200,19 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
     ElementalType spell = spellCard->GetSpell();
 
     switch (spell) {
-        case ElementalType::FIRE:
+        case ElementalType::FIRE: {
             Color playerColor = player.GetCards().back().GetColor();
-            if(m_board->GetCardColorAtPosition(possiblePosition)!=playerColor)
+            if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor)
             {
                 if (m_board->RemoveIllusion(possiblePosition))
-                    m_board->RemoveSpell(spellCard);
+                  m_board->RemoveSpell(spellCard);
             }
+            break;
+        }
+        case ElementalType::SQUALL:
+            m_board->ReturnCoveredCards();
+            m_board->RemoveSpell(spellCard);
+            break;
     }
 }
 
