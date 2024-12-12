@@ -32,6 +32,12 @@ public:
     using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
 public:
 
+    GameBoard(const GameBoard&) = delete; 
+    GameBoard& operator=(const GameBoard&) = delete; 
+    GameBoard(GameBoard&&) = delete; 
+    GameBoard& operator=(GameBoard&&) = delete; 
+    ~GameBoard() = default; 
+
     CardStatus PushNewCard(const PlayingCard& otherCard);
     void SetTable(short tableSize);
     short GetTableSize() const;

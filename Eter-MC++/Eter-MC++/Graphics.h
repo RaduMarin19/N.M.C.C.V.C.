@@ -29,20 +29,32 @@ class Graphics {
 public:
     Graphics();
     ~Graphics();
+
+    Graphics(const Graphics&) = delete;
+    Graphics& operator=(const Graphics&) = delete;
+    Graphics(Graphics&&) = delete;
+    Graphics& operator=(Graphics&&) = delete;
+
     void DrawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
+
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);
+
     void SetMousePos(const Coordinates& pos);
     Coordinates GetMousePos();
+
     void ResetGameModes();
     bool IsMouseInRect(const SDL_Rect& rect) const;
+
     bool DrawLoginPage();
     void DrawModeSelection();
 	void DrawTournamentModeSelection();
+
     void DrawCard(const Card& card, SDL_Texture* cardTexture);
+
     bool IsTrainingActive();
     bool IsMageDuelActive();
     bool IsElementalActive();

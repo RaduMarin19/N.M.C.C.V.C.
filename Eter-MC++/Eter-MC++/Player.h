@@ -23,6 +23,10 @@ public:
 	Player(std::vector<PlayingCard>&& cards);
 	Player(Player&&) = default;
 	Player& operator=(Player&&) = default;
+	Player(const Player&) = delete; 
+	Player& operator=(const Player&) = delete;
+
+	~Player() = default;
 
 	void SetIllusionTexture(std::shared_ptr<CardTexture> texture);
 	const CardTexture& GetIllusionTexture() const;

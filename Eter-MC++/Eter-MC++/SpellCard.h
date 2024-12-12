@@ -12,6 +12,12 @@ class SpellCard : public Card
 public:
 	SpellCard(const Coordinates& position, CardTexture* texture,ElementalType spell, unsigned short id);
 	
+	~SpellCard() = default; 
+	SpellCard(const SpellCard& other) = default; 
+	SpellCard& operator=(const SpellCard& other) = default; 
+	SpellCard(SpellCard&& other) noexcept = default; 
+	SpellCard& operator=(SpellCard&& other) noexcept = default; 
+
 	void SetSpell(ElementalType spell, CardTexture* texture);
 	void SetUsed(bool used);
 

@@ -20,6 +20,11 @@ class Game
 {
 public:
 	
+	Game(const Game&) = delete;                  
+	Game& operator=(const Game&) = delete;     
+	Game(Game&&) = delete;                       
+	Game& operator=(Game&&) = delete;
+
 	static Game& GetInstance();
 
 	void SetGameState(GameState state);

@@ -9,7 +9,12 @@ class PlayingCard : public Card
 public:
 	PlayingCard();
 	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short, Color);
-	PlayingCard(const PlayingCard&);
+	PlayingCard(const PlayingCard& other);
+
+	~PlayingCard() = default; // Destructor
+	PlayingCard& operator=(const PlayingCard& other) = default;
+	PlayingCard(PlayingCard&& other) noexcept = default; 
+	PlayingCard& operator=(PlayingCard&& other) noexcept = default;
 
 	void SetIllussion(bool IsIllusion);
 	bool IsIllusion() const;
