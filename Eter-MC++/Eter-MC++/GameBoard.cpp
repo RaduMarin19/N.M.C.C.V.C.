@@ -171,13 +171,13 @@ bool GameBoard::CheckScore(GameState& gameState) {
     if ((m_isBluePlayer && m_playerBlue.GetCards().empty()) || (!m_isBluePlayer && m_playerRed.GetCards().empty())) {
         for (auto& [coords, cardStack] : m_positions) {
             if (cardStack.back().GetColor() == BLUE) {
-                if (cardStack.back().isIllusion()) {
+                if (cardStack.back().IsIllusion()) {
                     blueScore += 1;
                 }
                 else blueScore += cardStack.back().GetValue();
             }
             if (cardStack.back().GetColor() == RED) {
-                if (cardStack.back().isIllusion()) {
+                if (cardStack.back().IsIllusion()) {
                     redScore += 1;
                 }
                 else redScore += cardStack.back().GetValue();
@@ -378,7 +378,7 @@ bool GameBoard::RemoveIllusion(const Coordinates& boardPosition)
     auto cards = m_positions.find(boardPosition);
     if (cards != m_positions.end()) {
         auto& card = cards->second.back();
-        if (card.isIllusion())
+        if (card.IsIllusion())
         {
             card.SetIllussion(false);
             return true;
@@ -448,12 +448,12 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-        if (!otherCard.isIllusion()) { //if a card is a illusion you cannot add it to an existing stack
+        if (!otherCard.IsIllusion()) { //if a card is a illusion you cannot add it to an existing stack
             auto it = m_positions.find(newCardCoords);
             if (it->second.back().GetValue() < otherCard.GetValue()) {
                 it->second.emplace_back(otherCard);
             }
-            else if (it->second.back().isIllusion()) {
+            else if (it->second.back().IsIllusion()) {
                 m_isBluePlayer = !m_isBluePlayer;
                 it->second.back().SetIllussion(false);
                 return REMOVED;
@@ -548,13 +548,13 @@ void GameBoard::Clear() {
     m_positions.clear();
     m_possiblePositions.clear();
     m_possiblePositions.insert({ 0,0 });
-    m_playerBlue.reset();
+    m_playerBlue.Reset();
     m_exploded = false;
     m_maxX = 0;
     m_minX = 0;
     m_minY = 0;
     m_maxY = 0;
-    m_playerRed.reset();
+    m_playerRed.Reset();
     m_explosion->InitializeExplosionCard();
     m_holes.clear();
 

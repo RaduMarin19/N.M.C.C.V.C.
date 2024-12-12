@@ -11,8 +11,8 @@ public:
 	PlayingCard(const Coordinates&, CardTexture*, short, unsigned short, Color);
 	PlayingCard(const PlayingCard&);
 
-	void SetIllussion(bool isIllusion);
-	bool isIllusion() const;
+	void SetIllussion(bool IsIllusion);
+	bool IsIllusion() const;
 
 	Coordinates GetBoardPosition() const;
 	Color GetColor() const;
@@ -20,7 +20,7 @@ public:
 
 	void SetBoardPosition(Coordinates position);
 	void SetInitialPosition(Coordinates position);
-	void setValue(short value);
+	void SetValue(short value);
 
 	bool operator==(const PlayingCard& other) const;
 

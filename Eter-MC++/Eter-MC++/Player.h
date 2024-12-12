@@ -29,15 +29,15 @@ public:
 
 	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
-	void removeCard(const PlayingCard& card);
+	void RemoveCard(const PlayingCard& card);
 	std::vector<PlayingCard>& GetCards();
 	Card *GetGrabbedCard() const;
-	bool isGrabbingCard() const;
+	bool IsGrabbingCard() const;
 	void SetIsGrabbingCard(bool isGrabbingCard);
 	void SetHasPlayedIllusion();
 	bool HasPlayedIllusion() const;
-	bool& isPlayingIllusion();
-	void reset();
+	bool& IsPlayingIllusion();
+	void Reset();
 
 private:
 	std::vector<PlayingCard> m_cards;

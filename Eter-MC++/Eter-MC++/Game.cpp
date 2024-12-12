@@ -40,7 +40,7 @@ void Game::Run() {
         while (SDL_PollEvent(&e) != 0)
         {
             
-            m_painter->setEvent(e);
+            m_painter->SetEvent(e);
             if (e.type == SDL_QUIT)
             {
                 quit = true;
@@ -55,7 +55,7 @@ void Game::Run() {
             if (m_currentState == WELCOME_SCREEN && !drawThisFrame) {
 
                 //Draw the login page until user moves to the next page
-                if (m_painter->drawLoginPage()) {
+                if (m_painter->DrawLoginPage()) {
                     m_currentState = MODE_SELECTION;
                     drawThisFrame = true;
                 }
@@ -64,16 +64,16 @@ void Game::Run() {
             if (m_currentState == MODE_SELECTION && !drawThisFrame) {
 
                 //Draw the mode selection menu
-                m_painter->drawModeSelection();
+                m_painter->DrawModeSelection();
 
                 //Check which button the player has pressed, and initialize the cards accordingly
-                if (m_painter->isTrainingActive()) {
+                if (m_painter->IsTrainingActive()) {
                     m_currentState = TRAINING_MODE;
                     m_board->GeneratePlayerCards(GameMode::Training);
                     m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
-                else if (m_painter->isElementalActive())
+                else if (m_painter->IsElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
@@ -81,7 +81,7 @@ void Game::Run() {
 					m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
-                else if (m_painter->isMageDuelActive())
+                else if (m_painter->IsMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
@@ -89,12 +89,12 @@ void Game::Run() {
                     m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
-                else if (m_painter->isTournamentActive())
+                else if (m_painter->IsTournamentActive())
                 {
                     m_currentState = TOURNAMENT;
 					drawThisFrame = true;
                 }
-                else if (m_painter->isQuickMatchActive())
+                else if (m_painter->IsQuickMatchActive())
                 {
                     m_currentState = QUICK_MODE;
 					m_board->SetGameMode(GameMode::QuickMode);
@@ -106,8 +106,8 @@ void Game::Run() {
 
             if (m_currentState == TOURNAMENT && !drawThisFrame)
             {
-                m_painter->drawTournamentModeSelection();
-                if (m_painter->isElementalActive())
+                m_painter->DrawTournamentModeSelection();
+                if (m_painter->IsElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
@@ -115,7 +115,7 @@ void Game::Run() {
 					m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
-                else if (m_painter->isMageDuelActive())
+                else if (m_painter->IsMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
@@ -128,14 +128,14 @@ void Game::Run() {
             if (m_currentState == RED_PLAYER_WON || m_currentState == BLUE_PLAYER_WON || m_currentState == TIE) {
                 std::string message = (m_currentState == RED_PLAYER_WON) ? "RED player WON!" :
                     (m_currentState == BLUE_PLAYER_WON) ? "Blue player WON!" : "TIE!";
-                m_painter->drawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
+                m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
 
                 bool isPressed = false;
-                m_painter->drawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
+                m_painter->DrawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
                 if (isPressed) {
                     m_currentState = MODE_SELECTION;
                     drawThisFrame = true;
-                    m_painter->resetGameModes();
+                    m_painter->ResetGameModes();
                     m_board->Clear();
                     m_explosionTurn = false;
                 }
@@ -162,7 +162,7 @@ void Game::Run() {
 void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     pushCard->SetBoardPosition(possiblePosition);
     pushCard->SetCoordinates({ renderRect.x, renderRect.y });
-    if (player.HasPlayedIllusion() == false && player.isPlayingIllusion()) {
+    if (player.HasPlayedIllusion() == false && player.IsPlayingIllusion()) {
         pushCard->SetIllussion(true);
         player.SetHasPlayedIllusion();
     }
@@ -170,12 +170,12 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     CardStatus status = m_board->PushNewCard(*pushCard);
 
     if (status == ON_BOARD) {
-        player.removeCard(*pushCard);
-        if (pushCard->isIllusion())
+        player.RemoveCard(*pushCard);
+        if (pushCard->IsIllusion())
         {
             for (auto& card : m_board->GetPlayedPositions())
                 if (card.second.back() == *pushCard)
-                    card.second.back().SetIllussion(player.isPlayingIllusion());
+                    card.second.back().SetIllussion(player.IsPlayingIllusion());
             player.SetHasPlayedIllusion();
         }
         m_board->CheckStatus(m_currentState);
@@ -190,7 +190,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         m_board->ReturnCardToDeck(*pushCard);
     }
     else if (status == REMOVED) {
-        player.removeCard(*pushCard);
+        player.RemoveCard(*pushCard);
     }
 }
 
@@ -251,11 +251,11 @@ void Game::HandleBoardState() {
 
     //drawing the play illusion buttons
     if (m_board->GetPlayerBlue()->HasPlayedIllusion() == false && m_board->IsBluePlayer()) {
-        m_painter->drawButton(m_board->GetPlayerBlue()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+        m_painter->DrawButton(m_board->GetPlayerBlue()->IsPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
     }
 
     if (m_board->GetPlayerRed()->HasPlayedIllusion() == false && !m_board->IsBluePlayer()) {
-        m_painter->drawButton(m_board->GetPlayerRed()->isPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+        m_painter->DrawButton(m_board->GetPlayerRed()->IsPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
     }
 
     //Draw the board, with the possible positions and played cards;
@@ -275,7 +275,7 @@ void Game::HandleBoardState() {
         }
     }
 
-    if (!m_painter->isPressingLeftClick() && (m_board->GetPlayerRed()->isGrabbingCard() || m_board->GetPlayerBlue()->isGrabbingCard())) {
+    if (!m_painter->IsPressingLeftClick() && (m_board->GetPlayerRed()->IsGrabbingCard() || m_board->GetPlayerBlue()->IsGrabbingCard())) {
         //std::cout << "Player stopped grabbing a card\n";
         m_board->GetPlayerRed()->SetIsGrabbingCard(false);
         m_board->GetPlayerBlue()->SetIsGrabbingCard(false);
@@ -290,13 +290,13 @@ void Game::DrawBoard() {
         renderRect.w = textureWidth;
         renderRect.h = textureHeight;
 
-        if (m_painter->isMouseInRect(renderRect)) {
+        if (m_painter->IsMouseInRect(renderRect)) {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
-            if (m_board->IsBluePlayer() && m_board->GetPlayerBlue()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
+            if (m_board->IsBluePlayer() && m_board->GetPlayerBlue()->IsGrabbingCard() && !m_painter->IsPressingLeftClick()) {
                 PlayerTurn(*m_board->GetPlayerBlue(), renderRect, possiblePosition);
             }
-            else if (m_board->GetPlayerRed()->isGrabbingCard() && !m_painter->isPressingLeftClick()) {
+            else if (m_board->GetPlayerRed()->IsGrabbingCard() && !m_painter->IsPressingLeftClick()) {
                 PlayerTurn(*m_board->GetPlayerRed(), renderRect, possiblePosition);
             }
         }
@@ -307,18 +307,18 @@ void Game::DrawBoard() {
     }
 
     for (const auto& cards = m_board->GetPlayedCards(); const auto & card : cards) {
-        if (card.isIllusion())
+        if (card.IsIllusion())
         {
             if (card.GetColor() == BLUE)
-                m_painter->drawCard(card, m_board->GetPlayerBlue()->GetIllusionTexture().GetTexture());
+                m_painter->DrawCard(card, m_board->GetPlayerBlue()->GetIllusionTexture().GetTexture());
             else if (card.GetColor() == RED)
             {
-                m_painter->drawCard(card, m_board->GetPlayerRed()->GetIllusionTexture().GetTexture());
+                m_painter->DrawCard(card, m_board->GetPlayerRed()->GetIllusionTexture().GetTexture());
             }
         }
         else
         {
-            m_painter->drawCard(card, card.GetTexture()->GetTexture());
+            m_painter->DrawCard(card, card.GetTexture()->GetTexture());
         }
     }
 }
@@ -329,17 +329,17 @@ void Game::HandleCardMovement(Player* player,Card& card) {
     cardRect.y = card.GetCoordinates().GetY();
     cardRect.w = textureWidth;
     cardRect.h = textureHeight;
-    if (m_painter->isMouseInRect(cardRect)) {
+    if (m_painter->IsMouseInRect(cardRect)) {
         SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
         SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
-        if (m_painter->isPressingLeftClick() && !player->isGrabbingCard()) {
+        if (m_painter->IsPressingLeftClick() && !player->IsGrabbingCard()) {
             player->SetIsGrabbingCard(true);
             player->SetGrabbedCard(&card);
         }
-        if (player->isGrabbingCard()) {
+        if (player->IsGrabbingCard()) {
             if (player->GetGrabbedCard()->GetId() == card.GetId()) {
                 //std::cout << "Player blue is grabbing a card\n";
-                Coordinates mousePos = m_painter->getMousePos();
+                Coordinates mousePos = m_painter->GetMousePos();
                 mousePos.SetX(mousePos.GetX() - (textureWidth / 2));
                 mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
                 card.SetCoordinates(mousePos);
@@ -351,13 +351,13 @@ void Game::HandleCardMovement(Player* player,Card& card) {
 void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
     auto DrawAndHandleCard = [&](Player* player, Card& card) {
         if (isPlayersTurn) {
-            m_painter->drawCard(card, card.GetTexture()->GetTexture());
+            m_painter->DrawCard(card, card.GetTexture()->GetTexture());
             if (!m_explosionTurn) {
                 HandleCardMovement(player, card);
             }
         }
         else {
-            m_painter->drawCard(card, player->GetIllusionTexture().GetTexture());
+            m_painter->DrawCard(card, player->GetIllusionTexture().GetTexture());
         }
     };
 
@@ -381,7 +381,7 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
 bool Game::ExplosionTurn(){
     static bool checkExplosion = false;
     bool dontExplode = false;
-    m_painter->drawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t Explode!", 14);
+    m_painter->DrawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t Explode!", 14);
 
     if (dontExplode) {
         checkExplosion = false;
@@ -389,25 +389,25 @@ bool Game::ExplosionTurn(){
     }
 
     if (!checkExplosion) {
-        m_painter->drawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
+        m_painter->DrawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
     }
     if (checkExplosion) {
         {
             SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
-            m_painter->drawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
+            m_painter->DrawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
             auto explosion = m_board->GetExplosion();
             decltype(auto) explosionMask = explosion->GetExplosionMask();
             for (int i = 0; i < m_board->GetTableSize(); i++) {
                 for (int j = 0; j < m_board->GetTableSize(); j++) {
                     SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
                     if (explosionMask[i][j] == ExplosionType::HOLE) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->GetTexture());
+                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->GetTexture());
                     }
                     else if (explosionMask[i][j] == ExplosionType::DELETE) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->GetTexture());
+                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->GetTexture());
                     }
                     else if (explosionMask[i][j] == ExplosionType::RETURN) {
-                        m_painter->drawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->GetTexture());
+                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->GetTexture());
                     }
                 }
 
@@ -415,9 +415,9 @@ bool Game::ExplosionTurn(){
         }
         m_drawThisFrame = false;
         bool exploded = false;
-        m_painter->drawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+        m_painter->DrawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
         static bool rotate = false;
-        m_painter->drawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
+        m_painter->DrawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
         
         if (exploded) {
             //if (board.ValidateExplosion())

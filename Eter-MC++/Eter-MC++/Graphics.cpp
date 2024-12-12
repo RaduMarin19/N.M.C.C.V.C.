@@ -65,7 +65,7 @@ Graphics::~Graphics()
     SDL_Quit();
 }
 
-void Graphics::drawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
+void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
 
     //Initialize a texture and rectangle for the text
     SDL_Texture *texture = NULL;
@@ -125,7 +125,7 @@ void Graphics::drawText(const std::string &buf, const Coordinates &pos, int font
     }
 }
 
-void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
+void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
 
     //Initialize a texture and rectangle for the text
     SDL_Texture *texture = NULL;
@@ -187,7 +187,7 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
 
         //Typing logic, if the mouse is on the element, we can type in it
         //TODO: Change this logic to be on click instead
-        if(this->isMouseInRect(outlineRect)) {
+        if(this->IsMouseInRect(outlineRect)) {
             if(m_event.type == SDL_KEYDOWN) {
                 //Get the key ASCII id
                 unsigned short key = m_event.key.keysym.sym;
@@ -213,7 +213,7 @@ void Graphics::drawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
     }
 }
 
-void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int height, std::string text, int fontSize) {
+void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int height, std::string text, int fontSize) {
 
     //Initialize a texture and rectangle for the text
     SDL_Rect buttonRect = {pos.GetX(), pos.GetY(), width, height};
@@ -222,7 +222,7 @@ void Graphics::drawButton(bool &active, const Coordinates &pos, int width, int h
     SDL_Color chosenColor;
 
     //Is the mouse hovering our button?
-    if(isMouseInRect(buttonRect)) {
+    if(IsMouseInRect(buttonRect)) {
         //If we are hovering and we pressed on it, invert its state
         if(m_event.type == SDL_MOUSEBUTTONDOWN) {
             if(m_event.button.button == SDL_BUTTON_LEFT) {
@@ -278,7 +278,7 @@ SDL_Renderer* Graphics::GetRenderer()
     return m_renderer;
 }
 
-void Graphics::setEvent(const SDL_Event &event) {
+void Graphics::SetEvent(const SDL_Event &event) {
     m_event = event;
     SDL_GetMouseState(&m_mouseX, &m_mouseY);
 
@@ -294,16 +294,16 @@ void Graphics::setEvent(const SDL_Event &event) {
     }
 }
 
-void Graphics::setMousePos(const Coordinates &pos) {
+void Graphics::SetMousePos(const Coordinates &pos) {
     m_mouseX = pos.GetX();
     m_mouseY = pos.GetY();
 }
 
-Coordinates Graphics::getMousePos() {
+Coordinates Graphics::GetMousePos() {
     return {m_mouseX, m_mouseY};
 }
 
-void Graphics::resetGameModes()
+void Graphics::ResetGameModes()
 {
     g_config.elementalBattleActive = false;
     g_config.trainingActive = false;
@@ -312,23 +312,23 @@ void Graphics::resetGameModes()
 	g_config.quickMatchActive = false;
 }
 
-bool Graphics::isMouseInRect(const SDL_Rect &rect) const {
+bool Graphics::IsMouseInRect(const SDL_Rect &rect) const {
     return (m_mouseX > rect.x &&m_mouseX < rect.x + rect.w
 && m_mouseY > rect.y && m_mouseY < rect.y + rect.h);
 }
 
-bool Graphics::drawLoginPage() {
+bool Graphics::DrawLoginPage() {
 
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item, a text box and a button
-    drawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 14, true);
-    drawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 14, true);
+    DrawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 14, true);
+    DrawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 14, true);
 
     bool buttonActive = false;
-    drawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
+    DrawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
 
     // Present the updated render
     SDL_RenderPresent(m_renderer);
@@ -338,41 +338,41 @@ bool Graphics::drawLoginPage() {
 
 }
 
-void Graphics::drawModeSelection() {
+void Graphics::DrawModeSelection() {
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    drawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     // Draw and check each button
-    drawButton(g_config.tournamentActive,      { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
-    drawButton(g_config.mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
-    drawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    drawButton(g_config.trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
-    drawButton(g_config.quickMatchActive,      { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Quick Match", 14);
+    DrawButton(g_config.tournamentActive,      { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
+    DrawButton(g_config.mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    DrawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    DrawButton(g_config.trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    DrawButton(g_config.quickMatchActive,      { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Quick Match", 14);
 
     SDL_RenderPresent(m_renderer);
 }
 
-void Graphics::drawTournamentModeSelection()
+void Graphics::DrawTournamentModeSelection()
 {
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    drawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     // Draw and check each button
-    drawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
-    drawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    DrawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    DrawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
 
     SDL_RenderPresent(m_renderer);
 }
 
-void Graphics::drawCard(const Card& card, SDL_Texture* cardTexture)
+void Graphics::DrawCard(const Card& card, SDL_Texture* cardTexture)
 {
     // Ensure the card has a valid texture
     if (!card.GetTexture() || !cardTexture) {
@@ -404,7 +404,7 @@ void Graphics::drawCard(const Card& card, SDL_Texture* cardTexture)
     }
 }
 
-void Graphics::drawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
+void Graphics::DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
     if (!texture) {
         std::cerr << "Error: Texture has no valid texture!\n";
         return;
@@ -415,36 +415,36 @@ void Graphics::drawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
     }
 }
 
-bool Graphics::isTrainingActive()
+bool Graphics::IsTrainingActive()
 {
     return g_config.trainingActive;
 }
 
-bool Graphics::isMageDuelActive()
+bool Graphics::IsMageDuelActive()
 {
     return g_config.mageDuelActive;
 }
 
-bool Graphics::isElementalActive()
+bool Graphics::IsElementalActive()
 {
     return g_config.elementalBattleActive;
 }
 
-bool Graphics::isTournamentActive()
+bool Graphics::IsTournamentActive()
 {
     return g_config.tournamentActive;
 }
 
-bool Graphics::isQuickMatchActive()
+bool Graphics::IsQuickMatchActive()
 {
     return g_config.quickMatchActive;
 }
 
-bool Graphics::isPressingLeftClick() {
+bool Graphics::IsPressingLeftClick() {
     return this->m_isPressingLeftClick;
 }
 
-bool Graphics::isPressingRightClick() {
+bool Graphics::IsPressingRightClick() {
     return this->m_isPressingRightClick;
 }
 

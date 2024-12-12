@@ -35,7 +35,7 @@ void Player::AddCard(const PlayingCard& card)
 	m_cards.emplace_back(card);
 }
 
-void Player::removeCard(const PlayingCard& card) {
+void Player::RemoveCard(const PlayingCard& card) {
 	//Find the given card in the player deck
 	auto it = std::remove_if(m_cards.begin(), m_cards.end(),
 		[&card](const PlayingCard& c) {
@@ -61,7 +61,7 @@ Card *Player::GetGrabbedCard() const
 		return m_grabbedCard;
 }
 
-bool Player::isGrabbingCard() const
+bool Player::IsGrabbingCard() const
 {
 	return m_isGrabbingCard;
 }
@@ -80,12 +80,12 @@ bool Player::HasPlayedIllusion() const
 	return m_hasPlayedIllusion;
 }
 
-bool& Player::isPlayingIllusion()
+bool& Player::IsPlayingIllusion()
 {
 	return m_isPlayingIllusion;
 }
 
-void Player::reset()
+void Player::Reset()
 {
 	m_isGrabbingCard = false;
 	m_hasPlayedIllusion = false;

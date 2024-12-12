@@ -21,11 +21,11 @@ PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_initialPosition = oth.m_initialPosition;
 }
 
-void PlayingCard::SetIllussion(bool isIllusion) {
-	m_isIllusion = isIllusion;
+void PlayingCard::SetIllussion(bool IsIllusion) {
+	m_isIllusion = IsIllusion;
 }
 
-bool PlayingCard::isIllusion() const
+bool PlayingCard::IsIllusion() const
 {
 	return m_isIllusion;
 }
@@ -52,7 +52,7 @@ short PlayingCard::GetValue() const
 	return m_value;
 }
 
-void PlayingCard::setValue(short value)
+void PlayingCard::SetValue(short value)
 {
 	m_value = value;
 }

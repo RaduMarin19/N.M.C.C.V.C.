@@ -29,27 +29,27 @@ class Graphics {
 public:
     Graphics();
     ~Graphics();
-    void drawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
-    void drawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
-    void drawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
-    void drawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
+    void DrawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
+    void DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
+    void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
+    void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
     SDL_Renderer* GetRenderer();
-    void setEvent(const SDL_Event &event);
-    void setMousePos(const Coordinates& pos);
-    Coordinates getMousePos();
-    void resetGameModes();
-    bool isMouseInRect(const SDL_Rect& rect) const;
-    bool drawLoginPage();
-    void drawModeSelection();
-	void drawTournamentModeSelection();
-    void drawCard(const Card& card, SDL_Texture* cardTexture);
-    bool isTrainingActive();
-    bool isMageDuelActive();
-    bool isElementalActive();
-    bool isTournamentActive();
-    bool isQuickMatchActive();
-    bool isPressingLeftClick();
-    bool isPressingRightClick();
+    void SetEvent(const SDL_Event &event);
+    void SetMousePos(const Coordinates& pos);
+    Coordinates GetMousePos();
+    void ResetGameModes();
+    bool IsMouseInRect(const SDL_Rect& rect) const;
+    bool DrawLoginPage();
+    void DrawModeSelection();
+	void DrawTournamentModeSelection();
+    void DrawCard(const Card& card, SDL_Texture* cardTexture);
+    bool IsTrainingActive();
+    bool IsMageDuelActive();
+    bool IsElementalActive();
+    bool IsTournamentActive();
+    bool IsQuickMatchActive();
+    bool IsPressingLeftClick();
+    bool IsPressingRightClick();
 
 private:
     SDL_Window* m_window;
