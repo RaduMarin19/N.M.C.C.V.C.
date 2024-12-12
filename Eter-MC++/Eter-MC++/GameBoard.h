@@ -27,7 +27,7 @@
 class GameBoard
 {
 public:
-    using SpellType = std::variant<std::monostate, MageType, ElementalType>;  //no value for training - other types for specific gamemodes
+    
 
 public:
 
@@ -98,11 +98,10 @@ private:
     Player m_playerBlue;
     Player m_playerRed;
 
-    SpellType m_bluePlayerSpell;
-    SpellType m_RedPlayerSpell;
-
-    std::vector<CardTexture> m_blueCards;
-    std::vector<CardTexture> m_redCards;
+    std::vector<CardTexture> m_blueCardTextures;
+    std::vector<CardTexture> m_redCardTextures;
+    std::vector<CardTexture> m_elementalCardTextures;
+    std::vector<CardTexture> m_mageCardTextures;
     std::vector<CardTexture> m_explosionSprites;
 
     std::unique_ptr<CardTexture> m_explosionBoard;

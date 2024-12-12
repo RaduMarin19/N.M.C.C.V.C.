@@ -537,16 +537,16 @@ void GameBoard::GenerateTrainingCards() {
         for (int j = 0; j < 2; j++)
             for (int i = 1; i <= 3; i++) {
                 //Fill each deck with cards
-                PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
-                PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
+                PlayingCard cardBlue({ 0,  0 }, &m_blueCardTextures[i], i, nextCardId(), BLUE);
+                PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[i], i, nextCardId(), RED);
 
                 PlayingCardsBlue.emplace_back(std::move(cardBlue));
                 PlayingCardsRed.emplace_back(std::move(cardRed));
             }
-        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[4], 4, nextCardId(), BLUE);
         PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
-        PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
+        PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[4], 4, nextCardId(), RED);
         PlayingCardsRed.emplace_back(std::move(cardRed));
 
         //Set how much space we have for our deck, the whole screen - padding top/bottom
@@ -600,8 +600,8 @@ void GameBoard::GenerateElementalCards() {
 
     for (int i = 0; i < 2; i++) {
         //Fill each deck with cards
-        PlayingCard cardBlue({ 0, 0 }, &m_blueCards[1], i, nextCardId(), BLUE);
-        PlayingCard cardRed({ 0, 0 }, &m_redCards[1], i, nextCardId(), RED);
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[1], i, nextCardId(), BLUE);
+        PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[1], i, nextCardId(), RED);
         PlayingCardsBlue.emplace_back(std::move(cardBlue));
         PlayingCardsRed.emplace_back(std::move(cardRed));
     }
@@ -609,21 +609,21 @@ void GameBoard::GenerateElementalCards() {
     for (int j = 0; j < 3; j++)
         for (int i = 2; i <= 3; i++) {
             //Fill each deck with cards
-            PlayingCard cardBlue({ 0,  0 }, &m_blueCards[i], i, nextCardId(), BLUE);
-            PlayingCard cardRed({ 0, 0 }, &m_redCards[i], i, nextCardId(), RED);
+            PlayingCard cardBlue({ 0,  0 }, &m_blueCardTextures[i], i, nextCardId(), BLUE);
+            PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[i], i, nextCardId(), RED);
             PlayingCardsBlue.emplace_back(std::move(cardBlue));
             PlayingCardsRed.emplace_back(std::move(cardRed));
         }
-    PlayingCard cardBlue({ 0, 0 }, &m_blueCards[4], 4, nextCardId(), BLUE);
+    PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[4], 4, nextCardId(), BLUE);
     PlayingCardsBlue.emplace_back(std::move(cardBlue));
 
-    PlayingCard cardRed({ 0, 0 }, &m_redCards[4], 4, nextCardId(), RED);
+    PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[4], 4, nextCardId(), RED);
     PlayingCardsRed.emplace_back(std::move(cardRed));
 
-    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCards[0], 5, nextCardId(), BLUE);
+    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCardTextures[0], 5, nextCardId(), BLUE);
     PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
-    PlayingCard cardRedEter({ 0, 0 }, &m_redCards[0], 5, nextCardId(), RED);
+    PlayingCard cardRedEter({ 0, 0 }, &m_redCardTextures[0], 5, nextCardId(), RED);
     PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
     //Set how much space we have for our deck, the whole screen - padding top/bottom
@@ -662,11 +662,13 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndexBlue = Random::Get(14,37);
-    int randomIndexRed = Random::Get(14, 37);
-    SpellCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_blueCards[randomIndexBlue], nextCardId());
+    int randomIndexBlue = Random::Get(0,23);
+    int randomIndexRed = Random::Get(0, 23);
+    SpellCard cardBlueSpell({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_elementalCardTextures[randomIndexBlue], nextCardId());
+    m_playerBlue.SetSpellCard(cardBlueSpell);
 
-    SpellCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCards[randomIndexRed], nextCardId());
+    SpellCard cardRedSpell({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding }, &m_redCardTextures[randomIndexRed], nextCardId());
+    m_playerBlue.SetSpellCard(cardBlueSpell);
 
     //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(std::move(PlayingCardsBlue));
@@ -742,8 +744,8 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_" + std::to_string(i) + ".jpg");
     }
-    m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
-    m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
+    m_blueCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
+    m_redCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
@@ -751,13 +753,11 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     m_explosionBoard = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 8; i++) {
-        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        m_mageCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
     for (int i = 0; i < 24; i++) {
-        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        m_elementalCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
     m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
@@ -765,11 +765,11 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 
 #else
     for (int i = 0; i < 5; i++) {
-        m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");
+        m_blueCardTextures.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
+        m_redCardTextures.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");
     }
-    m_blueCards.emplace_back(renderer, "Dependencies/textures/blue_back.jpg");
-    m_redCards.emplace_back(renderer, "Dependencies/textures/red_back.jpg");
+    m_blueCardTextures.emplace_back(renderer, "Dependencies/textures/blue_back.jpg");
+    m_redCardTextures.emplace_back(renderer, "Dependencies/textures/red_back.jpg");
 
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
@@ -777,13 +777,11 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     m_explosionBoard = std::make_unique<CardTexture>(renderer, "Dependencies/textures/explosion_blank.jpg");
 
     for (int i = 0; i < 8; i++) {
-        m_blueCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
+        m_mageCardTextures.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
     }
 
     for (int i = 0; i < 24; i++) {
-        m_blueCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
+        m_elementalCardTextures.emplace_back(renderer, "Dependencies/textures/spell_" + std::to_string(i) + ".jpg");
     }
 
     m_blueCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");

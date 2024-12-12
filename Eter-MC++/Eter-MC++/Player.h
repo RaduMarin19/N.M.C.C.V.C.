@@ -1,14 +1,23 @@
 #pragma once
 #include "PlayingCard.h"
 #include "SpellCard.h"
+#include "MageType.h"
+#include "ElementalType.h"
 
 #include <vector>
 #include <unordered_map>
 #include <memory>
 #include <stdexcept>
+#include <variant>
+#include <algorithm>
+#include <utility>
+#include <optional>
 
 class Player
 {
+public:
+	using SpellType = std::variant<std::monostate, MageType, ElementalType>;  //no value for training - other types for specific gamemodes
+
 public:
 	Player();
 	Player(std::vector<PlayingCard>&& cards);
@@ -20,7 +29,7 @@ public:
 
 	void SetGrabbedCard(PlayingCard* grabbedCard);
 	void AddCard(const PlayingCard& card);
-	void SetSpellCard(SpellCard&& spellCard);
+	void SetSpellCard(SpellCard& spellCard);
 	void removeCard(const PlayingCard& card);
 	std::vector<PlayingCard>& GetCards();
 	PlayingCard *GetGrabbedCard() const;
@@ -33,7 +42,8 @@ public:
 
 private:
 	std::vector<PlayingCard> m_cards;
-	//SpellCard m_spellCard;
+	std::optional<SpellCard> m_spellCard;
+	SpellType m_spell;
 	std::shared_ptr<CardTexture> m_cardIllusion;
 
 	PlayingCard *m_grabbedCard;

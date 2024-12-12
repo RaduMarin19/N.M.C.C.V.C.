@@ -1,7 +1,5 @@
 #include "Player.h"
 
-#include <algorithm>
-#include <utility>
 
 Player::Player() {
 	m_isGrabbingCard = false;
@@ -37,9 +35,9 @@ void Player::AddCard(const PlayingCard& card)
 	m_cards.emplace_back(card);
 }
 
-void Player::SetSpellCard(SpellCard&& spellCard)
+void Player::SetSpellCard(SpellCard& spellCard)
 {
-	//m_spellCard = std::move(spellCard);
+	m_spellCard = std::move(spellCard);
 }
 
 void Player::removeCard(const PlayingCard& card) {
