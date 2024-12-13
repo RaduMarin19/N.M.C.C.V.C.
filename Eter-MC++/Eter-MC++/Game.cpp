@@ -205,11 +205,13 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+
         case ElementalType::SQUALL:
             m_board->ReturnCoveredCards();      //returns all covered cards to the players hand
             m_board->RemoveSpell(spellCard);    //then remove the spell card
             m_board->ChangeTurn();              //player loses its turn
             break;
+
         case ElementalType::ASHES: {
             std::vector<PlayingCard>& cards = player.GetRemovedCards();
             if (cards.size() > 0) {  //if the player has at least one removed cards(avoiding errors)
@@ -221,14 +223,23 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+
         case ElementalType::STORM: {
-            short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
-            if (size > 1) {                                                      //if the position has >= 2 cards
-                while (size) {                                                   //delete all cards from the game
-                    m_board->DeleteCardAtPosition(possiblePosition);               
-                    --size;
+            if(m_board->GetPlayedPositions().find(possiblePosition) != m_board->GetPlayedPositions().end())
+            {
+                short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
+
+                if (size > 1) {                                                      //if the position has >= 2 cards
+                    while (size) {                                                   //delete all cards from the game
+                        m_board->DeleteCardAtPosition(possiblePosition);
+                        --size;
+                    }
+                    m_board->RemoveSpell(spellCard); //then remove the spell card
                 }
-                m_board->RemoveSpell(spellCard); //then remove the spell card
+            }
+            else
+            {
+                std::cout << "Not a valid position for this elements!\n";
             }
             break;
         }
@@ -389,10 +400,10 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
 
         if (spells) {
             auto& [spellCard1, spellCard2] = *spells;
-            if(spellCard1!=nullptr)
-            DrawAndHandleCard(player, *spellCard1);
-            if (spellCard2!=nullptr)
-            DrawAndHandleCard(player, *spellCard2);
+            if(spellCard1 != nullptr)
+                DrawAndHandleCard(player, *spellCard1);
+            if (spellCard2 != nullptr)
+                DrawAndHandleCard(player, *spellCard2);
         }
     }
 }
