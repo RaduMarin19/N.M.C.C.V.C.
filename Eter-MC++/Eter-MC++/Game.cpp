@@ -70,7 +70,6 @@ void Game::Run() {
                 if (m_painter->IsTrainingActive()) {
                     m_currentState = TRAINING_MODE;
                     m_board->GeneratePlayerCards(GameMode::Training);
-                    m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsElementalActive())
@@ -78,7 +77,6 @@ void Game::Run() {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
                     m_board->GeneratePlayerCards(GameMode::Elemental);
-					m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsMageDuelActive())
@@ -86,7 +84,6 @@ void Game::Run() {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
                     m_board->GeneratePlayerCards(GameMode::MageDuel);
-                    m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsTournamentActive())
@@ -99,7 +96,6 @@ void Game::Run() {
                     m_currentState = QUICK_MODE;
 					m_board->SetGameMode(GameMode::QuickMode);
                     m_board->GeneratePlayerCards(GameMode::QuickMode);
-                    m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
             }
@@ -112,7 +108,6 @@ void Game::Run() {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
                     m_board->GeneratePlayerCards(GameMode::Elemental);
-					m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsMageDuelActive())
@@ -120,7 +115,6 @@ void Game::Run() {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
                     m_board->GeneratePlayerCards(GameMode::MageDuel);
-                    m_board->SetIsBluePlayer(true);
                     drawThisFrame = true;
                 }
             }
@@ -183,7 +177,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
             m_explosionTurn = true;
         }
         else {
-            m_board->SetIsBluePlayer(!m_board->IsBluePlayer());
+            m_board ->ChangeTurn(); 
         }
     }
     else if (status == IN_HAND) {
@@ -271,7 +265,7 @@ void Game::HandleBoardState() {
     if (m_explosionTurn){
         if (ExplosionTurn() == true) {
             m_explosionTurn = false;
-            m_board->SetIsBluePlayer(!m_board->IsBluePlayer());
+            m_board->ChangeTurn();
         }
     }
 

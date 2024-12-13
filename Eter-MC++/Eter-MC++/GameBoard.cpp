@@ -557,6 +557,7 @@ void GameBoard::Clear() {
     m_playerRed.Reset();
     m_explosion->InitializeExplosionCard();
     m_holes.clear();
+    m_isBluePlayer = true;
 
 }
 
@@ -851,6 +852,7 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 
 GameBoard::GameBoard(SDL_Renderer* renderer)
 {
+    m_isBluePlayer = true;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 
@@ -878,12 +880,13 @@ const Color GameBoard::GetCardColorAtPosition(const Coordinates& boardPosition) 
     }
 }
 
-void GameBoard::SetIsBluePlayer(bool player) {
-    this->m_isBluePlayer = player;
-}
-
 bool GameBoard::IsBluePlayer() const {
     return this->m_isBluePlayer;
+}
+
+void GameBoard::ChangeTurn()
+{
+    m_isBluePlayer = !m_isBluePlayer;
 }
 
 bool GameBoard::DidExplode() const

@@ -32,6 +32,7 @@ public:
     using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
 public:
 
+    GameBoard(SDL_Renderer* renderer);
     GameBoard(const GameBoard&) = delete; 
     GameBoard& operator=(const GameBoard&) = delete; 
     GameBoard(GameBoard&&) = delete; 
@@ -43,7 +44,6 @@ public:
     short GetTableSize() const;
     void SetGameMode(const GameMode& mode);
     void GeneratePlayerCards(const GameMode& mode);
-    GameBoard(SDL_Renderer* renderer);
 
     unsigned short NextCardId();
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
@@ -75,8 +75,9 @@ public:
 
     void ReturnCardToDeck(PlayingCard& card);
 
-    void SetIsBluePlayer(bool player);
     bool IsBluePlayer() const;
+
+    void ChangeTurn();
 
     bool VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
 
