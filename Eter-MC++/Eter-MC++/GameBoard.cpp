@@ -470,19 +470,24 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-        if (!otherCard.IsIllusion()) { //if a card is a illusion you cannot add it to an existing stack
-            auto it = m_positions.find(newCardCoords);
-            if (it->second.back().GetValue() < otherCard.GetValue()) {
-                it->second.emplace_back(otherCard);
-            }
-            else if (it->second.back().IsIllusion() && it->second.back().GetColor()!=otherCard.GetColor()) {
-                m_isBluePlayer = !m_isBluePlayer;
-                it->second.back().SetIllusion(false);
-                return REMOVED;
+        if (!otherCard.IsEter())
+        {
+            if (!otherCard.IsIllusion()) { //if a card is a illusion you cannot add it to an existing stack
+                auto it = m_positions.find(newCardCoords);
+                if (it->second.back().GetValue() < otherCard.GetValue()) {
+                    it->second.emplace_back(otherCard);
+                }
+                else if (it->second.back().IsIllusion() && it->second.back().GetColor() != otherCard.GetColor()) {
+                    m_isBluePlayer = !m_isBluePlayer;
+                    it->second.back().SetIllusion(false);
+                    return REMOVED;
+                }
+                else return IN_HAND;
             }
             else return IN_HAND;
         }
         else return IN_HAND;
+            
     }
 
     std::cout << "Card successfully added at: ("
@@ -691,9 +696,11 @@ void GameBoard::GenerateElementalCards() {
     PlayingCardsRed.emplace_back(std::move(cardRed));
 
     PlayingCard cardBlueEter({ 0, 0 }, &m_blueCardTextures[0], 5, NextCardId(), BLUE);
+    cardBlueEter.SetEter(true);
     PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
     PlayingCard cardRedEter({ 0, 0 }, &m_redCardTextures[0], 5, NextCardId(), RED);
+    cardRedEter.SetEter(true);
     PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
     //Set how much space we have for our deck, the whole screen - padding top/bottom

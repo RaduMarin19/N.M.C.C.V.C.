@@ -37,6 +37,6 @@ private:
 	Color m_color;
 	short m_value;
 	bool m_isIllusion;
-	bool m_isEter;
+	bool m_isEter = false;
 };
 
