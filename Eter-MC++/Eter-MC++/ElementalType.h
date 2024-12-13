@@ -5,7 +5,7 @@ enum class ElementalType {
     DESTROY,              // Distrugere: Elimina din joc ultima carte jucata de adversar.
     FIRE,                 // Flacari: Intoarce iluzia adversarului cu fata in sus si joaca o carte pe oricare pozitie de pe tabla.
     LAVA,                 // Lava: Toate cartile vizibile cu un numar specific se intorc in mainile proprietarilor. DONE
-    ASHES,                // Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat.
+    ASHES,                // Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat. DONE
     SPARKS,               // Scantei: Alege orice carte proprie acoperita de adversar si joac-o pe alta pozitie.
     WHIRLWIND,            // Vifor: Intoarce o carte vizibila a oponentului in mana sa.
     SQUALL,               // Vijelie: Toate cartile acoperite de alte carti se intorc in mainile proprietarilor. DONE

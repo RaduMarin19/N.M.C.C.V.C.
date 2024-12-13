@@ -221,12 +221,13 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
         PlayingCard& card = m_positions[boardPosition].back();
         card.SetIllussion(false);    //if its a illusion it loses the property
         if (card.GetColor() == BLUE)
-            m_blueRemovedCards.emplace_back(std::move(card));           //put the card in the deleted stack of each respective player
+            m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition), card);         //put the card in the deleted stack of each respective player
         else
-            m_redRemovedCards.emplace_back(std::move(card));
-        m_positions[boardPosition].pop_back();
-        if (m_positions[boardPosition].size() == 0)
+            m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition),card);
+        if (m_positions[boardPosition].size() == 0) {
             m_positions.erase(boardPosition);           //if there isnt any card in the deque anymore then remove the position
+            //TODO: remove actual possiblePositions and regenerate them.
+        }
     }
 }
 
@@ -237,15 +238,21 @@ void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
 
         for (PlayingCard& card : m_positions[boardPosition]) {
             if (card.GetColor() == BLUE)
-                m_blueRemovedCards.emplace_back(std::move(card));           //put the card in the deleted stack of each respective player
+                m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition),card);           //put the card in the deleted stack of each respective player
             else
-                m_redRemovedCards.emplace_back(std::move(card));
+                m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition),card);
         }
 
         m_positions.erase(boardPosition);
         m_possiblePositions.erase(boardPosition);
         m_holes.insert(boardPosition);
     }
+}
+
+std::deque<PlayingCard>& GameBoard::GetCardsAtPosition(const Coordinates& position)
+{
+    if (m_positions.find(position) != m_positions.end())
+        return m_positions.at(position);
 }
 
 void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
@@ -421,6 +428,21 @@ void GameBoard::RemoveSpell(SpellCard* spell)
     }
 }
 
+void GameBoard::TestPossiblePositions(const Coordinates& boardPosition) {
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY());
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY());
+
+    //Check vertically for new possible positions
+    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() + 1);
+
+    //Check diagonally for new possible positions
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() + 1);
+
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() + 1);
+}
 
 CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 {
@@ -453,7 +475,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
             if (it->second.back().GetValue() < otherCard.GetValue()) {
                 it->second.emplace_back(otherCard);
             }
-            else if (it->second.back().IsIllusion()) {
+            else if (it->second.back().IsIllusion() && it->second.back().GetColor()!=otherCard.GetColor()) {
                 m_isBluePlayer = !m_isBluePlayer;
                 it->second.back().SetIllussion(false);
                 return REMOVED;
@@ -467,20 +489,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
         << newCardCoords.GetX() << ", "
         << newCardCoords.GetY() << ")" << std::endl;
 
-    //Check horizontally for new possible positions
-    this->TestPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY());
-    this->TestPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY());
-
-    //Check vertically for new possible positions
-    this->TestPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() - 1);
-    this->TestPossiblePosition(newCardCoords.GetX(), newCardCoords.GetY() + 1);
-
-    //Check diagonally for new possible positions
-    this->TestPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() - 1);
-    this->TestPossiblePosition(newCardCoords.GetX() - 1, newCardCoords.GetY() + 1);
-
-    this->TestPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() - 1);
-    this->TestPossiblePosition(newCardCoords.GetX() + 1, newCardCoords.GetY() + 1);
+    TestPossiblePositions(newCardCoords);
 
     //If the board size is at max size, erase all old entries that are out of bounds
     //TODO: this should be it's own function
@@ -724,7 +733,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 4/*Random::Get(0, 23)*/;
-    int randomIndex2 = 7/*Random::Get(0, 23)*/;
+    int randomIndex2 = 11/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);

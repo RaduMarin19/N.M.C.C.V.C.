@@ -37,23 +37,6 @@ void Player::AddCard(const PlayingCard& card)
 	m_cards.emplace_back(card);
 }
 
-void Player::AddRemovedCard(PlayingCard& card)
-{
-	auto it = std::find_if(m_cards.begin(), m_cards.end(),
-		[&card](const PlayingCard& c) {
-			return c == card;
-		});
-
-	// If it's there, move it to removed cards and erase it from the deck
-	if (it != m_cards.end()) {
-		m_removedCards.emplace_back(std::move(*it)); // Move the card to removedCards
-		m_cards.erase(it);                          // Remove the card from the player's hand
-	}
-	else {
-		throw std::runtime_error("Card not found in player's hand.");
-	}
-}
-
 void Player::RemoveCardFromDeck(std::vector<PlayingCard>& cards,const PlayingCard& card) {
 	auto it = std::remove_if(cards.begin(), cards.end(),
 		[&card](const PlayingCard& c) {

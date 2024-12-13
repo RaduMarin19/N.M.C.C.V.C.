@@ -51,6 +51,7 @@ public:
     const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
     const std::vector<PlayingCard> GetPlayedCards() const;
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
+    std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
 
     Player* GetPlayerRed();
@@ -74,6 +75,7 @@ public:
     void CheckStatus(GameState& gameMode);
 
     void ReturnCardToDeck(PlayingCard& card);
+    void DeleteCardAtPosition(const Coordinates& boardPosition);
 
     bool IsBluePlayer() const;
 
@@ -105,8 +107,6 @@ private:
     std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
 
-    std::list<PlayingCard> m_blueRemovedCards;
-    std::list<PlayingCard> m_redRemovedCards;
     SpellsType m_spells;
 
     Player m_playerBlue;
@@ -133,12 +133,13 @@ private:
     unsigned int m_centerY;
 
     void TestPossiblePosition(short x, short y);
+    void TestPossiblePositions(const Coordinates& boardPosition);
     bool CheckRows(GameState& gameState);
     bool CheckColumns(GameState& gameState);
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
 
-    void DeleteCardAtPosition(const Coordinates& boardPosition);
+    
     void CreateHoleAtPosition(const Coordinates& boardPosition);
     void ReturnTopCardAtPosition(const Coordinates& boardPosition);
 

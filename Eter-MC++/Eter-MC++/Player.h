@@ -13,6 +13,16 @@
 #include <algorithm>
 #include <utility>
 #include <optional>
+#include <concepts>
+#include <iterator>
+
+template <typename Container, typename T>
+concept CardContainer =
+std::ranges::input_range<Container> &&                        // Container must be an input range
+std::equality_comparable_with<typename Container::value_type, T>&& // Elements must be comparable with T
+	requires(Container c, typename Container::iterator it) {
+		{ c.erase(it) };                                          // Container must support erase()
+};
 
 class Player
 {
@@ -33,7 +43,10 @@ public:
 
 	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
-	void AddRemovedCard(PlayingCard& card);    //for cards that are removed from the game
+
+	template <typename Container>
+	requires CardContainer<Container, PlayingCard>
+	void AddRemovedCard(Container& container, PlayingCard& card);    //for cards that are removed from the game
 	void RemoveCardFromHand(const PlayingCard& card);
 
 	std::vector<PlayingCard>& GetRemovedCards();
@@ -65,4 +78,24 @@ private:
 
 	void RemoveCardFromDeck(std::vector<PlayingCard>& cards, const PlayingCard& card);
 };
+
+template <typename Container>
+requires CardContainer<Container, PlayingCard>
+void Player::AddRemovedCard(Container& container, PlayingCard& card) {
+	card.ReturnToHand();
+
+	auto it = std::find_if(container.begin(), container.end(),
+		[&card](const PlayingCard& c) {
+			return c == card;
+		});
+
+	// If it's there, move it to removed cards and erase it from the hand
+	if (it != container.end()) {
+		m_removedCards.emplace_back(std::move(*it)); // Move the card to removedCards
+		container.erase(it);                        // Remove the card from the player's hand
+	}
+	else {
+		throw std::runtime_error("Card not found in player's hand.");
+	}
+}
 

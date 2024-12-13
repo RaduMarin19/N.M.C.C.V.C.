@@ -23,6 +23,7 @@ public:
 	Color GetColor() const;
 	short GetValue() const;
 
+	void ReturnToHand();
 	void SetBoardPosition(Coordinates position);
 	void SetInitialPosition(Coordinates position);
 	void SetValue(short value);

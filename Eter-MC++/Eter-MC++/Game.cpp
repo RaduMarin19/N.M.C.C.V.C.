@@ -185,7 +185,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         m_board->ReturnCardToDeck(*pushCard);
     }
     else if (status == REMOVED) {
-        player.AddRemovedCard(*pushCard);
+        player.AddRemovedCard(player.GetCards(), *pushCard);
         player.SetIsPlayingAshes(false);
     }
 }
@@ -193,29 +193,45 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
 void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     spellCard->SetCoordinates({ renderRect.x, renderRect.y });
 
-    ElementalType spell = spellCard->GetSpell();
+    ElementalType spell = spellCard->GetSpell(); //getting the spell type
 
     switch (spell) {
         case ElementalType::FIRE: {
             Color playerColor = player.GetCards().back().GetColor();
-            if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor)
+            if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor) //checking if the color of the chosen card is different than that of the player
             {
-                if (m_board->RemoveIllusion(possiblePosition))
+                if (m_board->RemoveIllusion(possiblePosition))   //if the illusion is successfully removed then remove the spell card
                   m_board->RemoveSpell(spellCard);
             }
             break;
         }
         case ElementalType::SQUALL:
-            m_board->ReturnCoveredCards();
-            m_board->RemoveSpell(spellCard);
-            m_board->ChangeTurn();
+            m_board->ReturnCoveredCards();      //returns all covered cards to the players hand
+            m_board->RemoveSpell(spellCard);    //then remove the spell card
+            m_board->ChangeTurn();              //player loses its turn
             break;
-        case ElementalType::ASHES:
-            if (player.GetRemovedCards().size() > 0) {
-                player.SetIsPlayingAshes(true);
-                m_board->RemoveSpell(spellCard);
+        case ElementalType::ASHES: {
+            std::vector<PlayingCard>& cards = player.GetRemovedCards();
+            if (cards.size() > 0) {  //if the player has at least one removed cards(avoiding errors)
+                player.SetIsPlayingAshes(true);         //this will determine from which deck the player will take cards
+                m_board->RemoveSpell(spellCard);        //then remove the spell card
+                for (decltype(auto) card : cards) {
+                    m_board->ReturnCardToDeck(card);
+                }
             }
             break;
+        }
+        case ElementalType::STORM: {
+            short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
+            if (size > 1) {                                                      //if the position has >= 2 cards
+                while (size) {                                                   //delete all cards from the game
+                    m_board->DeleteCardAtPosition(possiblePosition);               
+                    --size;
+                }
+                m_board->RemoveSpell(spellCard); //then remove the spell card
+            }
+            break;
+        }
     }
 }
 

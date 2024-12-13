@@ -30,6 +30,11 @@ bool PlayingCard::IsIllusion() const
 	return m_isIllusion;
 }
 
+void PlayingCard::ReturnToHand()
+{
+	m_boardPosition = m_initialPosition;
+}
+
 void PlayingCard::SetBoardPosition(Coordinates position) {
 	this->m_boardPosition = position;
 }
