@@ -157,7 +157,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     pushCard->SetBoardPosition(possiblePosition);
     pushCard->SetCoordinates({ renderRect.x, renderRect.y });
     if (player.HasPlayedIllusion() == false && player.IsPlayingIllusion()) {
-        pushCard->SetIllussion(true);
+        pushCard->SetIllusion(true);
         player.SetHasPlayedIllusion();
     }
 
@@ -169,7 +169,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         {
             for (auto& card : m_board->GetPlayedPositions())
                 if (card.second.back() == *pushCard)
-                    card.second.back().SetIllussion(player.IsPlayingIllusion());
+                    card.second.back().SetIllusion(player.IsPlayingIllusion());
             player.SetHasPlayedIllusion();
         }
         m_board->CheckStatus(m_currentState);

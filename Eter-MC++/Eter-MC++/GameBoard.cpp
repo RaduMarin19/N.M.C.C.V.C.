@@ -219,7 +219,7 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
     if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
     {
         PlayingCard& card = m_positions[boardPosition].back();
-        card.SetIllussion(false);    //if its a illusion it loses the property
+        card.SetIllusion(false);    //if its a illusion it loses the property
         if (card.GetColor() == BLUE)
             m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition), card);         //put the card in the deleted stack of each respective player
         else
@@ -234,7 +234,7 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
 void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
     if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
     {
-        m_positions[boardPosition].back().SetIllussion(false);
+        m_positions[boardPosition].back().SetIllusion(false);
 
         for (PlayingCard& card : m_positions[boardPosition]) {
             if (card.GetColor() == BLUE)
@@ -387,7 +387,7 @@ bool GameBoard::RemoveIllusion(const Coordinates& boardPosition)
         auto& card = cards->second.back();
         if (card.IsIllusion())
         {
-            card.SetIllussion(false);
+            card.SetIllusion(false);
             return true;
         }
     }
@@ -477,7 +477,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
             }
             else if (it->second.back().IsIllusion() && it->second.back().GetColor()!=otherCard.GetColor()) {
                 m_isBluePlayer = !m_isBluePlayer;
-                it->second.back().SetIllussion(false);
+                it->second.back().SetIllusion(false);
                 return REMOVED;
             }
             else return IN_HAND;

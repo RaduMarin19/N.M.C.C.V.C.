@@ -21,7 +21,7 @@ PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_initialPosition = oth.m_initialPosition;
 }
 
-void PlayingCard::SetIllussion(bool IsIllusion) {
+void PlayingCard::SetIllusion(bool IsIllusion) {
 	m_isIllusion = IsIllusion;
 }
 

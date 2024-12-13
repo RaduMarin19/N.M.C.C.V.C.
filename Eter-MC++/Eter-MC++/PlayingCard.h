@@ -16,7 +16,7 @@ public:
 	PlayingCard(PlayingCard&& other) noexcept = default; 
 	PlayingCard& operator=(PlayingCard&& other) noexcept = default;
 
-	void SetIllussion(bool IsIllusion);
+	void SetIllusion(bool IsIllusion);
 	void SetEter(bool IsEter);
 	bool IsIllusion() const;
 	bool IsEter() const;
