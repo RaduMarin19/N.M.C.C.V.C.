@@ -17,7 +17,9 @@ public:
 	PlayingCard& operator=(PlayingCard&& other) noexcept = default;
 
 	void SetIllussion(bool IsIllusion);
+	void SetEter(bool IsEter);
 	bool IsIllusion() const;
+	bool IsEter() const;
 
 	Coordinates GetBoardPosition() const;
 	Color GetColor() const;
@@ -35,5 +37,6 @@ private:
 	Color m_color;
 	short m_value;
 	bool m_isIllusion;
+	bool m_isEter;
 };
 

@@ -30,6 +30,16 @@ bool PlayingCard::IsIllusion() const
 	return m_isIllusion;
 }
 
+void PlayingCard::SetEter(bool isEter)
+{
+	m_isEter = isEter;
+}
+
+bool PlayingCard::IsEter() const
+{
+	return m_isEter;
+}
+
 void PlayingCard::ReturnToHand()
 {
 	m_boardPosition = m_initialPosition;

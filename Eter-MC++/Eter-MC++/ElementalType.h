@@ -4,11 +4,11 @@ enum class ElementalType {
     CONTROLLED_EXPLOSION, // Explozie controlata: Tabla explodeaza! Obs: Conditii speciale in functie de regula jocului.
     DESTROY,              // Distrugere: Elimina din joc ultima carte jucata de adversar.
     FIRE,                 // Flacari: Intoarce iluzia adversarului cu fata in sus si joaca o carte pe oricare pozitie de pe tabla.
-    LAVA,                 // Lava: Toate cartile vizibile cu un numar specific se intorc in mainile proprietarilor. DONE
-    ASHES,                // Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat. DONE
+    LAVA,                 // Lava: Toate cartile vizibile cu un numar specific se intorc in mainile proprietarilor.                   !!DONE!!
+    ASHES,                // Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat.                                   !!DONE!!
     SPARKS,               // Scantei: Alege orice carte proprie acoperita de adversar si joac-o pe alta pozitie.
     WHIRLWIND,            // Vifor: Intoarce o carte vizibila a oponentului in mana sa.
-    SQUALL,               // Vijelie: Toate cartile acoperite de alte carti se intorc in mainile proprietarilor. DONE
+    SQUALL,               // Vijelie: Toate cartile acoperite de alte carti se intorc in mainile proprietarilor.                      !!DONE!!
     HURRICANE,            // Uragan: Shift-eaza un rand complet ocupat cu 1 pozitie in directia dorita.
     FLURRY,               // Rafala: Muta o carte vizibila pe o pozitie adiacenta cu o carte cu un numar mai mic.
     MIRAGE,               // Miraj: Inlocuieste propria iluzie plasata cu o alta iluzie. Obs: Disponibil doar daca se joaca cu iluzii.

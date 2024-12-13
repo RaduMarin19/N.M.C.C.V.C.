@@ -399,7 +399,7 @@ void Graphics::DrawCard(const Card& card, SDL_Texture* cardTexture)
     // destRect.h = 128;
 
     // Render the card
-    if (SDL_RenderCopy(m_renderer, cardTexture,NULL,&destRect) != 0) {
+    if (SDL_RenderCopy(m_renderer, cardTexture, NULL, &destRect) != 0) {
         std::cerr << "SDL_RenderCopy Error: " << SDL_GetError() << std::endl;
     }
 }
@@ -410,7 +410,7 @@ void Graphics::DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
         return;
     }
 
-    if (SDL_RenderCopy(m_renderer, texture,NULL,&rect) != 0) {
+    if (SDL_RenderCopy(m_renderer, texture, NULL, &rect) != 0) {
         std::cerr << "SDL_RenderCopy Error: " << SDL_GetError() << std::endl;
     }
 }
