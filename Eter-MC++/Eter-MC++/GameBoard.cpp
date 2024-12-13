@@ -646,8 +646,8 @@ void GameBoard::GenerateTrainingCards() {
         }
 
         //Initialize the two players with the newly generated decks
-        this->m_playerBlue = Player(std::move(PlayingCardsBlue));
-        this->m_playerRed = Player(std::move(PlayingCardsRed));
+        this->m_playerBlue = Player(PlayingCardsBlue);
+        this->m_playerRed = Player(PlayingCardsRed);
 
         m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
@@ -723,7 +723,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 2/*Random::Get(0, 23)*/;
+    int randomIndex1 = 4/*Random::Get(0, 23)*/;
     int randomIndex2 = 7/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
@@ -740,13 +740,11 @@ void GameBoard::GenerateElementalCards() {
     m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 
     //Initialize the two players with the newly generated decks
-    this->m_playerBlue = Player(std::move(PlayingCardsBlue));
-    this->m_playerRed = Player(std::move(PlayingCardsRed));
+    this->m_playerBlue = Player(PlayingCardsBlue);
+    this->m_playerRed = Player(PlayingCardsRed);
 
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
-
-
 }
 
 void GameBoard::GeneratePlayerCards(const GameMode& mode) {

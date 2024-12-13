@@ -20,7 +20,7 @@ class Player
 
 public:
 	Player();
-	Player(std::vector<PlayingCard>&& cards);
+	Player(std::vector<PlayingCard>& cards);
 	Player(Player&&) = default;
 	Player& operator=(Player&&) = default;
 	Player(const Player&) = delete; 
@@ -33,23 +33,36 @@ public:
 
 	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
-	void RemoveCard(const PlayingCard& card);
+	void AddRemovedCard(PlayingCard& card);    //for cards that are removed from the game
+	void RemoveCardFromHand(const PlayingCard& card);
+
+	std::vector<PlayingCard>& GetRemovedCards();
 	std::vector<PlayingCard>& GetCards();
+
 	Card *GetGrabbedCard() const;
 	bool IsGrabbingCard() const;
+
 	void SetIsGrabbingCard(bool isGrabbingCard);
 	void SetHasPlayedIllusion();
+	void SetIsPlayingAshes(bool isPlayingAshes);
+
 	bool HasPlayedIllusion() const;
 	bool& IsPlayingIllusion();
+	bool IsPlayingAshes() const;
+
 	void Reset();
 
 private:
 	std::vector<PlayingCard> m_cards;
+	std::vector<PlayingCard> m_removedCards;
 	std::shared_ptr<CardTexture> m_cardIllusion;
 
 	Card *m_grabbedCard;
 	bool m_isPlayingIllusion;
 	bool m_isGrabbingCard;
 	bool m_hasPlayedIllusion;
+	bool m_isPlayingAshes;
+
+	void RemoveCardFromDeck(std::vector<PlayingCard>& cards, const PlayingCard& card);
 };
 

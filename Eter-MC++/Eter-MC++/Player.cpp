@@ -1,17 +1,19 @@
 #include "Player.h"
 
-
 Player::Player() {
 	m_isGrabbingCard = false;
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
+
 	m_grabbedCard = nullptr;
 }
 
-Player::Player(std::vector<PlayingCard>&& cards) : m_cards(std::move(cards)) {
+Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_isGrabbingCard = false;
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
+	m_isPlayingAshes = false;
+
 	m_grabbedCard = nullptr;
 }
 
@@ -35,20 +37,52 @@ void Player::AddCard(const PlayingCard& card)
 	m_cards.emplace_back(card);
 }
 
-void Player::RemoveCard(const PlayingCard& card) {
-	//Find the given card in the player deck
-	auto it = std::remove_if(m_cards.begin(), m_cards.end(),
+void Player::AddRemovedCard(PlayingCard& card)
+{
+	auto it = std::find_if(m_cards.begin(), m_cards.end(),
 		[&card](const PlayingCard& c) {
-			return c == card; 
+			return c == card;
 		});
 
-	//If it's there, remove it
+	// If it's there, move it to removed cards and erase it from the deck
 	if (it != m_cards.end()) {
-		m_cards.erase(it, m_cards.end());
+		m_removedCards.emplace_back(std::move(*it)); // Move the card to removedCards
+		m_cards.erase(it);                          // Remove the card from the player's hand
 	}
 	else {
 		throw std::runtime_error("Card not found in player's hand.");
 	}
+}
+
+void Player::RemoveCardFromDeck(std::vector<PlayingCard>& cards,const PlayingCard& card) {
+	auto it = std::remove_if(cards.begin(), cards.end(),
+		[&card](const PlayingCard& c) {
+			return c == card;
+		});
+
+	//If it's there, remove it
+	if (it != cards.end()) {
+		cards.erase(it, cards.end());
+	}
+	else {
+		throw std::runtime_error("Card not found in player's hand.");
+	}
+}
+
+void Player::RemoveCardFromHand(const PlayingCard& card) {
+	//Find the given card in the player deck
+	if (m_isPlayingAshes) {
+		RemoveCardFromDeck(m_removedCards, card);
+	}
+	else {
+		RemoveCardFromDeck(m_cards, card);
+	}
+	
+}
+
+std::vector<PlayingCard>& Player::GetRemovedCards()
+{
+	return m_removedCards;
 }
 
 std::vector<PlayingCard>& Player::GetCards()
@@ -58,7 +92,7 @@ std::vector<PlayingCard>& Player::GetCards()
 
 Card *Player::GetGrabbedCard() const
 {
-		return m_grabbedCard;
+	return m_grabbedCard;
 }
 
 bool Player::IsGrabbingCard() const
@@ -75,9 +109,19 @@ void Player::SetHasPlayedIllusion()
 	m_hasPlayedIllusion = true;
 }
 
+void Player::SetIsPlayingAshes(bool isPlayingAshes)
+{
+	m_isPlayingAshes = isPlayingAshes;
+}
+
 bool Player::HasPlayedIllusion() const
 {
 	return m_hasPlayedIllusion;
+}
+
+bool Player::IsPlayingAshes() const
+{
+	return m_isPlayingAshes;
 }
 
 bool& Player::IsPlayingIllusion()

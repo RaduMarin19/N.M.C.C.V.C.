@@ -164,7 +164,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     CardStatus status = m_board->PushNewCard(*pushCard);
 
     if (status == ON_BOARD) {
-        player.RemoveCard(*pushCard);
+        player.RemoveCardFromHand(*pushCard);
         if (pushCard->IsIllusion())
         {
             for (auto& card : m_board->GetPlayedPositions())
@@ -179,12 +179,14 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         else {
             m_board ->ChangeTurn(); 
         }
+        player.SetIsPlayingAshes(false);
     }
     else if (status == IN_HAND) {
         m_board->ReturnCardToDeck(*pushCard);
     }
     else if (status == REMOVED) {
-        player.RemoveCard(*pushCard);
+        player.AddRemovedCard(*pushCard);
+        player.SetIsPlayingAshes(false);
     }
 }
 
@@ -206,6 +208,13 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
         case ElementalType::SQUALL:
             m_board->ReturnCoveredCards();
             m_board->RemoveSpell(spellCard);
+            m_board->ChangeTurn();
+            break;
+        case ElementalType::ASHES:
+            if (player.GetRemovedCards().size() > 0) {
+                player.SetIsPlayingAshes(true);
+                m_board->RemoveSpell(spellCard);
+            }
             break;
     }
 }
@@ -259,8 +268,6 @@ void Game::HandleBoardState() {
     //This is where all the in game logic will go
     DrawPlayersCards(m_board->GetPlayerBlue(), m_board->IsBluePlayer());
     DrawPlayersCards(m_board->GetPlayerRed(), !m_board->IsBluePlayer());
-
-
 
     if (m_explosionTurn){
         if (ExplosionTurn() == true) {
@@ -355,7 +362,9 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
         }
     };
 
-    for (auto& card : player->GetCards()) {
+    std::vector<PlayingCard>& cards = (isPlayersTurn && player->IsPlayingAshes()) ? player->GetRemovedCards() : player->GetCards();
+
+    for (auto& card : cards) {
         
         DrawAndHandleCard(player, card);
     }
