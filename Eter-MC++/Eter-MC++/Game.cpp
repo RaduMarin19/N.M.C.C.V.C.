@@ -225,8 +225,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
         }
 
         case ElementalType::STORM: {
-            if(m_board->GetPlayedPositions().find(possiblePosition) != m_board->GetPlayedPositions().end())
-            {
+            try {
                 short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
 
                 if (size > 1) {                                                      //if the position has >= 2 cards
@@ -236,11 +235,14 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                     }
                     m_board->RemoveSpell(spellCard); //then remove the spell card
                 }
+                else {
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            } 
+            catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
-            else
-            {
-                std::cout << "Not a valid position for this elements!\n";
-            }
+
             break;
         }
     }

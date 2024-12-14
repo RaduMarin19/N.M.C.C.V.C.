@@ -253,6 +253,8 @@ std::deque<PlayingCard>& GameBoard::GetCardsAtPosition(const Coordinates& positi
 {
     if (m_positions.find(position) != m_positions.end())
         return m_positions.at(position);
+    else
+        throw std::runtime_error("There are no cards at this position\n");
 }
 
 void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
@@ -540,7 +542,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     return ON_BOARD;
 }
 
-void GameBoard::ReturnCardToDeck(PlayingCard& card) {
+void GameBoard::ReturnCardToDeck(Card& card) {
     card.SetCoordinates(card.GetInitialPosition());
 }
 

@@ -74,7 +74,7 @@ public:
     const CardTexture& GetRedIllusionTexture() const;
     void CheckStatus(GameState& gameMode);
 
-    void ReturnCardToDeck(PlayingCard& card);
+    void ReturnCardToDeck(Card& card);
     void DeleteCardAtPosition(const Coordinates& boardPosition);
 
     bool IsBluePlayer() const;
