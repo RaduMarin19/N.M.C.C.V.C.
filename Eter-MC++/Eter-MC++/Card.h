@@ -21,6 +21,7 @@ public:
 	unsigned short GetId() const;
 	CardTexture* GetTexture() const;
 
+	void SetTexture(CardTexture* texture);
 	void SetCoordinates(const Coordinates& position);
 
 	bool operator==(const Card& other) const;

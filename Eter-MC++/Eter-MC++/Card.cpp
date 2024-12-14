@@ -39,6 +39,10 @@ CardTexture* Card::GetTexture() const
 	return m_texture;
 }
 
+void Card::SetTexture(CardTexture* texture) {
+	m_texture = texture;
+}
+
 void Card::SetCoordinates(const Coordinates& position)
 {
 	m_position = position;

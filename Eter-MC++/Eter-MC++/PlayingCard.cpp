@@ -7,6 +7,7 @@ PlayingCard::PlayingCard()
 PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color) :
 	Card{coord,texture,id},
 	m_value{value},
+	m_initialValue{value},
 	m_color{color},
     m_isIllusion{ false }
 	{}
@@ -19,6 +20,7 @@ PlayingCard::PlayingCard(const PlayingCard &oth) {
 	this->m_cardId = oth.m_cardId;
 	this->m_color = oth.m_color;
 	m_initialPosition = oth.m_initialPosition;
+	m_initialValue = oth.m_initialValue;
 }
 
 void PlayingCard::SetIllusion(bool IsIllusion) {
@@ -65,6 +67,11 @@ Color PlayingCard::GetColor() const
 short PlayingCard::GetValue() const
 {
 	return m_value;
+}
+
+short PlayingCard::GetInitialValue() const
+{
+	return m_initialValue;
 }
 
 void PlayingCard::SetValue(short value)

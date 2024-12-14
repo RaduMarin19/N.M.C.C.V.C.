@@ -13,7 +13,7 @@ public:
 
 	~PlayingCard() = default; // Destructor
 	PlayingCard& operator=(const PlayingCard& other) = default;
-	PlayingCard(PlayingCard&& other) noexcept = default; 
+	PlayingCard(PlayingCard&& other) noexcept = default;
 	PlayingCard& operator=(PlayingCard&& other) noexcept = default;
 
 	void SetIllusion(bool IsIllusion);
@@ -24,6 +24,7 @@ public:
 	Coordinates GetBoardPosition() const;
 	Color GetColor() const;
 	short GetValue() const;
+	short GetInitialValue() const;
 
 	void ReturnToHand();
 	void SetBoardPosition(Coordinates position);
@@ -36,6 +37,7 @@ private:
 	Coordinates m_boardPosition;
 	Color m_color;
 	short m_value;
+	short m_initialValue;
 	bool m_isIllusion;
 	bool m_isEter = false;
 };

@@ -196,12 +196,21 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
     ElementalType spell = spellCard->GetSpell(); //getting the spell type
 
     switch (spell) {
-        case ElementalType::FIRE: {
-            Color playerColor = player.GetCards().back().GetColor();
-            if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor) //checking if the color of the chosen card is different than that of the player
-            {
-                if (m_board->RemoveIllusion(possiblePosition))   //if the illusion is successfully removed then remove the spell card
-                  m_board->RemoveSpell(spellCard);
+        case ElementalType::FIRE: 
+        {
+            try {
+                Color playerColor = player.GetCards().back().GetColor();
+                if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor) //checking if the color of the chosen card is different than that of the player
+                {
+                    if (m_board->RemoveIllusion(possiblePosition))   //if the illusion is successfully removed then remove the spell card
+                        m_board->RemoveSpell(spellCard);
+                }
+                else {
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
             break;
         }
@@ -257,6 +266,25 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
            break;
+        case ElementalType::SUPPORT:
+        {
+            try {
+                Color playerColor = player.GetCards().back().GetColor();
+                if (m_board->GetCardColorAtPosition(possiblePosition) == playerColor) //checking if the color of the chosen card is the same as the color of the player
+                {
+                    if (m_board->ChangeCardValue(m_board->GetCardsAtPosition(possiblePosition).back(), 1)) { //if the change of value was sucessful
+                        m_board->RemoveSpell(spellCard); //then remove the spell card
+                        m_board->ChangeTurn();
+                    }
+                    else
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
     }
 }
 

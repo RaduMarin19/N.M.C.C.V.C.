@@ -215,10 +215,34 @@ void GameBoard::CheckStatus(GameState& gameState) {
         return;
 }
 
+bool GameBoard::ChangeCardValue(PlayingCard& card,short valueChange) {
+    if (card.IsEter())      //cannot increase the value on an eter card
+        return false;
+
+    if (card.GetValue() + valueChange >= 1 && card.GetValue() + valueChange <= 4) {
+        auto& cardTextures = card.GetColor() == BLUE ? m_blueCardTextures : m_redCardTextures;      //getting the reference to respective card textures
+
+        card.SetTexture(&cardTextures[card.GetValue() + valueChange]);  //setting the texture
+
+        card.SetValue(card.GetValue() + valueChange);       //changing the value
+
+        return true;        //returns true if change was succesful
+    }
+    return false;
+}
+
+void GameBoard::ResetCardValue(PlayingCard& card) {
+    auto& cardTextures = card.GetColor() == BLUE ? m_blueCardTextures : m_redCardTextures;
+
+    card.SetTexture(&cardTextures[card.GetInitialValue()]);
+    card.SetValue(card.GetInitialValue());
+}
+
 void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
     if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
     {
         PlayingCard& card = m_positions[boardPosition].back();
+        ResetCardValue(card);
         card.SetIllusion(false);    //if its a illusion it loses the property
         if (card.GetColor() == BLUE)
             m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition), card);         //put the card in the deleted stack of each respective player
@@ -258,6 +282,7 @@ std::deque<PlayingCard>& GameBoard::GetCardsAtPosition(const Coordinates& positi
 }
 
 void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
+    ResetCardValue(card);
     ReturnCardToDeck(card);
     if (card.GetColor() == BLUE) {
         m_playerBlue.AddCard(card);
@@ -476,11 +501,13 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
              auto it = m_positions.find(newCardCoords);
 
              PlayingCard& lastCard = it->second.back();
+             
 
              if (m_canCoverIllusion) {
                  if (lastCard.IsIllusion()&&lastCard.GetColor()!=otherCard.GetColor())
                  {
                      it->second.emplace_back(otherCard); //placing the card in the stack
+                     ResetCardValue(lastCard);
                      m_canCoverIllusion = false;
                  }
                  else return IN_HAND;
@@ -489,6 +516,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
                  if (lastCard.GetValue() < otherCard.GetValue()) {
                      it->second.emplace_back(otherCard);        //placing the card in the stack
                      lastCard.SetIllusion(false);      //resetting the illusion
+                     ResetCardValue(lastCard);
                  }
                  else if (lastCard.GetColor() != otherCard.GetColor()) {      //else, if trying to covver 
                          ChangeTurn();
@@ -498,6 +526,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
              }
              else if (lastCard.GetValue() < otherCard.GetValue()) {
                  it->second.emplace_back(otherCard);
+                 ResetCardValue(lastCard);
              }
              else
                  return IN_HAND;
@@ -691,8 +720,8 @@ void GameBoard::GenerateElementalCards() {
 
     for (int i = 0; i < 2; i++) {
         //Fill each deck with cards
-        PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[1], i, NextCardId(), BLUE);
-        PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[1], i, NextCardId(), RED);
+        PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[1], 1, NextCardId(), BLUE);
+        PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[1], 1, NextCardId(), RED);
         PlayingCardsBlue.emplace_back(std::move(cardBlue));
         PlayingCardsRed.emplace_back(std::move(cardRed));
     }
@@ -755,8 +784,8 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 4/*Random::Get(0, 23)*/;
-    int randomIndex2 = 23/*Random::Get(0, 23)*/;
+    int randomIndex1 = 7/*Random::Get(0, 23)*/;
+    int randomIndex2 = 18/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
@@ -835,8 +864,6 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
         m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
         m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_" + std::to_string(i) + ".jpg");
     }
-    m_blueCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
-    m_redCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
@@ -859,8 +886,6 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
         m_blueCardTextures.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
         m_redCardTextures.emplace_back(renderer, "Dependencies/textures/red_" + std::to_string(i) + ".jpg");
     }
-    m_blueCardTextures.emplace_back(renderer, "Dependencies/textures/blue_back.jpg");
-    m_redCardTextures.emplace_back(renderer, "Dependencies/textures/red_back.jpg");
 
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
