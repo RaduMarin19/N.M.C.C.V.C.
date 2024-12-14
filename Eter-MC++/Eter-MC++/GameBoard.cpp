@@ -841,6 +841,18 @@ std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetHoles()
     return m_holes;
 }
 
+ExplosionCard* GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
+
+}
+
+void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
+    this->m_validatedExplosion = std::unique_ptr<ExplosionCard>(card);
+}
+
+ExplosionCard * GameBoard::GetValidatedExplosion() {
+    return this->m_validatedExplosion.get();
+}
+
 Player* GameBoard::GetPlayerRed() {
     return &m_playerRed;
 }
@@ -861,8 +873,8 @@ const CardTexture& GameBoard::GetRedIllusionTexture() const {
 void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 #if defined linux
     for (int i = 0; i < 5; i++) {
-        m_blueCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
-        m_redCards.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_" + std::to_string(i) + ".jpg");
+        m_blueCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
+        m_redCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_" + std::to_string(i) + ".jpg");
     }
 
     for (int i = 0; i < 3; i++) {
@@ -979,60 +991,3 @@ void GameBoard::UpdateBoardMask()
             else
                 m_boardMask[i][j] = 0;
 }
-
-uint8_t explodedBoardRemains(std::array<std::array<uint8_t, 3>, 3> explodedBoardMask)
-{
-    int ct = 0;
-    for (int i = 0; i < 3; ++i)
-        for (int j = 0; j < 3; ++j)
-            if (explodedBoardMask[i][j] != 0)
-                ++ct;
-    return ct;
-
-}
-
-bool GameBoard::ValidateExplosion()
-{
-    UpdateBoardMask();
-    std::cout << "m_boardMask\n";
-    for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-        {
-            std::cout << (int)m_boardMask[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "m_explosionMask\n";
-    for (int i = 0; i < 3; ++i)
-    {
-        for (int j = 0; j < 3; ++j)
-        {
-            std::cout << (int)m_explosion->GetExplosionMask()[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-
-    std::array<std::array<uint8_t, 3>, 3> explodedBoardMask = m_boardMask;
-
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            if (m_explosion->GetExplosionMask()[i][j] != ExplosionType::NONE)
-            {
-                if (m_explosion->GetExplosionMask()[i][j] == ExplosionType::HOLE)
-                    explodedBoardMask[i][j] = 0;
-                else if (explodedBoardMask[i][j] > 0)
-                    explodedBoardMask[i][j]--;
-            }
-
-    if (explodedBoardRemains(explodedBoardMask) <= 1)
-        return true;
-
-    for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++)
-            if (explodedBoardMask[i][j] != 0)
-                return VerifyNeighbours(explodedBoardMask, i, j);
-    return false;
-}
-
-

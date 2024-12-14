@@ -68,7 +68,6 @@ void ExplosionCard::InitializeExplosionCard() {
 		}
 		else this->m_explosionMask[chosenLine][chosenColumn] = ExplosionType::HOLE;
 	}
-
 }
 
 const std::vector<std::vector<ExplosionType>>& ExplosionCard::GetExplosionMask() const {

@@ -127,6 +127,9 @@ add_executable(N_M_C_C_V_C_
         Eter-MC++/Eter-MC++/CardStatus.h
         Eter-MC++/Eter-MC++/ExplosionCard.cpp
         Eter-MC++/Eter-MC++/ExplosionCard.h
-        Eter-MC++/Eter-MC++/ExplosionType.h)
+        Eter-MC++/Eter-MC++/ExplosionType.h
+        Eter-MC++/Eter-MC++/SpellCard.cpp
+        Eter-MC++/Eter-MC++/Random.cpp
+        Eter-MC++/Eter-MC++/Random.h)
 
 target_link_libraries(N_M_C_C_V_C_ ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRAY} SDL2_ttf::SDL2_ttf -lSDL2_image)

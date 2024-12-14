@@ -53,13 +53,15 @@ public:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
     std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
+    ExplosionCard* validateBoardAfterEffect(ExplosionCard *card);
+    void SetValidatedExplosion(ExplosionCard *card);
+    ExplosionCard* GetValidatedExplosion();
 
     Player* GetPlayerRed();
     Player* GetPlayerBlue();
 
     bool CanUseExplosion();
     bool DidExplode() const;
-    bool ValidateExplosion();
     void Explode();
     void UpdateBoardMask();
     void PrintExplosionMask();
@@ -135,6 +137,7 @@ private:
     std::array<std::array<uint8_t, 3>, 3> m_boardMask;
 
     std::unique_ptr<ExplosionCard> m_explosion;
+    std::unique_ptr<ExplosionCard> m_validatedExplosion;
 
     unsigned int m_centerX;
     unsigned int m_centerY;

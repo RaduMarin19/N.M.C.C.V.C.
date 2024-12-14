@@ -471,57 +471,53 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
 
 bool Game::ExplosionTurn(){
     static bool checkExplosion = false;
+    static bool isExplosionValidated = false;
     bool dontExplode = false;
-    m_painter->DrawButton(dontExplode, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 260 }, 120, 50, "Don`t Explode!", 14);
+    m_painter->DrawButton(dontExplode, {SCREEN_WIDTH - 700, SCREEN_HEIGHT - 100 }, 150, 50, "Skip explosion!", 14);
 
     if (dontExplode) {
-        checkExplosion = false;
         return true;
     }
 
-    if (!checkExplosion) {
-        m_painter->DrawButton(checkExplosion, { SCREEN_WIDTH - 1000, SCREEN_HEIGHT - 100 }, 120, 50, "Check explosion!", 14);
+    if(!isExplosionValidated) {
+        m_board->SetValidatedExplosion(m_board->validateBoardAfterEffect(m_board->GetExplosion()));
+        isExplosionValidated = true;
     }
-    if (checkExplosion) {
-        {
-            SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
-            m_painter->DrawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
-            auto explosion = m_board->GetExplosion();
-            decltype(auto) explosionMask = explosion->GetExplosionMask();
-            for (int i = 0; i < m_board->GetTableSize(); i++) {
-                for (int j = 0; j < m_board->GetTableSize(); j++) {
-                    SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
-                    if (explosionMask[i][j] == ExplosionType::HOLE) {
-                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->GetTexture());
-                    }
-                    else if (explosionMask[i][j] == ExplosionType::DELETE) {
-                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->GetTexture());
-                    }
-                    else if (explosionMask[i][j] == ExplosionType::RETURN) {
-                        m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->GetTexture());
-                    }
-                }
 
+    {
+        SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
+        m_painter->DrawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
+        auto explosion = m_board->GetExplosion();
+        decltype(auto) explosionMask = explosion->GetExplosionMask();
+        for (int i = 0; i < m_board->GetTableSize(); i++) {
+            for (int j = 0; j < m_board->GetTableSize(); j++) {
+                SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
+                if (explosionMask[i][j] == ExplosionType::HOLE) {
+                    m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->GetTexture());
+                }
+                else if (explosionMask[i][j] == ExplosionType::DELETE) {
+                    m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(0)->GetTexture());
+                }
+                else if (explosionMask[i][j] == ExplosionType::RETURN) {
+                    m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(1)->GetTexture());
+                }
             }
         }
+
         m_drawThisFrame = false;
         bool exploded = false;
-        m_painter->DrawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+        m_painter->DrawButton(exploded, { SCREEN_WIDTH - 850, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
         static bool rotate = false;
-        m_painter->DrawButton(rotate, { SCREEN_WIDTH - 550, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
+        m_painter->DrawButton(rotate, { SCREEN_WIDTH - 500, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
         
         if (exploded) {
-            //if (board.ValidateExplosion())
             m_board->Explode();
-            //else
-            //   std::cout << "Explosion invalidates map!\n";
             return true;
         }
         if (rotate) {
             m_board->GetExplosion()->RotateExplosion();
-            std::cout << "----------------\n";
-            m_board->PrintExplosionMask();
             rotate = false;
+            isExplosionValidated = false;
         }
     }
     return false;
