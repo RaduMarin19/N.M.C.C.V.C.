@@ -242,9 +242,11 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
-
             break;
         }
+                                 
+        case ElementalType::AVALANCHE:
+               break;
     }
 }
 
