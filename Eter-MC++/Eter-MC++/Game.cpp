@@ -245,8 +245,18 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             break;
         }
                                  
-        case ElementalType::AVALANCHE:
-               break;
+        case ElementalType::BOULDER:
+            try {
+                auto& cards= m_board->GetCardsAtPosition(possiblePosition);
+                if (cards.back().IsIllusion()) {
+                    m_board->SetCanCoverIllusion(true);     //telling the board that the player will be able to cover a illusion
+                    m_board->RemoveSpell(spellCard); //then remove the spell card
+                }
+            }
+            catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+           break;
     }
 }
 

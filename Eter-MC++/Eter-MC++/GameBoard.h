@@ -67,6 +67,8 @@ public:
     CardTexture* GetExplosionSprite(const int& offset);
 
     bool RemoveIllusion(const Coordinates& boardPosition);
+    void SetCanCoverIllusion(bool canCoverIllusion);
+
     void ReturnCoveredCards();
     void RemoveSpell(SpellCard* spell);
 
@@ -76,6 +78,7 @@ public:
 
     void ReturnCardToDeck(Card& card);
     void DeleteCardAtPosition(const Coordinates& boardPosition);
+    void DeleteAllCardsAtPosition(const Coordinates& boardPosition);
 
     bool IsBluePlayer() const;
 
@@ -106,6 +109,8 @@ private:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash> m_positions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
+
+    bool m_canCoverIllusion;
 
     SpellsType m_spells;
 

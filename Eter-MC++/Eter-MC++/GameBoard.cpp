@@ -472,18 +472,36 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-         if (!otherCard.IsIllusion()&& !otherCard.IsEter()) { //if a card is a illusion you cannot add it to an existing stack
+         if (!otherCard.IsIllusion() && !otherCard.IsEter()) { //if a card is a illusion you cannot add it to an existing stack
              auto it = m_positions.find(newCardCoords);
-             if (it->second.back().GetValue() < otherCard.GetValue()) {
+
+             PlayingCard& lastCard = it->second.back();
+
+             if (m_canCoverIllusion) {
+                 if (lastCard.IsIllusion()&&lastCard.GetColor()!=otherCard.GetColor())
+                 {
+                     it->second.emplace_back(otherCard); //placing the card in the stack
+                     m_canCoverIllusion = false;
+                 }
+                 else return IN_HAND;
+             }
+             else if (lastCard.IsIllusion()) {  
+                 if (lastCard.GetValue() < otherCard.GetValue()) {
+                     it->second.emplace_back(otherCard);        //placing the card in the stack
+                     lastCard.SetIllusion(false);      //resetting the illusion
+                 }
+                 else if (lastCard.GetColor() != otherCard.GetColor()) {      //else, if trying to covver 
+                         ChangeTurn();
+                         lastCard.SetIllusion(false);
+                         return REMOVED;
+                 }
+             }
+             else if (lastCard.GetValue() < otherCard.GetValue()) {
                  it->second.emplace_back(otherCard);
              }
-             else if (it->second.back().IsIllusion() && it->second.back().GetColor() != otherCard.GetColor()) {
-                 m_isBluePlayer = !m_isBluePlayer;
-                 it->second.back().SetIllusion(false);
-                 return REMOVED;
+             else
+                 return IN_HAND;
              }
-             else return IN_HAND;
-         }
          else return IN_HAND;;
             
     }
@@ -738,7 +756,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 4/*Random::Get(0, 23)*/;
-    int randomIndex2 = 11/*Random::Get(0, 23)*/;
+    int randomIndex2 = 23/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
@@ -865,6 +883,7 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     m_isBluePlayer = true;
+    m_canCoverIllusion = false;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 
@@ -894,6 +913,10 @@ const Color GameBoard::GetCardColorAtPosition(const Coordinates& boardPosition) 
 
 bool GameBoard::IsBluePlayer() const {
     return this->m_isBluePlayer;
+}
+
+void GameBoard::SetCanCoverIllusion(bool canCoverIllusion) {
+    m_canCoverIllusion = canCoverIllusion;
 }
 
 void GameBoard::ChangeTurn()
