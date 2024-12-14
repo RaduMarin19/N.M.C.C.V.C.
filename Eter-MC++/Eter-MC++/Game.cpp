@@ -285,6 +285,25 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+        case ElementalType::SHATTER:
+        {
+            try {
+                Color playerColor = player.GetCards().back().GetColor();
+                if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor) //checking if the color of the chosen card is different than that of the player
+                {
+                    if (m_board->ChangeCardValue(m_board->GetCardsAtPosition(possiblePosition).back(), -1)) { //if the change of value was sucessful
+                        m_board->RemoveSpell(spellCard); //then remove the spell card
+                        m_board->ChangeTurn();
+                    }
+                    else
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
     }
 }
 
