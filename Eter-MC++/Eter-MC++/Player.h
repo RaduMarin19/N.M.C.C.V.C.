@@ -1,6 +1,7 @@
 #pragma once
 #include "PlayingCard.h"
 #include "Card.h"
+#include "Color.h"
 #include "SpellCard.h"
 #include "MageType.h"
 #include "ElementalType.h"
@@ -26,8 +27,6 @@ std::equality_comparable_with<typename Container::value_type, T>&& // Elements m
 
 class Player
 {
-
-
 public:
 	Player();
 	Player(std::vector<PlayingCard>& cards);
@@ -47,6 +46,7 @@ public:
 	template <typename Container>
 	requires CardContainer<Container, PlayingCard>
 	void AddRemovedCard(Container& container, PlayingCard& card);    //for cards that are removed from the game
+
 	void RemoveCardFromHand(const PlayingCard& card);
 
 	std::vector<PlayingCard>& GetRemovedCards();
@@ -63,12 +63,16 @@ public:
 	bool& IsPlayingIllusion();
 	bool IsPlayingAshes() const;
 
+	const Color GetColor() const;
+
 	void Reset();
 
 private:
 	std::vector<PlayingCard> m_cards;
 	std::vector<PlayingCard> m_removedCards;
 	std::shared_ptr<CardTexture> m_cardIllusion;
+
+	Color m_color;
 
 	Card *m_grabbedCard;
 	bool m_isPlayingIllusion;

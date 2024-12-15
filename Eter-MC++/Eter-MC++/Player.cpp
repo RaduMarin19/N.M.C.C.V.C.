@@ -14,6 +14,8 @@ Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_isPlayingIllusion = false;
 	m_isPlayingAshes = false;
 
+	m_color = m_cards.back().GetColor();
+
 	m_grabbedCard = nullptr;
 }
 
@@ -105,6 +107,11 @@ bool Player::HasPlayedIllusion() const
 bool Player::IsPlayingAshes() const
 {
 	return m_isPlayingAshes;
+}
+
+const Color Player::GetColor() const
+{
+	return m_color;
 }
 
 bool& Player::IsPlayingIllusion()

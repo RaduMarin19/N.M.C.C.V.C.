@@ -785,7 +785,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 7/*Random::Get(0, 23)*/;
-    int randomIndex2 = 3/*Random::Get(0, 23)*/;
+    int randomIndex2 = 6/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
