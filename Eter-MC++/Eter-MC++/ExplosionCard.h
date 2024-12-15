@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 
+class Coordinates;
+
 class ExplosionCard
 {
 public:
@@ -21,6 +23,8 @@ public:
 	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
 	short GetAffectedPosCounter() const;
+
+	void makeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>>);
 
 	ExplosionCard(const ExplosionCard&) = delete;                 
 	ExplosionCard& operator=(const ExplosionCard&) = delete;       

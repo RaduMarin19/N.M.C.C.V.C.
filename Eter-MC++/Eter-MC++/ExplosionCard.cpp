@@ -3,6 +3,8 @@
 #include <iostream>
 #include <ostream>
 
+#include "Coordinates.h"
+
 
 ExplosionCard::ExplosionCard(short tableSize) {
 	m_tableSize = tableSize;
@@ -95,4 +97,13 @@ void ExplosionCard::RotateExplosion() {
 short ExplosionCard::GetAffectedPosCounter() const
 {
 	return m_affectedPosCounter;
+}
+
+void ExplosionCard::makeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>> vec) {
+	for (int i = 0; i < m_explosionMask.size(); ++i) {
+		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
+	}
+	for (const auto& [pos, eff] : vec) {
+		m_explosionMask[pos.GetX()][pos.GetY()] = eff;
+	}
 }

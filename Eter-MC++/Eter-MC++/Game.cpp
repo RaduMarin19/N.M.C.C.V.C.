@@ -523,7 +523,7 @@ bool Game::ExplosionTurn(){
     }
 
     if(!isExplosionValidated) {
-        m_board->SetValidatedExplosion(m_board->validateBoardAfterEffect(m_board->GetExplosion()));
+        m_board->SetValidatedExplosion(m_board->GetExplosion());
         isExplosionValidated = true;
     }
 

@@ -309,7 +309,9 @@ void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
 
 void GameBoard::Explode()
 {
-    decltype(auto) explosionEffects = m_explosion->GetExplosionMask();
+    if(m_validatedExplosion == nullptr) return;
+
+    decltype(auto) explosionEffects = m_validatedExplosion->GetExplosionMask();
     for (int i = 0; i < m_tableSize; ++i) {
         for (int j = 0; j < m_tableSize; ++j) {
             if (explosionEffects[i][j] != ExplosionType::NONE) {
@@ -905,8 +907,45 @@ bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
 }
 
 void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
-    //TODO: Create subsets of explosion, with decreasing effect amount, first valid one is set as m_validatedExplosion.
-    this->m_validatedExplosion = std::unique_ptr<ExplosionCard>(card);
+
+    std::vector<std::vector<ExplosionType>> mask = card->GetExplosionMask();
+    using tmp = std::vector<std::pair<Coordinates, ExplosionType>>;
+     tmp positions;
+    for(int i = 0; i < m_tableSize; ++i) {
+        for(int j = 0; j < m_tableSize; ++j) {
+            if(mask[i][j] != ExplosionType::NONE) {
+                std::pair<Coordinates, ExplosionType> obj;
+                obj.first = {i, j};
+                obj.second = mask[i][j];
+                positions.push_back(obj);
+            }
+        }
+    }
+    int effectsSize = pow(2, positions.size());
+    std::vector<tmp> explosionSubsets;
+    for(int i = 0; i < effectsSize; ++i) {
+        tmp subset;
+        int copy = i;
+        int curBit = 0;
+        while(copy) {
+            if(copy % 2) subset.push_back(positions[curBit]);
+            copy /= 2;
+            curBit += 1;
+        }
+        explosionSubsets.emplace_back(subset);
+    }
+    std::sort(explosionSubsets.begin(), explosionSubsets.end(), [](tmp obj1, tmp obj2){return obj1.size() > obj2.size();});
+    for(const auto& subset : explosionSubsets) {
+        ExplosionCard *tmpCard = new ExplosionCard(m_tableSize);
+        tmpCard->makeExplosionFromVector(subset);
+        if(this->validateBoardAfterEffect(tmpCard)) {
+            this->m_validatedExplosion = std::unique_ptr<ExplosionCard>(tmpCard);
+            return;
+        } else {
+            delete tmpCard;
+        }
+    }
+    this->m_validatedExplosion = nullptr;
 }
 
 ExplosionCard * GameBoard::GetValidatedExplosion() {
