@@ -304,6 +304,34 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+        case ElementalType::LAVA:
+        {
+            try {
+                short cardValue = m_board->GetCardsAtPosition(possiblePosition).back().GetValue();
+                short cardsCount = 0;
+                for (const PlayingCard& card : m_board->GetPlayedCards()) {
+                    if (card.GetValue() == cardValue) {
+                        ++cardsCount;
+                    }
+                }
+                if (cardsCount >= 2) {
+                    for (const auto& card : m_board->GetPlayedCards()) {
+                        if (card.GetValue() == cardValue) {
+                            m_board->ReturnTopCardAtPosition(card.GetBoardPosition());
+                        }
+                    }
+                    m_board->RemoveSpell(spellCard); //then remove the spell card
+                    m_board->ChangeTurn();
+                }
+                else {
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
     }
 }
 

@@ -83,6 +83,7 @@ public:
 
     void ReturnCardToDeck(Card& card);
     void DeleteCardAtPosition(const Coordinates& boardPosition);
+    void ReturnTopCardAtPosition(const Coordinates& boardPosition);
 
     bool IsBluePlayer() const;
 
@@ -149,9 +150,7 @@ private:
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
 
-    
     void CreateHoleAtPosition(const Coordinates& boardPosition);
-    void ReturnTopCardAtPosition(const Coordinates& boardPosition);
 
     void ReturnCardAtPosition(PlayingCard& card);
 

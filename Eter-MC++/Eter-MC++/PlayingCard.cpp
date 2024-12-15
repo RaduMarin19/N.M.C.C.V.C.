@@ -14,6 +14,7 @@ PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short v
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_isIllusion = oth.m_isIllusion;
+	m_boardPosition = oth.m_boardPosition;
 	this->m_position = oth.m_position;
 	this->m_value = oth.m_value;
 	this->m_texture = oth.m_texture;
