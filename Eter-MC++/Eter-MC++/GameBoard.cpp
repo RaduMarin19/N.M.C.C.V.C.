@@ -841,11 +841,71 @@ std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetHoles()
     return m_holes;
 }
 
-ExplosionCard* GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
-    return nullptr;
+bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
+    auto boardState = this->m_positions;
+    //copy our board state to a new object and explode it, then we run our check
+
+    decltype(auto) explosionEffects = card->GetExplosionMask();
+    for (int i = 0; i < m_tableSize; ++i) {
+        for (int j = 0; j < m_tableSize; ++j) {
+            if (explosionEffects[i][j] != ExplosionType::NONE) {
+                short translatedX = m_maxX - i;
+                short translatedY = m_maxY - j;
+                Coordinates position{ translatedX,translatedY };
+                if (explosionEffects[i][j] == ExplosionType::DELETE) {
+                    if(boardState.contains(position)) {
+                        auto it = boardState.find(position);
+                        if(!it->second.empty()) {
+                            it->second.pop_back();
+                            if(it->second.empty())
+                                boardState.erase(position);
+                        } else boardState.erase(position);
+                    }
+                }
+                else if (explosionEffects[i][j] == ExplosionType::HOLE) {
+                    if(boardState.contains(position)) {
+                        boardState.erase(position);
+                    }
+                }
+                else if (explosionEffects[i][j] == ExplosionType::RETURN) {
+                    if(boardState.contains(position)) {
+                        auto it = boardState.find(position);
+                        if(!it->second.empty()) {
+                            it->second.pop_back();
+                            if(it->second.empty())
+                                boardState.erase(position);
+                        } else boardState.erase(position);
+                    }
+                }
+            }
+        }
+    }
+    for(auto& [k, v] : boardState) {
+        int curX = k.GetX();
+        int curY = k.GetY();
+        int nrNeighbours = 0;
+        //check current place for neighbours, if it has none then it is invalidated by our explosion;
+        for(int i = -1; i<= 1; ++i) {
+            for(int j = -1; j<=1; ++j) {
+                if(i == 0 && j == 0) continue;
+                if(boardState.contains({curX + i, curY + j})) {
+                    if(!boardState.find({curX + i, curY + j})->second.empty()) {
+                        nrNeighbours++;
+                    }
+                }
+            }
+        }
+
+        std::cout << curX << " " << curY << " " << nrNeighbours << "\n";
+        if(nrNeighbours == 0) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
+    //TODO: Create subsets of explosion, with decreasing effect amount, first valid one is set as m_validatedExplosion.
     this->m_validatedExplosion = std::unique_ptr<ExplosionCard>(card);
 }
 

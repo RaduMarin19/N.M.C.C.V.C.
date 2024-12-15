@@ -527,6 +527,9 @@ bool Game::ExplosionTurn(){
         isExplosionValidated = true;
     }
 
+    static bool rotate = false;
+    m_painter->DrawButton(rotate, { SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500 }, 128, 128, "Rotate!", 14);
+
     {
         SDL_Rect explosionRect{ SCREEN_WIDTH / 2 - textureWidth * 3, SCREEN_HEIGHT - 500, 128, 128 };
         m_painter->DrawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
@@ -550,9 +553,7 @@ bool Game::ExplosionTurn(){
         m_drawThisFrame = false;
         bool exploded = false;
         m_painter->DrawButton(exploded, { SCREEN_WIDTH - 850, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
-        static bool rotate = false;
-        m_painter->DrawButton(rotate, { SCREEN_WIDTH - 500, SCREEN_HEIGHT - 100 }, 100, 50, "Rotate!", 14);
-        
+
         if (exploded) {
             m_board->Explode();
             return true;

@@ -53,7 +53,7 @@ public:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
     std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
-    ExplosionCard* validateBoardAfterEffect(ExplosionCard *card);
+    bool validateBoardAfterEffect(ExplosionCard *card);
     void SetValidatedExplosion(ExplosionCard *card);
     ExplosionCard* GetValidatedExplosion();
 
