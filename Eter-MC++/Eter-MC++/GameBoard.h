@@ -92,6 +92,7 @@ public:
     bool VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
 
     void UpdateBoardCenter();
+    bool SetBlockedRow(short row);
 
     unsigned int GetCenterX() const;
     unsigned int GetCenterY() const;
@@ -114,6 +115,7 @@ private:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash> m_positions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
+    short m_blockedRow;
 
     bool m_canCoverIllusion;
 

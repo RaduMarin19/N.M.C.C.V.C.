@@ -352,6 +352,17 @@ void GameBoard::UpdateBoardCenter() {
     }
 }
 
+bool GameBoard::SetBlockedRow(short row)
+{
+    for (auto& coordinates : m_possiblePositions) {
+        if (coordinates.GetY() != row) {
+            m_blockedRow = row;
+            return true;
+        }
+    }
+    return false;
+}
+
 
 
 unsigned int GameBoard::GetCenterX() const {
@@ -476,6 +487,9 @@ void GameBoard::TestPossiblePositions(const Coordinates& boardPosition) {
 CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 {
     Coordinates newCardCoords = otherCard.GetBoardPosition();
+    if (newCardCoords.GetY() == m_blockedRow) {
+        return IN_HAND;
+    }
 
 
     //Update minimum and maximum board coordinates
@@ -790,7 +804,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 19/*Random::Get(0, 23)*/;
+    int randomIndex1 = 16/*Random::Get(0, 23)*/;
     int randomIndex2 = 12/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
@@ -1027,6 +1041,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     m_isBluePlayer = true;
     m_canCoverIllusion = false;
+    m_blockedRow = 69;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 

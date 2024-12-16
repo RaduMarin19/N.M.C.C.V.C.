@@ -175,6 +175,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     CardStatus status = m_board->PushNewCard(*pushCard);
 
     if (status == ON_BOARD) {
+        m_board->SetBlockedRow(100);
         player.RemoveCardFromHand(*pushCard);
         if (pushCard->IsIllusion())
         {
@@ -196,6 +197,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         m_board->ReturnCardToDeck(*pushCard);
     }
     else if (status == REMOVED) {
+        m_board->SetBlockedRow(100);
         player.AddRemovedCard(player.GetCards(), *pushCard);
         player.SetIsPlayingAshes(false);
     }
@@ -424,7 +426,15 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             break;
         }
         
-        case ElementalType::SPARKS:
+        case ElementalType::TSUNAMI:
+            if (m_board->SetBlockedRow(possiblePosition.GetY())) {  //checking if there are other possible positions that dont contain Y
+                m_board->ReturnCardToDeck(*spellCard);
+                m_board->RemoveSpell(spellCard);         //then remove the spell card
+                m_board->ChangeTurn();
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);
+            }
             break;
     }
 }
