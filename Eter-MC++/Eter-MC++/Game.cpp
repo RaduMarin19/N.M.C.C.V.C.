@@ -339,6 +339,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+
         case ElementalType::WHIRLWIND:
             try {
                 if (m_board->GetCardsAtPosition(possiblePosition).back().GetColor() != player.GetColor()) {
@@ -354,6 +355,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
             break;
+
         case ElementalType::MIST:
         {
             Color playerColor = player.GetColor();
@@ -368,6 +370,21 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             if (player.HasPlayedIllusion() == true)         //can only play mist illusion after playing the regular one
                 player.IsPlayingIllusion() = true;
             m_board->RemoveSpell(spellCard); //then remove the spell card
+            break;
+        }
+
+        case ElementalType::EARTHQUAKE:
+        {
+            for (const auto& card : m_board->GetPlayedCards()) {
+                if (card.GetValue() == 1) {
+                    m_board->ReturnTopCardAtPosition(card.GetBoardPosition());        //returning the top cards that are found at each position with equal value
+                }
+            }
+            m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            m_board->RemoveSpell(spellCard);         //then remove the spell card
+            m_board->ChangeTurn();
+               
+            break;
         }
     }
 }

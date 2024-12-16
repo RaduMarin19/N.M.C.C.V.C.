@@ -20,7 +20,7 @@ enum class ElementalType {
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.
     CASCADE,              // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!
-    EARTHQUAKE,           // Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.
+    EARTHQUAKE,           // Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.                                        !!DONE!!
     SHATTER,              // Sfarama: Valoarea unei carti a adversarului 2/3/4 scade cu 1.                                             !!DONE!!
     BORDERS,              // Granite: Plaseaza o carte neutra pentru a defini o granita a tablei.
     AVALANCHE,            // Avalansa: Shift-eaza doua teancuri adiacente pe orizontala/verticala cu 1 pozitie.
