@@ -14,7 +14,7 @@ enum class ElementalType {
     MIRAGE,               // Miraj: Inlocuieste propria iluzie plasata cu o alta iluzie. Obs: Disponibil doar daca se joaca cu iluzii.
     STORM,                // Furtuna: Elimina din joc orice teanc de carti ce contine 2 sau mai multe carti.                           !!DONE!!
     TIDE,                 // Maree: Interschimba pozitiile a 2 teancuri de carti.
-    MIST,                 // Ceata: Joaca inca o iluzie. Obs: Un jucator nu poate avea 2 iluzii simultan pe tabla.
+    MIST,                 // Ceata: Joaca inca o iluzie. Obs: Un jucator nu poate avea 2 iluzii simultan pe tabla.                       
     WAVE,                 // Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.
     WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.

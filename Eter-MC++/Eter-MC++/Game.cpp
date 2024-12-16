@@ -238,11 +238,11 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
 
                 if (size > 1) {                                                      //if the position has >= 2 cards
-                   /* ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
+                    ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
                     std::vector <std::pair<Coordinates,ExplosionType>> ex;
                     ex.push_back({ possiblePosition,ExplosionType::TOTAL_DELETE });
-                    explosion->makeExplosionFromVector(ex);*/
-                    if (true/*m_board->validateBoardAfterEffect(explosion)*/) {
+                    explosion->makeExplosionFromVector(ex);
+                    if (m_board->validateBoardAfterEffect(explosion)) {
                         while (size) {                                                   //delete all cards from the game
                             m_board->DeleteCardAtPosition(possiblePosition);
                             --size;
@@ -261,16 +261,16 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
         }
                                  
         case ElementalType::BOULDER:
-            try {
-                auto& cards= m_board->GetCardsAtPosition(possiblePosition);
-                if (cards.back().IsIllusion()) {
-                    m_board->SetCanCoverIllusion(true);     //telling the board that the player will be able to cover a illusion
-                    m_board->RemoveSpell(spellCard); //then remove the spell card
-                }
-            }
-            catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
-                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
-            }
+           try {
+               auto& cards= m_board->GetCardsAtPosition(possiblePosition);
+               if (cards.back().IsIllusion()) {
+                   m_board->SetCanCoverIllusion(true);     //telling the board that the player will be able to cover a illusion
+                   m_board->RemoveSpell(spellCard); //then remove the spell card
+               }
+           }
+           catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
+               m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+           }
            break;
         case ElementalType::SUPPORT:
         {
@@ -320,6 +320,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                         ++cardsCount;                                       //counting the cards with equal value
                     }
                 }
+
                 if (cardsCount >= 2) {
                     for (const auto& card : m_board->GetPlayedCards()) {                    
                         if (card.GetValue() == cardValue) {     
