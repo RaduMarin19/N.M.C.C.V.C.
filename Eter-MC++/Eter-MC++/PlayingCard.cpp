@@ -10,7 +10,7 @@ PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short v
 	m_initialValue{value},
 	m_color{color},
     m_isIllusion{ false }
-	{}
+{}
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_isIllusion = oth.m_isIllusion;
@@ -22,6 +22,7 @@ PlayingCard::PlayingCard(const PlayingCard &oth) {
 	this->m_color = oth.m_color;
 	m_initialPosition = oth.m_initialPosition;
 	m_initialValue = oth.m_initialValue;
+	m_isEter = oth.m_isEter;
 }
 
 void PlayingCard::SetIllusion(bool IsIllusion) {

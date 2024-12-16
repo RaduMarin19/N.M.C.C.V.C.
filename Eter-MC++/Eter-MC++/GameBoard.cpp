@@ -504,9 +504,13 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 
              PlayingCard& lastCard = it->second.back();
              
+             if (lastCard.IsEter())
+             {
+                 return IN_HAND;
+             }
 
              if (m_canCoverIllusion) {
-                 if (lastCard.IsIllusion()&&lastCard.GetColor()!=otherCard.GetColor())
+                 if (lastCard.IsIllusion() && lastCard.GetColor()!=otherCard.GetColor())
                  {
                      it->second.emplace_back(otherCard); //placing the card in the stack
                      ResetCardValue(lastCard);
