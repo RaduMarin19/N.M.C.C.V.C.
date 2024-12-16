@@ -393,7 +393,6 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                     m_board->ReturnTopCardAtPosition(card.GetBoardPosition());        //returning the top cards that are found at each position with equal value
                 }
             }
-            m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             m_board->RemoveSpell(spellCard);         //then remove the spell card
             m_board->ChangeTurn();
                
@@ -411,7 +410,6 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                     std::deque<PlayingCard>* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
                     if (m_selectedStack != otherStack) {
                         std::swap(*m_selectedStack, m_board->GetCardsAtPosition(possiblePosition));         //swapping the stacks
-                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
                         m_board->RemoveSpell(spellCard);         //then remove the spell card
                         m_board->ChangeTurn();
                     }
@@ -428,9 +426,17 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
         
         case ElementalType::TSUNAMI:
             if (m_board->SetBlockedRow(possiblePosition.GetY())) {  //checking if there are other possible positions that dont contain Y
-                m_board->ReturnCardToDeck(*spellCard);
                 m_board->RemoveSpell(spellCard);         //then remove the spell card
                 m_board->ChangeTurn();
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);
+            }
+            break;
+        case ElementalType::WAVE:
+            if (m_board->MoveStackToEmptyPosition(possiblePosition)) {      //if the stack was sucesfully moved
+                m_board->SetBoundPosition(possiblePosition);                //we set the bound position             
+                m_board->RemoveSpell(spellCard);         //then remove the spell card
             }
             else {
                 m_board->ReturnCardToDeck(*spellCard);
@@ -527,7 +533,7 @@ void Game::DrawBoard() {
         SDL_RenderDrawRect(m_painter->GetRenderer(), &renderRect);
     }
 
-    for (const auto& cards = m_board->GetPlayedCards(); const auto & card : cards) {
+    for (const auto& card : m_board->GetPlayedCards()) {
         if (card.IsIllusion())
         {
             if (card.GetColor() == BLUE)

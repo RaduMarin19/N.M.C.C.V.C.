@@ -93,6 +93,8 @@ public:
 
     void UpdateBoardCenter();
     bool SetBlockedRow(short row);
+    void SetBoundPosition(const Coordinates& position);
+    bool MoveStackToEmptyPosition(const Coordinates& position);
 
     unsigned int GetCenterX() const;
     unsigned int GetCenterY() const;
@@ -116,6 +118,7 @@ private:
     std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
     short m_blockedRow;
+    Coordinates* m_boundPosition;
 
     bool m_canCoverIllusion;
 

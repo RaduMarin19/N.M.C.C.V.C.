@@ -363,6 +363,31 @@ bool GameBoard::SetBlockedRow(short row)
     return false;
 }
 
+void GameBoard::SetBoundPosition(const Coordinates& position)
+{
+    m_boundPosition = new Coordinates(position);
+}
+
+bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
+{
+    Coordinates emptyPosition(100,100);
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            if (i != 0 && j != 0 && m_possiblePositions.contains({ position.GetX() + i,position.GetY() + j })) {
+                emptyPosition = { position.GetX() + i,position.GetY() + j };
+                break;
+            }
+        }
+    }
+    if (emptyPosition.GetX() == 100)
+        return false;
+    std::deque<PlayingCard> cards;
+    m_positions.emplace(emptyPosition, cards);
+    std::swap(GetCardsAtPosition(emptyPosition), GetCardsAtPosition(position));
+    m_positions.erase(position);
+    return true;
+}
+
 
 
 unsigned int GameBoard::GetCenterX() const {
@@ -487,6 +512,7 @@ void GameBoard::TestPossiblePositions(const Coordinates& boardPosition) {
 CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 {
     Coordinates newCardCoords = otherCard.GetBoardPosition();
+
     if (newCardCoords.GetY() == m_blockedRow) {
         return IN_HAND;
     }
@@ -507,14 +533,26 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 
     //If there is no card at the position create a new stack and add to it
     if (!m_positions.contains(newCardCoords)) {
+        if(m_boundPosition!=nullptr && *m_boundPosition != newCardCoords){      //if there is a bound position then only place card on that one
+            return IN_HAND;
+        }
         std::deque<PlayingCard> cards;
         cards.emplace_back(otherCard);
         m_positions.emplace(newCardCoords, cards);
+        if (m_boundPosition != nullptr) {           //delete it and set it to null if there is any bound position
+            delete m_boundPosition;
+            m_boundPosition = nullptr;
+        }
     }
     //Otherwise just add to the existing stack
     else {
          if (!otherCard.IsIllusion() && !otherCard.IsEter()) { //if a card is a illusion you cannot add it to an existing stack
              auto it = m_positions.find(newCardCoords);
+
+             if (m_boundPosition != nullptr)
+             {
+                 return IN_HAND;            //if there is a bound position you cannot place a card over a stack
+             }
 
              PlayingCard& lastCard = it->second.back();
              
@@ -805,7 +843,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 16/*Random::Get(0, 23)*/;
-    int randomIndex2 = 12/*Random::Get(0, 23)*/;
+    int randomIndex2 = 14/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
@@ -846,7 +884,8 @@ const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
     std::vector<PlayingCard> playingCards;
 
     for (auto& [k, v] : this->m_positions) {
-        playingCards.emplace_back(v.back());
+        if (!v.empty())
+            playingCards.emplace_back(v.back());
     }
     return playingCards;
 }
@@ -1041,7 +1080,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     m_isBluePlayer = true;
     m_canCoverIllusion = false;
-    m_blockedRow = 69;
+    m_boundPosition = nullptr;
+    m_blockedRow = 100;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 
