@@ -162,7 +162,11 @@ void Game::IRun() {
 void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     pushCard->SetBoardPosition(possiblePosition);
     pushCard->SetCoordinates({ renderRect.x, renderRect.y });
-    if (player.HasPlayedIllusion() == false && player.IsPlayingIllusion()) {
+    if (pushCard->IsEter()) {
+        player.IsPlayingIllusion() = false;
+    }
+
+    if (player.HasPlayedIllusion() == false && player.IsPlayingIllusion()) { //if player can play a illusion
         pushCard->SetIllusion(true);
         player.SetHasPlayedIllusion();
     }
