@@ -5,6 +5,7 @@ Game::Game()
     : m_currentState(WELCOME_SCREEN) {
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
+    m_selectedStack = nullptr;
 }
 
 Game& Game::GetInstance()
@@ -160,6 +161,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         pushCard->SetIllusion(true);
         player.SetHasPlayedIllusion();
     }
+    m_selectedStack = nullptr; //resetting the selected stack if a player doesnt select the second one too
 
     CardStatus status = m_board->PushNewCard(*pushCard);
 
@@ -384,6 +386,32 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             m_board->RemoveSpell(spellCard);         //then remove the spell card
             m_board->ChangeTurn();
                
+            break;
+        }
+        
+        case ElementalType::TIDE:
+        {
+            try {
+                if (m_selectedStack == nullptr) {
+                    m_selectedStack = &m_board->GetCardsAtPosition(possiblePosition); //getting the first stack selected
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+                else {
+                    std::deque<PlayingCard>* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
+                    if (m_selectedStack != otherStack) {
+                        std::swap(*m_selectedStack, m_board->GetCardsAtPosition(possiblePosition));         //swapping the stacks
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                        m_board->RemoveSpell(spellCard);         //then remove the spell card
+                        m_board->ChangeTurn();
+                    }
+                    else {
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                    }
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
             break;
         }
     }

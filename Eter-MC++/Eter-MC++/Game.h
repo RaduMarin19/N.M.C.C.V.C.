@@ -42,6 +42,8 @@ private:
 	bool m_drawThisFrame;
 	bool m_explosionTurn = false;
 
+	std::deque<PlayingCard>* m_selectedStack;
+
 	void DrawPlayersCards(Player* player,bool isPlayersTurn);
 	void DrawBoard();
 
