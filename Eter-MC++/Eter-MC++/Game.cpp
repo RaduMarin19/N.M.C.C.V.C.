@@ -238,11 +238,17 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
 
                 if (size > 1) {                                                      //if the position has >= 2 cards
-                    while (size) {                                                   //delete all cards from the game
-                        m_board->DeleteCardAtPosition(possiblePosition);
-                        --size;
+                   /* ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
+                    std::vector <std::pair<Coordinates,ExplosionType>> ex;
+                    ex.push_back({ possiblePosition,ExplosionType::TOTAL_DELETE });
+                    explosion->makeExplosionFromVector(ex);*/
+                    if (true/*m_board->validateBoardAfterEffect(explosion)*/) {
+                        while (size) {                                                   //delete all cards from the game
+                            m_board->DeleteCardAtPosition(possiblePosition);
+                            --size;
+                        }
+                        m_board->RemoveSpell(spellCard); //then remove the spell card
                     }
-                    m_board->RemoveSpell(spellCard); //then remove the spell card
                 }
                 else {
                     m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
@@ -347,6 +353,21 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
             break;
+        case ElementalType::MIST:
+        {
+            Color playerColor = player.GetColor();
+            for (auto& [coordinates, cards] : m_board->GetPlayedPositions()) {
+                for (auto& card : cards) {
+                    if (card.IsIllusion() && card.GetColor() == playerColor) {  //cannot play 2 illusions at the same time
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                        return;
+                    }
+                }
+            }
+            if (player.HasPlayedIllusion() == true)         //can only play mist illusion after playing the regular one
+                player.IsPlayingIllusion() = true;
+            m_board->RemoveSpell(spellCard); //then remove the spell card
+        }
     }
 }
 

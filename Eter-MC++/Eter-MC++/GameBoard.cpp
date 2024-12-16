@@ -786,8 +786,8 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 7/*Random::Get(0, 23)*/;
-    int randomIndex2 = 6/*Random::Get(0, 23)*/;
+    int randomIndex1 = 11/*Random::Get(0, 23)*/;
+    int randomIndex2 = 13/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
@@ -879,6 +879,9 @@ bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
                         } else boardState.erase(position);
                     }
                 }
+                else if (explosionEffects[i][j] == ExplosionType::TOTAL_DELETE) {
+                    if(boardState.contains(position)) boardState.erase(position);
+                }
             }
         }
     }
@@ -910,7 +913,7 @@ void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
 
     std::vector<std::vector<ExplosionType>> mask = card->GetExplosionMask();
     using tmp = std::vector<std::pair<Coordinates, ExplosionType>>;
-     tmp positions;
+    tmp positions;
     for(int i = 0; i < m_tableSize; ++i) {
         for(int j = 0; j < m_tableSize; ++j) {
             if(mask[i][j] != ExplosionType::NONE) {
