@@ -3,7 +3,7 @@
 int main(int argc, char* argv[])
 {
 	//Step into main game loop
-	Game::GetInstance().Run();
+	Game::Run();
 
 	return 0;
 }

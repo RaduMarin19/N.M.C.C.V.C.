@@ -29,11 +29,11 @@ public:
 
 	void SetGameState(GameState state);
 	GameState GetGameState() const;
-	void Run();
-
+	static void Run();
 
 private:
 
+	void IRun();
 	Game();
 
 	GameState m_currentState = WELCOME_SCREEN;

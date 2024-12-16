@@ -24,7 +24,12 @@ GameState Game::GetGameState() const
     return m_currentState;
 }
 
-void Game::Run() {
+void Game::Run()
+{
+    GetInstance().IRun();
+}
+
+void Game::IRun() {
 
     bool quit = false;
     SDL_Event e;
@@ -414,6 +419,9 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+        
+        case ElementalType::SPARKS:
+            break;
     }
 }
 
