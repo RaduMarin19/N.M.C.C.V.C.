@@ -170,6 +170,11 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         pushCard->SetIllusion(true);
         player.SetHasPlayedIllusion();
     }
+
+    if (m_board->IsPlayingMirage()) {
+        pushCard->SetIllusion(true);
+        m_board->SetCanCoverIllusion(true);
+    }
     m_selectedStack = nullptr; //resetting the selected stack if a player doesnt select the second one too
 
     CardStatus status = m_board->PushNewCard(*pushCard);
@@ -179,9 +184,9 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         player.RemoveCardFromHand(*pushCard);
         if (pushCard->IsIllusion())
         {
-            for (auto& card : m_board->GetPlayedPositions())
-                if (card.second.back() == *pushCard)
-                    card.second.back().SetIllusion(player.IsPlayingIllusion());
+            for (auto& cards : m_board->GetPlayedPositions())
+                if (cards.second.back() == *pushCard)
+                    cards.second.back().SetIllusion(player.IsPlayingIllusion());
             player.SetHasPlayedIllusion();
         }
         m_board->CheckStatus(m_currentState);
@@ -458,7 +463,25 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         case ElementalType::MIRAGE:
+        {
+            Color playerColor = player.GetColor();
+            try {
+                PlayingCard& topCard = m_board->GetCardsAtPosition(possiblePosition).back();
+                if (topCard.GetColor() == playerColor&&topCard.IsIllusion()) {
+                    m_board->SetIsPlayingMirage(true);
+                    m_board->SetBoundPosition(possiblePosition);
+                    m_board->RemoveSpell(spellCard); //then remove the spell card
+                }
+                else {
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
             break;
+        }
+        break;
 
     }
 }

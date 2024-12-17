@@ -273,6 +273,18 @@ void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
     }
 }
 
+void GameBoard::SetIsPlayingMirage(bool isPlayingMirage)
+{
+    m_isPlayingMirage = isPlayingMirage;
+}
+
+
+
+bool GameBoard::IsPlayingMirage() const
+{
+    return m_isPlayingMirage;
+}
+
 std::deque<PlayingCard>& GameBoard::GetCardsAtPosition(const Coordinates& position)
 {
     if (m_positions.find(position) != m_positions.end())
@@ -589,12 +601,12 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-         if (!otherCard.IsIllusion() && !otherCard.IsEter()) { //if a card is a illusion you cannot add it to an existing stack
+         if ((!otherCard.IsIllusion() && !otherCard.IsEter())||IsPlayingMirage()) { //if a card is a illusion you cannot add it to an existing stack
              auto it = m_positions.find(newCardCoords);
 
-             if (m_boundPosition != nullptr)
+             if (m_boundPosition != nullptr && *m_boundPosition!=newCardCoords)
              {
-                 return IN_HAND;            //if there is a bound position you cannot place a card over a stack
+                 return IN_HAND;            //if there is a bound position then only place card on that one
              }
 
              PlayingCard& lastCard = it->second.back();
@@ -605,11 +617,17 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
              }
 
              if (m_canCoverIllusion) {
-                 if (lastCard.IsIllusion() && lastCard.GetColor()!=otherCard.GetColor())
+                 if (lastCard.IsIllusion())
                  {
                      it->second.emplace_back(otherCard); //placing the card in the stack
                      ResetCardValue(lastCard);
                      m_canCoverIllusion = false;
+                     if (IsPlayingMirage()) {
+                         lastCard.SetIllusion(false);
+                         SetIsPlayingMirage(false);
+                         delete m_boundPosition;
+                         m_boundPosition = nullptr;
+                     }
                  }
                  else return IN_HAND;
              }
@@ -885,7 +903,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 13/*Random::Get(0, 23)*/;
+    int randomIndex1 = 10/*Random::Get(0, 23)*/;
     int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);

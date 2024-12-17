@@ -62,7 +62,8 @@ public:
 	bool HasPlayedIllusion() const;
 	bool& IsPlayingIllusion();
 	bool IsPlayingAshes() const;
-
+	
+	 
 	const Color GetColor() const;
 
 	void Reset();

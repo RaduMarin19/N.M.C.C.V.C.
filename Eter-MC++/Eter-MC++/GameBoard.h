@@ -86,6 +86,9 @@ public:
     void ReturnTopCardAtPosition(const Coordinates& boardPosition);
 
     bool IsBluePlayer() const;
+    bool IsPlayingMirage() const;
+
+    void SetIsPlayingMirage(bool isPlayingMirage);
 
     void ChangeTurn();
 
@@ -124,6 +127,7 @@ private:
     Coordinates* m_boundPosition;
 
     bool m_canCoverIllusion;
+    bool m_isPlayingMirage;
 
     SpellsType m_spells;
 
