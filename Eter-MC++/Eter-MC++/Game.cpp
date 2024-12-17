@@ -384,9 +384,12 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                     }
                 }
             }
-            if (player.HasPlayedIllusion() == true)         //can only play mist illusion after playing the regular one
+            if (player.HasPlayedIllusion() == true) {        //can only play mist illusion after playing the regular one
                 player.IsPlayingIllusion() = true;
-            m_board->RemoveSpell(spellCard); //then remove the spell card
+                m_board->RemoveSpell(spellCard); //then remove the spell card
+            }
+            else
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             break;
         }
 
@@ -453,6 +456,8 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             else {
                 m_board->ReturnCardToDeck(*spellCard);
             }
+            break;
+        case ElementalType::MIRAGE:
             break;
 
     }

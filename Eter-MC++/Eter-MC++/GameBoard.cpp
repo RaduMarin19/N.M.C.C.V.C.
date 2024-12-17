@@ -371,21 +371,21 @@ void GameBoard::SetBoundPosition(const Coordinates& position)
 }
 
 bool GameBoard::Flurry(const Coordinates& position) {
-    Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};
+    Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};            //getting the untranslated position
 
-    ExplosionCard expl(m_tableSize);
+    ExplosionCard expl(m_tableSize);        
     expl.makeExplosionFromVector({ {unTranslatedPosition, ExplosionType::HOLE} });
-
-    if (validateBoardAfterEffect(&expl)) {
+        
+    if (validateBoardAfterEffect(&expl)) {                  //verifying if we can remove this position
         PlayingCard& topCard = m_positions[position].back();
 
-        auto TryMoveCard = [&](const Coordinates& target) -> bool {
-            if (m_positions.contains(target)) {
-                if (m_positions[target].back().GetValue() < topCard.GetValue()) {
-                    m_positions[target].emplace_back(topCard);
-                    m_positions[position].pop_back();
+        auto TryMoveCard = [&](const Coordinates& target) -> bool {             
+            if (m_positions.contains(target)) {                                 
+                if (m_positions[target].back().GetValue() < topCard.GetValue()) {           //can only place a card over a lower value one
+                    m_positions[target].emplace_back(topCard);                  //placing the card
+                    m_positions[position].pop_back();                   //removing the card from the old stack
                     if (m_positions[position].empty()) {
-                        m_positions.erase(position);
+                        m_positions.erase(position);            //if it was the last card then remove the positions altogheter from the map
                     }
                     return true;
                 }
@@ -885,7 +885,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 11/*Random::Get(0, 23)*/;
+    int randomIndex1 = 13/*Random::Get(0, 23)*/;
     int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
