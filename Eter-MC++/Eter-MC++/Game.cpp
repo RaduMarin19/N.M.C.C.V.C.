@@ -251,16 +251,20 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 short size = m_board->GetCardsAtPosition(possiblePosition).size();   //getting the size for nicer code
 
                 if (size > 1) {                                                      //if the position has >= 2 cards
+                    Coordinates unTranslatedPosition{m_board->GetUnTranslatedPosition(possiblePosition)};
                     ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
                     std::vector <std::pair<Coordinates,ExplosionType>> ex;
-                    ex.push_back({ possiblePosition,ExplosionType::TOTAL_DELETE });
+                    ex.push_back({ unTranslatedPosition,ExplosionType::HOLE });
                     explosion->makeExplosionFromVector(ex);
                     if (m_board->validateBoardAfterEffect(explosion)) {
-                        while (size) {                                                   //delete all cards from the game
+                        while (size) {                                   //delete all cards from the game
                             m_board->DeleteCardAtPosition(possiblePosition);
                             --size;
                         }
                         m_board->RemoveSpell(spellCard); //then remove the spell card
+                    }
+                    else {
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
                     }
                 }
                 else {
@@ -442,6 +446,15 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+        case ElementalType::FLURRY:
+            if (m_board->Flurry(possiblePosition)) {
+                m_board->RemoveSpell(spellCard);         //then remove the spell card
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);
+            }
+            break;
+
     }
 }
 

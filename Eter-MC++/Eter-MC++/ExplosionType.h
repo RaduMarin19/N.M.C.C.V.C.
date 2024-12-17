@@ -5,6 +5,5 @@ enum class ExplosionType{
 	NONE,
 	DELETE,
 	RETURN,
-	HOLE,
-	TOTAL_DELETE
+	HOLE
 };

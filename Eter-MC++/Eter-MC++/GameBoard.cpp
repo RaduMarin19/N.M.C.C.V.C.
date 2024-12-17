@@ -311,6 +311,8 @@ void GameBoard::Explode()
 {
     if(m_validatedExplosion == nullptr) return;
 
+    SetValidatedExplosion(m_explosion.get());
+
     decltype(auto) explosionEffects = m_validatedExplosion->GetExplosionMask();
     for (int i = 0; i < m_tableSize; ++i) {
         for (int j = 0; j < m_tableSize; ++j) {
@@ -366,6 +368,47 @@ bool GameBoard::SetBlockedRow(short row)
 void GameBoard::SetBoundPosition(const Coordinates& position)
 {
     m_boundPosition = new Coordinates(position);
+}
+
+bool GameBoard::Flurry(const Coordinates& position) {
+    Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};
+
+    ExplosionCard expl(m_tableSize);
+    expl.makeExplosionFromVector({ {unTranslatedPosition, ExplosionType::HOLE} });
+
+    if (validateBoardAfterEffect(&expl)) {
+        PlayingCard& topCard = m_positions[position].back();
+
+        auto TryMoveCard = [&](const Coordinates& target) -> bool {
+            if (m_positions.contains(target)) {
+                if (m_positions[target].back().GetValue() < topCard.GetValue()) {
+                    m_positions[target].emplace_back(topCard);
+                    m_positions[position].pop_back();
+                    if (m_positions[position].empty()) {
+                        m_positions.erase(position);
+                    }
+                    return true;
+                }
+            }
+            return false;
+            };
+
+        for (int i = -1; i <= 1; ++i) {
+            if (i != 0) {
+                Coordinates XPosition{ position.GetX() + i, position.GetY() };
+                Coordinates YPosition{ position.GetX(), position.GetY() + i };
+
+                if (!m_positions.contains(position)) {
+                    return false;
+                }
+
+                if (TryMoveCard(XPosition) || TryMoveCard(YPosition)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
@@ -842,8 +885,8 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 16/*Random::Get(0, 23)*/;
-    int randomIndex2 = 14/*Random::Get(0, 23)*/;
+    int randomIndex1 = 11/*Random::Get(0, 23)*/;
+    int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
     ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
@@ -874,6 +917,10 @@ void GameBoard::GeneratePlayerCards(const GameMode& mode) {
         GenerateElementalCards();
     }
 
+}
+
+Coordinates GameBoard::GetUnTranslatedPosition(const Coordinates& position) {
+    return {m_maxX - position.GetX(), m_maxY - position.GetY()};
 }
 
 const std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetPossiblePositions() {
@@ -935,9 +982,6 @@ bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
                                 boardState.erase(position);
                         } else boardState.erase(position);
                     }
-                }
-                else if (explosionEffects[i][j] == ExplosionType::TOTAL_DELETE) {
-                    if(boardState.contains(position)) boardState.erase(position);
                 }
             }
         }

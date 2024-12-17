@@ -96,6 +96,9 @@ public:
     void SetBoundPosition(const Coordinates& position);
     bool MoveStackToEmptyPosition(const Coordinates& position);
 
+    bool Flurry(const Coordinates& position);
+    Coordinates GetUnTranslatedPosition(const Coordinates& position);
+
     unsigned int GetCenterX() const;
     unsigned int GetCenterY() const;
 
