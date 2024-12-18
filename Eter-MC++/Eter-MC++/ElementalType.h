@@ -22,7 +22,7 @@ enum class ElementalType {
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!
     EARTHQUAKE,           // Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.                                        !!DONE!!
     SHATTER,              // Sfarama: Valoarea unei carti a adversarului 2/3/4 scade cu 1.                                             !!DONE!!
-    BORDERS,              // Granite: Plaseaza o carte neutra pentru a defini o granita a tablei.                                      !!DONE!!
+    BORDERS,              // Granite: Plaseaza o carte neutra pentru a defini o granita a tablei.                                    !!IS BUGGY!!
     AVALANCHE,            // Avalansa: Shift-eaza doua teancuri adiacente pe orizontala/verticala cu 1 pozitie.
     BOULDER               // Bolovan: Acopera orice iluzie cu o carte, fara a intoarce iluzia.                                         !!DONE!!
 };
