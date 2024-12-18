@@ -481,8 +481,10 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
-        break;
-
+        case ElementalType::BORDERS:
+            m_board->FixBorders(possiblePosition);
+            m_board->RemoveSpell(spellCard);
+            break;
     }
 }
 
@@ -558,6 +560,7 @@ void Game::DrawBoard() {
         renderRect.w = textureWidth;
         renderRect.h = textureHeight;
 
+        
         if (m_painter->IsMouseInRect(renderRect)) {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
@@ -567,6 +570,9 @@ void Game::DrawBoard() {
             else if (m_board->GetPlayerRed()->IsGrabbingCard() && !m_painter->IsPressingLeftClick()) {
                 PlayerTurn(*m_board->GetPlayerRed(), renderRect, possiblePosition);
             }
+        }
+        else if (possiblePosition.GetX() == m_board->GetFixedX() || possiblePosition.GetY() == m_board->GetFixedY()) {
+            SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 0, 0, 255);
         }
         else {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 255, 255);

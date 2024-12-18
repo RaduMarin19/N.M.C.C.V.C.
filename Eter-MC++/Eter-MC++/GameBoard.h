@@ -89,10 +89,15 @@ public:
     bool IsPlayingMirage() const;
 
     void SetIsPlayingMirage(bool isPlayingMirage);
+    void FixBorders(const Coordinates& position);
+    void ResetPossiblePositions();
 
     void ChangeTurn();
 
     bool VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
+
+    short GetFixedX() const;
+    short GetFixedY() const;
 
     void UpdateBoardCenter();
     bool SetBlockedRow(short row);
@@ -128,6 +133,11 @@ private:
 
     bool m_canCoverIllusion;
     bool m_isPlayingMirage;
+
+    bool m_isMinXFixed;
+    bool m_isMaxXFixed;
+    bool m_isMinYFixed;
+    bool m_isMaxYFixed;
 
     SpellsType m_spells;
 

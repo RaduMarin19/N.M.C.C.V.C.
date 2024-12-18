@@ -10,6 +10,13 @@ void GameBoard::TestPossiblePosition(short x, short y)
         }
     }
 
+    if ((m_isMaxXFixed && m_maxX < x)||
+        (m_isMinXFixed && m_minX > x)||         //cannot add a position greater than a fixed border
+        (m_isMaxYFixed && m_maxY < y)||
+        (m_isMinYFixed && m_minY > y))
+        return;
+
+
     if (m_holes.find({ x,y }) != m_holes.end()) {
         return;  //cannot add a hole as a possible position
     }
@@ -161,6 +168,59 @@ bool GameBoard::CheckDiagonals(GameState& gameState)
         return true;
     }
     return false;
+}
+
+void GameBoard::FixBorders(const Coordinates& position) {
+    short x = position.GetX();
+    short y = position.GetY();
+
+    
+    
+    if (x >= m_maxX) {
+        m_maxX = x;
+        m_isMaxXFixed = true;
+        std::cout << "fix max x\n";
+    }
+    else if(x<=m_minX){
+        m_minX = x;
+        m_isMinXFixed = true;
+        std::cout << "fix min x\n";
+    }
+
+    if (m_maxX == m_minX)
+    {
+        m_isMinXFixed = false;
+        m_isMaxXFixed = false;
+    }
+
+    if (y >= m_maxY) {
+        m_maxY = y;
+        m_isMaxYFixed = true;
+        std::cout << "fix max y\n";
+    }
+    else if(y<=m_minX){
+        m_minY = y;
+        m_isMinYFixed = true;
+        std::cout << "fix min y\n";
+    }
+
+    if (m_maxY == m_minY)
+    {
+        m_isMinYFixed = false;
+        m_isMaxYFixed = false;
+    }
+
+    //ResetPossiblePositions();
+}
+
+void GameBoard::ResetPossiblePositions() {
+    m_possiblePositions.clear();
+    for (auto& [coords, cards] : m_positions) {
+        m_possiblePositions.emplace(coords);
+    }
+
+    for (auto& [coords, cards] : m_positions)
+        TestPossiblePositions(coords);
 }
 
 bool GameBoard::CheckScore(GameState& gameState) {
@@ -549,19 +609,20 @@ void GameBoard::RemoveSpell(SpellCard* spell)
 }
 
 void GameBoard::TestPossiblePositions(const Coordinates& boardPosition) {
-    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY());
-    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY());
+
+            this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() - 1);
+            this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() + 1);
+        this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY());
+            this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() - 1);
+            this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() + 1);
+        this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY());
+    
 
     //Check vertically for new possible positions
-    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() - 1);
-    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() + 1);
+        this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() - 1);
+        this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() + 1);
 
     //Check diagonally for new possible positions
-    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() - 1);
-    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() + 1);
-
-    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() - 1);
-    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() + 1);
 }
 
 CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
@@ -572,13 +633,12 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
         return IN_HAND;
     }
 
-
     //Update minimum and maximum board coordinates
-    if (newCardCoords.GetX() < m_minX) this->m_minX = newCardCoords.GetX();
-    if (newCardCoords.GetX() > m_maxX) this->m_maxX = newCardCoords.GetX();
+    if (newCardCoords.GetX() < m_minX&&!m_isMinXFixed) this->m_minX = newCardCoords.GetX();
+    if (newCardCoords.GetX() > m_maxX&&!m_isMaxXFixed) this->m_maxX = newCardCoords.GetX();
 
-    if (newCardCoords.GetY() < m_minY) this->m_minY = newCardCoords.GetY();
-    if (newCardCoords.GetY() > m_maxY) this->m_maxY = newCardCoords.GetY();
+    if (newCardCoords.GetY() < m_minY&&!m_isMinYFixed) this->m_minY = newCardCoords.GetY();
+    if (newCardCoords.GetY() > m_maxY&&!m_isMaxYFixed) this->m_maxY = newCardCoords.GetY();
 
     //If the position at which the new card is played is not on the posible positions list, discard it
     if (!m_possiblePositions.contains(newCardCoords)) {
@@ -680,7 +740,6 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
             }
             ++it;
         }
-
     }
 
     if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::m_tableSize - 1)) {
@@ -903,7 +962,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 10/*Random::Get(0, 23)*/;
+    int randomIndex1 = 21/*Random::Get(0, 23)*/;
     int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
     ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
@@ -1144,6 +1203,10 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_canCoverIllusion = false;
     m_boundPosition = nullptr;
     m_blockedRow = 100;
+    m_isMinXFixed = false;
+    m_isMaxXFixed = false;
+    m_isMinYFixed = false;
+    m_isMaxYFixed = false;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 
@@ -1203,6 +1266,20 @@ bool GameBoard::VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& ex
         }
     }
     return false;
+}
+
+short GameBoard::GetFixedX() const
+{
+    if (m_isMaxXFixed) return m_maxX;
+    if (m_isMinXFixed) return m_minX;
+    return -16;
+}
+
+short GameBoard::GetFixedY() const
+{
+    if (m_isMaxYFixed) return m_maxY;
+    if (m_isMinYFixed) return m_minY;
+    return -16;
 }
 
 void GameBoard::UpdateBoardMask()
