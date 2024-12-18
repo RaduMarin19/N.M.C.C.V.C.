@@ -337,16 +337,16 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             try {
                 short cardValue = m_board->GetCardsAtPosition(possiblePosition).back().GetValue();  //getting the value of the card under the spell
                 short cardsCount = 0;
-                for (const PlayingCard& card : m_board->GetPlayedCards()) {
-                    if (card.GetValue() == cardValue) {
+                for (const PlayingCard* card : m_board->GetPlayedCards()) {
+                    if (card->GetValue() == cardValue) {
                         ++cardsCount;                                       //counting the cards with equal value
                     }
                 }
 
                 if (cardsCount >= 2) {
                     for (const auto& card : m_board->GetPlayedCards()) {                    
-                        if (card.GetValue() == cardValue) {     
-                            m_board->ReturnTopCardAtPosition(card.GetBoardPosition());        //returning the top cards that are found at each position with equal value
+                        if (card->GetValue() == cardValue) {     
+                            m_board->ReturnTopCardAtPosition(card->GetBoardPosition());        //returning the top cards that are found at each position with equal value
                         }
                     }
                     m_board->RemoveSpell(spellCard); //then remove the spell card
@@ -401,8 +401,8 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
         case ElementalType::EARTHQUAKE:
         {
             for (const auto& card : m_board->GetPlayedCards()) {
-                if (card.GetValue() == 1) {
-                    m_board->ReturnTopCardAtPosition(card.GetBoardPosition());        //returning the top cards that are found at each position with equal value
+                if (card->GetValue() == 1) {
+                    m_board->ReturnTopCardAtPosition(card->GetBoardPosition());        //returning the top cards that are found at each position with equal value
                 }
             }
             m_board->RemoveSpell(spellCard);         //then remove the spell card
@@ -560,7 +560,6 @@ void Game::DrawBoard() {
         renderRect.w = textureWidth;
         renderRect.h = textureHeight;
 
-        
         if (m_painter->IsMouseInRect(renderRect)) {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
@@ -581,18 +580,18 @@ void Game::DrawBoard() {
     }
 
     for (const auto& card : m_board->GetPlayedCards()) {
-        if (card.IsIllusion())
+        if (card->IsIllusion())
         {
-            if (card.GetColor() == BLUE)
-                m_painter->DrawCard(card, m_board->GetPlayerBlue()->GetIllusionTexture().GetTexture());
-            else if (card.GetColor() == RED)
+            if (card->GetColor() == BLUE)
+                m_painter->DrawCard(*card, m_board->GetPlayerBlue()->GetIllusionTexture().GetTexture());
+            else if (card->GetColor() == RED)
             {
-                m_painter->DrawCard(card, m_board->GetPlayerRed()->GetIllusionTexture().GetTexture());
+                m_painter->DrawCard(*card, m_board->GetPlayerRed()->GetIllusionTexture().GetTexture());
             }
         }
         else
         {
-            m_painter->DrawCard(card, card.GetTexture()->GetTexture());
+            m_painter->DrawCard(*card, card->GetTexture()->GetTexture());
         }
     }
 }

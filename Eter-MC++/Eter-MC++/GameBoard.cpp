@@ -1004,12 +1004,12 @@ const std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetPossible
     return this->m_possiblePositions;
 }
 
-const std::vector<PlayingCard> GameBoard::GetPlayedCards() const {
-    std::vector<PlayingCard> playingCards;
+const std::vector<const PlayingCard*> GameBoard::GetPlayedCards() const {
+    std::vector<const PlayingCard*> playingCards;
 
-    for (auto& [k, v] : this->m_positions) {
+    for (const auto& [k, v] : this->m_positions) {
         if (!v.empty())
-            playingCards.emplace_back(v.back());
+            playingCards.emplace_back(&v.back());
     }
     return playingCards;
 }

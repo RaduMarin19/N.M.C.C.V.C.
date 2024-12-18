@@ -1,16 +1,19 @@
 #include "PlayingCard.h"
+#include <iostream>
 
 PlayingCard::PlayingCard()
 {
 }
 
 PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short value, unsigned short id, Color color) :
-	Card{coord,texture,id},
-	m_value{value},
-	m_initialValue{value},
-	m_color{color},
-    m_isIllusion{ false }
-{}
+	Card{ coord,texture,id },
+	m_value{ value },
+	m_initialValue{ value },
+	m_color{ color },
+	m_isIllusion{ false }
+{
+	std::cout << "Called PlayingCard constructor\n";
+}
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_isIllusion = oth.m_isIllusion;
@@ -23,6 +26,7 @@ PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_initialPosition = oth.m_initialPosition;
 	m_initialValue = oth.m_initialValue;
 	m_isEter = oth.m_isEter;
+	std::cout << "Called PlayingCard copy constructor\n";
 }
 
 void PlayingCard::SetIllusion(bool IsIllusion) {

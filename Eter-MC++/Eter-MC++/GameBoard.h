@@ -49,7 +49,7 @@ public:
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
 
     const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
-    const std::vector<PlayingCard> GetPlayedCards() const;
+    const std::vector<const PlayingCard*> GetPlayedCards() const;
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
     std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
