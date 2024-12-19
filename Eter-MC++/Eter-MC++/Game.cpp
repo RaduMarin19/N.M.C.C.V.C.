@@ -491,7 +491,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
 void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     Card* pushCard = player.GetGrabbedCard();
 
-    if (pushCard) {
+    if (pushCard!=nullptr) {
         if (PlayingCard* playingCard = dynamic_cast<PlayingCard*>(pushCard)) {
             PlayRegularCard(player, playingCard, renderRect, possiblePosition);
         }
@@ -549,11 +549,12 @@ void Game::HandleBoardState() {
         //std::cout << "Player stopped grabbing a card\n";
         m_board->GetPlayerRed()->SetIsGrabbingCard(false);
         m_board->GetPlayerBlue()->SetIsGrabbingCard(false);
+
     }
 }
 
 void Game::DrawBoard() {
-    for (const auto& possiblePosition : m_board->GetPossiblePositions()) {
+    for (const auto possiblePosition : m_board->GetPossiblePositions()) { //positions should be shared ptr
         SDL_Rect renderRect{};
         renderRect.x = m_board->GetCenterX() - (possiblePosition.GetX() * textureWidth);
         renderRect.y = m_board->GetCenterY() - (possiblePosition.GetY() * textureHeight);

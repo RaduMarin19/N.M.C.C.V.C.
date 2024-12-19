@@ -190,6 +190,7 @@ void GameBoard::FixBorders(const Coordinates& position) {
     if (m_maxX == m_minX)
     {
         m_isMinXFixed = false;
+        std::cout << "unfixed x";
         m_isMaxXFixed = false;
     }
 
@@ -206,21 +207,21 @@ void GameBoard::FixBorders(const Coordinates& position) {
 
     if (m_maxY == m_minY)
     {
+        std::cout << "unfixed y";
         m_isMinYFixed = false;
         m_isMaxYFixed = false;
     }
 
-    //ResetPossiblePositions();
+    ResetPossiblePositions();
 }
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
+
     for (auto& [coords, cards] : m_positions) {
         m_possiblePositions.emplace(coords);
-    }
-
-    for (auto& [coords, cards] : m_positions)
         TestPossiblePositions(coords);
+    }
 }
 
 bool GameBoard::CheckScore(GameState& gameState) {
