@@ -208,7 +208,7 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     }
 }
 
-void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     spellCard->SetCoordinates({ renderRect.x, renderRect.y });
 
     ElementalType spell = spellCard->GetSpell(); //getting the spell type
@@ -445,6 +445,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+
         case ElementalType::WAVE:
             if (m_board->MoveStackToEmptyPosition(possiblePosition)) {      //if the stack was sucesfully moved
                 m_board->SetBoundPosition(possiblePosition);                //we set the bound position             
@@ -454,6 +455,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+
         case ElementalType::FLURRY:
             if (m_board->Flurry(possiblePosition)) {
                 m_board->RemoveSpell(spellCard);         //then remove the spell card
@@ -462,6 +464,7 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+
         case ElementalType::MIRAGE:
         {
             Color playerColor = player.GetColor();
@@ -481,10 +484,13 @@ void Game::PlaySpellCard(Player& player,SpellCard* spellCard, SDL_Rect& renderRe
             }
             break;
         }
+
         case ElementalType::BORDERS:
             m_board->FixBorders(possiblePosition);
             m_board->RemoveSpell(spellCard);
             break;
+
+        
     }
 }
 

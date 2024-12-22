@@ -18,7 +18,7 @@ enum class ElementalType {
     WAVE,                 // Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.                         !!DONE!!
     WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.                                         !!DONE!!
-    CASCADE,              // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
+    WATERFALL,            // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!
     EARTHQUAKE,           // Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.                                        !!DONE!!
     SHATTER,              // Sfarama: Valoarea unei carti a adversarului 2/3/4 scade cu 1.                                             !!DONE!!

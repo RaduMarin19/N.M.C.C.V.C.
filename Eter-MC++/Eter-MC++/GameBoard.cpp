@@ -514,6 +514,26 @@ unsigned int GameBoard::GetCenterY() const {
     return this->m_centerY;
 }
 
+unsigned int GameBoard::GetMinX() const
+{
+    return m_minX;
+}
+
+unsigned int GameBoard::GetMinY() const
+{
+    return m_minY;
+}
+
+unsigned int GameBoard::GetMaxX() const
+{
+    return m_maxX;
+}
+
+unsigned int GameBoard::GetMaxY() const
+{
+    return m_maxY;
+}
+
 ExplosionCard* GameBoard::GetExplosion() {
     return m_explosion.get();
 }

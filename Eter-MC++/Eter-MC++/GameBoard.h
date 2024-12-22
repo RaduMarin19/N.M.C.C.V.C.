@@ -110,6 +110,11 @@ public:
     unsigned int GetCenterX() const;
     unsigned int GetCenterY() const;
 
+    unsigned int GetMinX() const;
+    unsigned int GetMinY() const;
+    unsigned int GetMaxX() const;
+    unsigned int GetMaxY() const;
+
     ExplosionCard* GetExplosion();
     SpellsType& GetSpells();
     void InitializeExplosion();
