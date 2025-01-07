@@ -72,6 +72,12 @@ void Game::IRun() {
                 //Draw the mode selection menu
                 m_painter->DrawModeSelection();
 
+                bool loadSave = false;
+                m_painter->DrawButton(loadSave, { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Load Save", 14);
+                if (loadSave) {
+                    LoadSave(3);
+                }
+
                 //Check which button the player has pressed, and initialize the cards accordingly
                 if (m_painter->IsTrainingActive()) {
                     m_currentState = TRAINING_MODE;
@@ -123,6 +129,7 @@ void Game::IRun() {
                     m_board->GeneratePlayerCards(GameMode::MageDuel);
                     drawThisFrame = true;
                 }
+
             }
 
             if (m_currentState == RED_PLAYER_WON || m_currentState == BLUE_PLAYER_WON || m_currentState == TIE) {
@@ -525,6 +532,14 @@ void Game::HandleBoardState() {
 
     m_board->UpdateBoardCenter();
 
+    bool shouldSave = false;
+
+    m_painter->DrawButton(shouldSave, { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 180 }, 120, 50, "Save game", 14);
+
+    if (shouldSave) {
+        SaveGame();
+    }
+
     // Common logic for all modes
 
     //drawing the play illusion buttons
@@ -713,4 +728,37 @@ bool Game::ExplosionTurn(){
         }
     }
     return false;
+}
+
+void Game::LoadSave(int saveId)
+{
+    m_board->GeneratePlayerCards(GameMode::Training);
+    std::string filename = "save_game.json"; 
+
+    std::ifstream inFile(filename);
+    if (!inFile) {
+        std::cerr << "Error: Save file not found!" << std::endl;
+        return;
+    }
+
+    nlohmann::json save;
+    inFile >> save;
+
+    m_board->LoadState(save);
+
+    inFile.close();
+    m_currentState = TRAINING_MODE;
+    std::cout << "Game loaded successfully!" << std::endl;
+}
+
+void Game::SaveGame()
+{
+    json save;
+
+    m_board->SaveState(save);
+
+    std::ofstream outFile("save_game.json");
+
+    outFile << save.dump(4);
+    outFile.close();
 }

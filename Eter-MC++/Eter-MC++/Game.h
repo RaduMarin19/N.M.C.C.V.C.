@@ -7,14 +7,18 @@
 #include "Graphics.h"
 #include "ElementalType.h"
 
-#include <iostream>
-#include <algorithm>
+#include "json.hpp"
 #include <SDL.h>
+
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 #include <memory>
 #include <vector>
 
 
 #define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)
+using json = nlohmann::json;
 
 class Game
 {
@@ -53,4 +57,7 @@ private:
 	void PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	void PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	bool ExplosionTurn();
+
+	void LoadSave(int saveId);
+	void SaveGame();
 };

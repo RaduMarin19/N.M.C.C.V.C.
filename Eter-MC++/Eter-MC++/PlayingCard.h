@@ -4,6 +4,8 @@
 #include "Color.h"
 #include "Card.h"
 
+#include "json.hpp"
+
 class PlayingCard : public Card
 {
 public:
@@ -30,6 +32,8 @@ public:
 	void SetBoardPosition(Coordinates position);
 	void SetInitialPosition(Coordinates position);
 	void SetValue(short value);
+	void SetInitialValue(short value);
+	void SetColor(Color color);
 
 	bool operator==(const PlayingCard& other) const;
 
@@ -41,4 +45,7 @@ private:
 	bool m_isIllusion;
 	bool m_isEter = false;
 };
+
+void to_json(nlohmann::json& j, const PlayingCard& card);
+void from_json(const nlohmann::json& j, PlayingCard& card);
 

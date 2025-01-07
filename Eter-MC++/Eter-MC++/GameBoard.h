@@ -15,6 +15,8 @@
 #include "MageType.h"
 #include "GameMode.h"
 
+#include "json.hpp"
+
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
@@ -119,6 +121,9 @@ public:
     SpellsType& GetSpells();
     void InitializeExplosion();
 
+
+    void SaveState(nlohmann::json& json) const;
+    void LoadState(const nlohmann::json& json);
     void Clear();
 protected:
     GameMode m_gameMode;

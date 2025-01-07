@@ -1312,3 +1312,203 @@ void GameBoard::UpdateBoardMask()
             else
                 m_boardMask[i][j] = 0;
 }
+
+void GameBoard::SaveState(nlohmann::json& json) const {
+    json["tableSize"] = m_tableSize;
+    json["center"] = { m_centerX, m_centerY };
+    json["isBluePlayer"] = m_isBluePlayer;
+    json["exploded"] = m_exploded;
+
+    //Serialize played positions
+    json["playedPositions"] = nlohmann::json::array();
+    for (const auto& [position, cards] : m_positions) {
+        nlohmann::json positionJson = { {"x", position.GetX()}, {"y", position.GetY()} };
+
+        nlohmann::json cardsJson = nlohmann::json::array();
+        for (const auto& card : cards) {
+            cardsJson.push_back({
+                {"board_position", {card.GetBoardPosition().GetX(), card.GetBoardPosition().GetY()}},
+                {"value", card.GetValue()},
+                {"initial_value", card.GetInitialValue()},
+                {"color", static_cast<int>(card.GetColor())},
+                {"is_illusion", card.IsIllusion()},
+                {"is_eter", card.IsEter()}
+                });
+        }
+
+        json["playedPositions"].push_back({ {"position", positionJson}, {"cards", cardsJson} });
+    }
+
+    //Serialize possible positions
+    json["possiblePositions"] = nlohmann::json::array();
+    for (const auto& position : m_possiblePositions) {
+        json["possiblePositions"].push_back({ {"x", position.GetX()}, {"y", position.GetY()} });
+    }
+
+    //Serialize player states
+    auto serializePlayer = [](const Player& player, nlohmann::json& playerJson) {
+        playerJson["hasPlayedIllusion"] = player.HasPlayedIllusion();
+        playerJson["cards"] = nlohmann::json::array();
+        playerJson["removed"] = nlohmann::json::array();
+
+        for (const auto& card : player.GetCards()) {
+            playerJson["cards"].push_back({
+                {"position", { {"x", card.GetInitialPosition().GetX()}, {"y", card.GetInitialPosition().GetY()} }},
+                {"card", {
+                    {"value", card.GetValue()},
+                    {"initial_value", card.GetInitialValue()},
+                    {"color", static_cast<int>(card.GetColor())},
+                    {"is_eter", card.IsEter()}
+                }}
+                });
+        }
+
+        for (const auto& card : player.GetRemovedCards()) {
+            playerJson["removed"].push_back({
+                {"position", { {"x", card.GetInitialPosition().GetX()}, {"y", card.GetInitialPosition().GetY()} }},
+                {"card", {
+                    {"value", card.GetValue()},
+                    {"initial_value", card.GetInitialValue()},
+                    {"color", static_cast<int>(card.GetColor())},
+                    {"is_eter", card.IsEter()}
+                }}
+                });
+        }
+        };
+
+    serializePlayer(m_playerBlue, json["PlayerBlue"]);
+    serializePlayer(m_playerRed, json["PlayerRed"]);
+}
+
+void GameBoard::LoadState(const nlohmann::json& json) {
+    if (json.contains("tableSize")) {
+        m_tableSize = json["tableSize"].get<short>();
+    }
+
+    if (json.contains("center")) {
+        m_centerX = json["center"][0].get<unsigned int>();
+        m_centerY = json["center"][1].get<unsigned int>();
+    }
+
+    if (json.contains("isBluePlayer")) {
+        m_isBluePlayer = json["isBluePlayer"].get<bool>();
+    }
+
+    if (json.contains("exploded")) {
+        m_exploded = json["exploded"].get<bool>();
+    }
+
+    // Deserialize played positions
+    if (json.contains("playedPositions")) {
+        m_positions.clear();
+
+        for (const auto& playedPosition : json["playedPositions"]) {
+            Coordinates position;
+            position.SetX(playedPosition["position"]["x"].get<int>());
+            position.SetY(playedPosition["position"]["y"].get<int>());
+
+            std::deque<PlayingCard> cards;
+            for (const auto& cardJson : playedPosition["cards"]) {
+                PlayingCard card;
+                card.SetBoardPosition({
+                    cardJson["board_position"][0].get<int>(),
+                    cardJson["board_position"][1].get<int>()
+                    });
+                card.SetValue(cardJson["value"].get<short>());
+                card.SetInitialValue(cardJson["initial_value"].get<short>());
+                card.SetColor(static_cast<Color>(cardJson["color"].get<int>()));
+                card.SetIllusion(cardJson["is_illusion"].get<bool>());
+                card.SetEter(cardJson["is_eter"].get<bool>());
+
+                // Assign the correct texture based on color
+                if (card.GetColor() == BLUE)
+                    card.SetTexture(&m_blueCardTextures[card.GetValue()]);
+                else
+                    card.SetTexture(&m_redCardTextures[card.GetValue()]);
+
+                cards.push_back(card);
+            }
+
+            m_positions[position] = std::move(cards);
+        }
+    }
+
+    // Deserialize possible positions
+    if (json.contains("possiblePositions")) {
+        m_possiblePositions.clear();
+
+        for (const auto& possiblePosition : json["possiblePositions"]) {
+            Coordinates position;
+            position.SetX(possiblePosition["x"].get<int>());
+            position.SetY(possiblePosition["y"].get<int>());
+
+            m_possiblePositions.insert(position);
+        }
+    }
+
+    // Deserialize players
+    auto deserializePlayer = [&](Player& player, const nlohmann::json& playerJson) {
+        if (playerJson.contains("hasPlayedIllusion")&& playerJson["hasPlayedIllusion"].get<bool>()==true) {
+            player.SetHasPlayedIllusion();
+        }
+
+        // Deserialize player's cards
+        if (playerJson.contains("cards")) {
+            player.ClearCards(); // Assuming you have a method to clear the player's cards
+            for (const auto& cardEntry : playerJson["cards"]) {
+                PlayingCard card;
+                card.SetInitialPosition({
+                    cardEntry["position"]["x"].get<int>(),
+                    cardEntry["position"]["y"].get<int>()
+                    });
+                card.SetValue(cardEntry["card"]["value"].get<short>());
+                card.SetInitialValue(cardEntry["card"]["initial_value"].get<short>());
+                card.SetColor(static_cast<Color>(cardEntry["card"]["color"].get<int>()));
+                card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
+
+                // Assign texture
+                if (card.GetColor() == BLUE)
+                    card.SetTexture(&m_blueCardTextures[card.GetValue()]);
+                else
+                    card.SetTexture(&m_redCardTextures[card.GetValue()]);
+
+                player.AddCard(card); // Assuming AddCard method exists
+            }
+        }
+
+        // Deserialize removed cards
+        if (playerJson.contains("removed")) {
+            player.ClearRemovedCards(); // Assuming you have a method to clear removed cards
+            for (const auto& cardEntry : playerJson["removed"]) {
+                PlayingCard card;
+                card.SetInitialPosition({
+                    cardEntry["position"]["x"].get<int>(),
+                    cardEntry["position"]["y"].get<int>()
+                    });
+                card.SetValue(cardEntry["card"]["value"].get<short>());
+                card.SetInitialValue(cardEntry["card"]["initial_value"].get<short>());
+                card.SetColor(static_cast<Color>(cardEntry["card"]["color"].get<int>()));
+                card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
+
+                // Assign texture
+                if (card.GetColor() == BLUE)
+                    card.SetTexture(&m_blueCardTextures[card.GetValue()]);
+                else
+                    card.SetTexture(&m_redCardTextures[card.GetValue()]);
+
+                player.LoadRemovedCard(card); // Assuming AddRemovedCard method exists
+            }
+        }
+        };
+
+    // Deserialize both players
+    if (json.contains("PlayerBlue")) {
+        deserializePlayer(m_playerBlue, json["PlayerBlue"]);
+    }
+
+    if (json.contains("PlayerRed")) {
+        deserializePlayer(m_playerRed, json["PlayerRed"]);
+    }
+}
+
+

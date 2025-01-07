@@ -2,6 +2,8 @@
 #include <cstddef>
 #include <functional>
 
+#include "json.hpp"
+
 class Coordinates
 {
 public:
@@ -32,3 +34,6 @@ private:
 	int m_x, m_y;
 };
 
+
+void to_json(nlohmann::json& j, const Coordinates& position);
+void from_json(const nlohmann::json& j, Coordinates& position);

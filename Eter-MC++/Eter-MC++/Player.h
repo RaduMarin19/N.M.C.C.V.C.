@@ -49,6 +49,8 @@ public:
 
 	void RemoveCardFromHand(const PlayingCard& card);
 
+	const std::vector<PlayingCard>& GetRemovedCards() const;
+	const std::vector<PlayingCard>& GetCards() const;
 	std::vector<PlayingCard>& GetRemovedCards();
 	std::vector<PlayingCard>& GetCards();
 
@@ -62,10 +64,13 @@ public:
 	bool HasPlayedIllusion() const;
 	bool& IsPlayingIllusion();
 	bool IsPlayingAshes() const;
-	
+
+	void LoadRemovedCard(PlayingCard& card);
 	 
 	const Color GetColor() const;
 
+	void ClearCards();
+	void ClearRemovedCards();
 	void Reset();
 
 private:
@@ -103,4 +108,7 @@ void Player::AddRemovedCard(Container& container, PlayingCard& card) {
 		throw std::runtime_error("Card not found in player's hand.");
 	}
 }
+
+void to_json(nlohmann::json& j,const Player& player);
+void from_json(nlohmann::json& j, Player& player);
 

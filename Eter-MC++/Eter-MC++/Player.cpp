@@ -65,9 +65,19 @@ void Player::RemoveCardFromHand(const PlayingCard& card) {
 	
 }
 
+const std::vector<PlayingCard>& Player::GetRemovedCards() const
+{
+	return m_removedCards;
+}
+
 std::vector<PlayingCard>& Player::GetRemovedCards()
 {
 	return m_removedCards;
+}
+
+const std::vector<PlayingCard>& Player::GetCards() const
+{
+	return m_cards;
 }
 
 std::vector<PlayingCard>& Player::GetCards()
@@ -94,6 +104,14 @@ void Player::SetHasPlayedIllusion()
 	m_hasPlayedIllusion = true;
 }
 
+void Player::ClearCards() {
+	m_cards.clear();
+}
+
+void Player::ClearRemovedCards() {
+	m_removedCards.clear();
+}
+
 void Player::SetIsPlayingAshes(bool isPlayingAshes)
 {
 	m_isPlayingAshes = isPlayingAshes;
@@ -109,6 +127,11 @@ bool Player::HasPlayedIllusion() const
 bool Player::IsPlayingAshes() const
 {
 	return m_isPlayingAshes;
+}
+
+void Player::LoadRemovedCard(PlayingCard& card)
+{
+	m_removedCards.emplace_back(card);
 }
 
 const Color Player::GetColor() const

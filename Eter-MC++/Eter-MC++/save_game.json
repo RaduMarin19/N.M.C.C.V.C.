@@ -1,0 +1,264 @@
+{
+    "PlayerBlue": {
+        "cards": [
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "value": 1
+                },
+                "position": {
+                    "x": 30,
+                    "y": 315
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 30,
+                    "y": 410
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 30,
+                    "y": 505
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 4,
+                    "is_eter": false,
+                    "value": 4
+                },
+                "position": {
+                    "x": 30,
+                    "y": 600
+                }
+            }
+        ],
+        "hasPlayedIllusion": false,
+        "removed": []
+    },
+    "PlayerRed": {
+        "cards": [
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "value": 1
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 30
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "value": 1
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 315
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 410
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 505
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 4,
+                    "is_eter": false,
+                    "value": 4
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 600
+                }
+            }
+        ],
+        "hasPlayedIllusion": false,
+        "removed": []
+    },
+    "center": [
+        536,
+        311
+    ],
+    "exploded": false,
+    "isBluePlayer": true,
+    "playedPositions": [
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        0
+                    ],
+                    "color": 0,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 1
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        -1
+                    ],
+                    "color": 0,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 3
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": -1
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        -1,
+                        0
+                    ],
+                    "color": 1,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 3
+                }
+            ],
+            "position": {
+                "x": -1,
+                "y": 0
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        1
+                    ],
+                    "color": 1,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 2
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": 1
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        1,
+                        0
+                    ],
+                    "color": 0,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 2
+                }
+            ],
+            "position": {
+                "x": 1,
+                "y": 0
+            }
+        }
+    ],
+    "possiblePositions": [
+        {
+            "x": 0,
+            "y": 0
+        },
+        {
+            "x": -1,
+            "y": -1
+        },
+        {
+            "x": 1,
+            "y": 1
+        },
+        {
+            "x": -1,
+            "y": 1
+        },
+        {
+            "x": 1,
+            "y": -1
+        },
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": 0,
+            "y": -1
+        },
+        {
+            "x": 0,
+            "y": 1
+        },
+        {
+            "x": 1,
+            "y": 0
+        }
+    ],
+    "tableSize": 3
+}
