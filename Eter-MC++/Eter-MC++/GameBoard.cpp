@@ -179,35 +179,29 @@ void GameBoard::FixBorders(const Coordinates& position) {
     if (x >= m_maxX) {
         m_maxX = x;
         m_isMaxXFixed = true;
-        std::cout << "fix max x\n";
     }
     else if(x<=m_minX){
         m_minX = x;
         m_isMinXFixed = true;
-        std::cout << "fix min x\n";
     }
 
     if (m_maxX == m_minX)
     {
         m_isMinXFixed = false;
-        std::cout << "unfixed x";
         m_isMaxXFixed = false;
     }
 
     if (y >= m_maxY) {
         m_maxY = y;
         m_isMaxYFixed = true;
-        std::cout << "fix max y\n";
     }
     else if(y<=m_minX){
         m_minY = y;
         m_isMinYFixed = true;
-        std::cout << "fix min y\n";
     }
 
     if (m_maxY == m_minY)
     {
-        std::cout << "unfixed y";
         m_isMinYFixed = false;
         m_isMaxYFixed = false;
     }
@@ -311,7 +305,7 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
             m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition),card);
         if (m_positions[boardPosition].size() == 0) {
             m_positions.erase(boardPosition);           //if there isnt any card in the deque anymore then remove the position
-            //TODO: remove actual possiblePositions and regenerate them.
+            ResetPossiblePositions();
         }
     }
 }
@@ -445,11 +439,14 @@ void GameBoard::SetBoundPosition(const Coordinates& position)
 
 bool GameBoard::Flurry(const Coordinates& position) {
     Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};            //getting the untranslated position
+    if (m_positions.find(position) == m_positions.end())
+        return false;
 
     ExplosionCard expl(m_tableSize);        
     expl.makeExplosionFromVector({ {unTranslatedPosition, ExplosionType::HOLE} });
-        
+    
     if (validateBoardAfterEffect(&expl)) {                  //verifying if we can remove this position
+
         PlayingCard& topCard = m_positions[position].back();
 
         auto TryMoveCard = [&](const Coordinates& target) -> bool {             
@@ -631,19 +628,15 @@ void GameBoard::RemoveSpell(SpellCard* spell)
 
 void GameBoard::TestPossiblePositions(const Coordinates& boardPosition) {
 
-            this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() - 1);
-            this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() + 1);
-        this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY());
-            this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() - 1);
-            this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() + 1);
-        this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY());
-    
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY() + 1);
+    this->TestPossiblePosition(boardPosition.GetX() - 1, boardPosition.GetY());
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY() + 1);
+    this->TestPossiblePosition(boardPosition.GetX() + 1, boardPosition.GetY());
+    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() - 1);
+    this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() + 1);
 
-    //Check vertically for new possible positions
-        this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() - 1);
-        this->TestPossiblePosition(boardPosition.GetX(), boardPosition.GetY() + 1);
-
-    //Check diagonally for new possible positions
 }
 
 CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
