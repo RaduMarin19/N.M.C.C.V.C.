@@ -121,7 +121,6 @@ public:
     SpellsType& GetSpells();
     void InitializeExplosion();
 
-
     void SaveState(nlohmann::json& json) const;
     void LoadState(const nlohmann::json& json);
     void Clear();
@@ -190,4 +189,6 @@ private:
 
     void GenerateTrainingCards();
     void GenerateElementalCards();
+
+    void InitializeSpellCards(short spellCardId1,short spellCardId2);
 };

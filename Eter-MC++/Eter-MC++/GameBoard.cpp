@@ -986,18 +986,7 @@ void GameBoard::GenerateElementalCards() {
     int randomIndex1 = 21/*Random::Get(0, 23)*/;
     int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
-    ElementalType spell1 = static_cast<ElementalType>(randomIndex1);
-    ElementalType spell2 = static_cast<ElementalType>(randomIndex2);
-
-    std::unique_ptr<SpellCard> cardSpell1= std::make_unique<SpellCard>(SpellCard({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
-        &m_elementalCardTextures[randomIndex1], spell1,
-        NextCardId()));
-
-    std::unique_ptr<SpellCard> cardSpell2 = std::make_unique<SpellCard>(SpellCard({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
-        &m_elementalCardTextures[randomIndex2], spell2,
-        NextCardId()));
-
-    m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
+    InitializeSpellCards(randomIndex1, randomIndex2);
 
     //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(PlayingCardsBlue);
@@ -1005,6 +994,24 @@ void GameBoard::GenerateElementalCards() {
 
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
+    std::unique_ptr<SpellCard> cardSpell1, cardSpell2;
+
+    ElementalType spell1 = static_cast<ElementalType>(spellCardId1);
+    ElementalType spell2 = static_cast<ElementalType>(spellCardId2);
+
+    if (spellCardId1 != 24)
+        cardSpell1 = std::make_unique<SpellCard>(SpellCard({ textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+            &m_elementalCardTextures[spellCardId1], spell1,
+            NextCardId()));
+    if (spellCardId2 != 24)
+        cardSpell2 = std::make_unique<SpellCard>(SpellCard({ SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+            &m_elementalCardTextures[spellCardId2], spell2,
+            NextCardId()));
+
+    m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 }
 
 void GameBoard::GeneratePlayerCards(const GameMode& mode) {
@@ -1318,6 +1325,35 @@ void GameBoard::SaveState(nlohmann::json& json) const {
     json["center"] = { m_centerX, m_centerY };
     json["isBluePlayer"] = m_isBluePlayer;
     json["exploded"] = m_exploded;
+    json["gameMode"] = m_gameMode;
+
+    json["blockedRow"] = m_blockedRow;
+    json["isMinXFixed"] = m_isMinXFixed;
+    json["isMaxXFixed"] = m_isMaxXFixed;
+    json["isMinYFixed"] = m_isMinYFixed;
+    json["isMaxYFixed"] = m_isMaxYFixed;
+    if (m_boundPosition != nullptr) {
+        json["boundPosition"] = {
+            {"x", m_boundPosition->GetX()},
+            {"y", m_boundPosition->GetY()}
+        };
+    }
+    json["minX"] = m_minX;
+    json["maxX"] = m_maxX;
+    json["minY"] = m_minY;
+    json["maxY"] = m_maxY;
+
+    if (m_spells.has_value()) {
+        if (m_spells->first.get()) {
+            json["firstSpell"] = static_cast<int>(m_spells->first->GetSpell());
+        }
+        else json["firstSpell"] = 24; // no element
+
+        if (m_spells->second.get()) {
+            json["secondSpell"] = static_cast<int>(m_spells->second->GetSpell());
+        }
+        else json["secondSpell"] = 24;
+    }
 
     //Serialize played positions
     json["playedPositions"] = nlohmann::json::array();
@@ -1452,9 +1488,8 @@ void GameBoard::LoadState(const nlohmann::json& json) {
             player.SetHasPlayedIllusion();
         }
 
-        // Deserialize player's cards
         if (playerJson.contains("cards")) {
-            player.ClearCards(); // Assuming you have a method to clear the player's cards
+            player.ClearCards();
             for (const auto& cardEntry : playerJson["cards"]) {
                 PlayingCard card;
                 card.SetInitialPosition({
@@ -1466,19 +1501,18 @@ void GameBoard::LoadState(const nlohmann::json& json) {
                 card.SetColor(static_cast<Color>(cardEntry["card"]["color"].get<int>()));
                 card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
 
-                // Assign texture
+                // Assign the correct texture based on color
                 if (card.GetColor() == BLUE)
                     card.SetTexture(&m_blueCardTextures[card.GetValue()]);
                 else
                     card.SetTexture(&m_redCardTextures[card.GetValue()]);
 
-                player.AddCard(card); // Assuming AddCard method exists
+                player.AddCard(card); 
             }
         }
 
-        // Deserialize removed cards
         if (playerJson.contains("removed")) {
-            player.ClearRemovedCards(); // Assuming you have a method to clear removed cards
+            player.ClearRemovedCards(); 
             for (const auto& cardEntry : playerJson["removed"]) {
                 PlayingCard card;
                 card.SetInitialPosition({
@@ -1490,16 +1524,16 @@ void GameBoard::LoadState(const nlohmann::json& json) {
                 card.SetColor(static_cast<Color>(cardEntry["card"]["color"].get<int>()));
                 card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
 
-                // Assign texture
+                // Assign the correct texture based on color
                 if (card.GetColor() == BLUE)
                     card.SetTexture(&m_blueCardTextures[card.GetValue()]);
                 else
                     card.SetTexture(&m_redCardTextures[card.GetValue()]);
 
-                player.LoadRemovedCard(card); // Assuming AddRemovedCard method exists
+                player.LoadRemovedCard(card); 
             }
         }
-        };
+    };
 
     // Deserialize both players
     if (json.contains("PlayerBlue")) {
@@ -1508,6 +1542,54 @@ void GameBoard::LoadState(const nlohmann::json& json) {
 
     if (json.contains("PlayerRed")) {
         deserializePlayer(m_playerRed, json["PlayerRed"]);
+    }
+
+    if (json.contains("gameMode")) {
+        m_gameMode = json["gameMode"].get<GameMode>();
+    }
+
+    if (json.contains("firstSpell")&&json.contains("secondSpell")) {
+        InitializeSpellCards(json["firstSpell"].get<int>(), json["secondSpell"].get<int>());
+    }
+
+    if (json.contains("blockedRow")) {
+        m_blockedRow = json["blockedRow"].get<short>();
+    }
+    if (json.contains("isMinXFixed")) {
+        m_isMinXFixed = json["isMinXFixed"].get<bool>();
+    }
+
+    if (json.contains("minX")) {
+        m_minX = json["minX"].get<short>();
+    }
+
+    if (json.contains("maxX")) {
+        m_maxX = json["maxX"].get<short>();
+    }
+
+    if (json.contains("minY")) {
+        m_minY = json["minY"].get<short>();
+    }
+
+    if (json.contains("maxY")) {
+        m_maxY = json["maxY"].get<short>();
+    }
+
+    if (json.contains("isMaxXFixed")) {
+        m_isMaxXFixed = json["isMaxXFixed"].get<bool>();
+    }
+
+    if (json.contains("isMinYFixed")) {
+        m_isMinYFixed = json["isMinYFixed"].get<bool>();
+    }
+
+    if (json.contains("isMaxYFixed")) {
+        m_isMaxYFixed = json["isMaxYFixed"].get<bool>();
+    }
+
+    if (json.contains("boundPosition")) {
+        Coordinates position(json["boundPosition"]["x"].get<int>(), json["boundPosition"]["y"].get<int>());
+        SetBoundPosition(position);
     }
 }
 

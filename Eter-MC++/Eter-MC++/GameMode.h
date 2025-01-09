@@ -1,5 +1,4 @@
 #pragma once
-
 enum class GameMode : short
 {
     Training,

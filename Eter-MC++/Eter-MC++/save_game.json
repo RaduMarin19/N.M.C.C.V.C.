@@ -4,25 +4,13 @@
             {
                 "card": {
                     "color": 0,
-                    "initial_value": 1,
-                    "is_eter": false,
-                    "value": 1
-                },
-                "position": {
-                    "x": 30,
-                    "y": 315
-                }
-            },
-            {
-                "card": {
-                    "color": 0,
                     "initial_value": 2,
                     "is_eter": false,
                     "value": 2
                 },
                 "position": {
                     "x": 30,
-                    "y": 410
+                    "y": 164
                 }
             },
             {
@@ -34,7 +22,55 @@
                 },
                 "position": {
                     "x": 30,
-                    "y": 505
+                    "y": 231
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 30,
+                    "y": 298
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 30,
+                    "y": 365
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 30,
+                    "y": 432
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 30,
+                    "y": 499
                 }
             },
             {
@@ -46,7 +82,19 @@
                 },
                 "position": {
                     "x": 30,
-                    "y": 600
+                    "y": 566
+                }
+            },
+            {
+                "card": {
+                    "color": 0,
+                    "initial_value": 1,
+                    "is_eter": true,
+                    "value": 1
+                },
+                "position": {
+                    "x": 30,
+                    "y": 633
                 }
             }
         ],
@@ -76,19 +124,7 @@
                 },
                 "position": {
                     "x": 1042,
-                    "y": 315
-                }
-            },
-            {
-                "card": {
-                    "color": 1,
-                    "initial_value": 2,
-                    "is_eter": false,
-                    "value": 2
-                },
-                "position": {
-                    "x": 1042,
-                    "y": 410
+                    "y": 97
                 }
             },
             {
@@ -100,7 +136,55 @@
                 },
                 "position": {
                     "x": 1042,
-                    "y": 505
+                    "y": 231
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 298
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 365
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "value": 2
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 432
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 3,
+                    "is_eter": false,
+                    "value": 3
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 499
                 }
             },
             {
@@ -112,19 +196,43 @@
                 },
                 "position": {
                     "x": 1042,
-                    "y": 600
+                    "y": 566
+                }
+            },
+            {
+                "card": {
+                    "color": 1,
+                    "initial_value": 1,
+                    "is_eter": true,
+                    "value": 1
+                },
+                "position": {
+                    "x": 1042,
+                    "y": 633
                 }
             }
         ],
         "hasPlayedIllusion": false,
         "removed": []
     },
+    "blockedRow": 100,
     "center": [
         536,
         311
     ],
     "exploded": false,
-    "isBluePlayer": true,
+    "firstSpell": 24,
+    "gameMode": 2,
+    "gameState": 3,
+    "isBluePlayer": false,
+    "isMaxXFixed": true,
+    "isMaxYFixed": true,
+    "isMinXFixed": false,
+    "isMinYFixed": false,
+    "maxX": 1,
+    "maxY": 1,
+    "minX": -1,
+    "minY": -1,
     "playedPositions": [
         {
             "cards": [
@@ -153,10 +261,10 @@
                         -1
                     ],
                     "color": 0,
-                    "initial_value": 3,
+                    "initial_value": 1,
                     "is_eter": false,
                     "is_illusion": false,
-                    "value": 3
+                    "value": 1
                 }
             ],
             "position": {
@@ -172,72 +280,38 @@
                         0
                     ],
                     "color": 1,
-                    "initial_value": 3,
+                    "initial_value": 2,
                     "is_eter": false,
                     "is_illusion": false,
-                    "value": 3
+                    "value": 2
                 }
             ],
             "position": {
                 "x": -1,
                 "y": 0
             }
-        },
-        {
-            "cards": [
-                {
-                    "board_position": [
-                        0,
-                        1
-                    ],
-                    "color": 1,
-                    "initial_value": 2,
-                    "is_eter": false,
-                    "is_illusion": false,
-                    "value": 2
-                }
-            ],
-            "position": {
-                "x": 0,
-                "y": 1
-            }
-        },
-        {
-            "cards": [
-                {
-                    "board_position": [
-                        1,
-                        0
-                    ],
-                    "color": 0,
-                    "initial_value": 2,
-                    "is_eter": false,
-                    "is_illusion": false,
-                    "value": 2
-                }
-            ],
-            "position": {
-                "x": 1,
-                "y": 0
-            }
         }
     ],
     "possiblePositions": [
         {
-            "x": 0,
-            "y": 0
+            "x": 1,
+            "y": 1
         },
         {
             "x": -1,
             "y": -1
         },
         {
-            "x": 1,
-            "y": 1
+            "x": 0,
+            "y": 0
         },
         {
-            "x": -1,
-            "y": 1
+            "x": 0,
+            "y": -2
+        },
+        {
+            "x": -2,
+            "y": 0
         },
         {
             "x": 1,
@@ -245,10 +319,30 @@
         },
         {
             "x": -1,
-            "y": 0
+            "y": 1
+        },
+        {
+            "x": 1,
+            "y": -2
+        },
+        {
+            "x": -2,
+            "y": 1
         },
         {
             "x": 0,
+            "y": -1
+        },
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": -1,
+            "y": -2
+        },
+        {
+            "x": -2,
             "y": -1
         },
         {
@@ -260,5 +354,6 @@
             "y": 0
         }
     ],
-    "tableSize": 3
+    "secondSpell": 9,
+    "tableSize": 4
 }

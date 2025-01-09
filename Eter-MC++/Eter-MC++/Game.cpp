@@ -744,16 +744,21 @@ void Game::LoadSave(int saveId)
     nlohmann::json save;
     inFile >> save;
 
+    if (save.contains("gameState")) {
+        m_currentState = save["gameState"].get<GameState>();
+    }
+
     m_board->LoadState(save);
 
     inFile.close();
-    m_currentState = TRAINING_MODE;
     std::cout << "Game loaded successfully!" << std::endl;
 }
 
 void Game::SaveGame()
 {
     json save;
+    
+    save["gameState"] = m_currentState;
 
     m_board->SaveState(save);
 
