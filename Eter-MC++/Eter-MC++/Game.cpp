@@ -552,7 +552,8 @@ void Game::HandleBoardState() {
     }
 
     //Draw the board, with the possible positions and played cards;
-    DrawBoard();
+    if (m_board->ShouldDrawBoard())
+        DrawBoard();
 
     //Iterate each players' cards and draw them onto the screen
     //This is where all the in game logic will go
@@ -575,7 +576,8 @@ void Game::HandleBoardState() {
 }
 
 void Game::DrawBoard() {
-    for (const auto possiblePosition : m_board->GetPossiblePositions()) { //positions should be shared ptr
+    for (const auto& possiblePosition : m_board->GetPossiblePositions()) { //positions should be shared ptr
+        if (&possiblePosition == nullptr) continue;
         SDL_Rect renderRect{};
         renderRect.x = m_board->GetCenterX() - (possiblePosition.GetX() * textureWidth);
         renderRect.y = m_board->GetCenterY() - (possiblePosition.GetY() * textureHeight);

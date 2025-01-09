@@ -4,18 +4,6 @@
             {
                 "card": {
                     "color": 0,
-                    "initial_value": 2,
-                    "is_eter": false,
-                    "value": 2
-                },
-                "position": {
-                    "x": 30,
-                    "y": 164
-                }
-            },
-            {
-                "card": {
-                    "color": 0,
                     "initial_value": 3,
                     "is_eter": false,
                     "value": 3
@@ -103,30 +91,6 @@
     },
     "PlayerRed": {
         "cards": [
-            {
-                "card": {
-                    "color": 1,
-                    "initial_value": 1,
-                    "is_eter": false,
-                    "value": 1
-                },
-                "position": {
-                    "x": 1042,
-                    "y": 30
-                }
-            },
-            {
-                "card": {
-                    "color": 1,
-                    "initial_value": 1,
-                    "is_eter": false,
-                    "value": 1
-                },
-                "position": {
-                    "x": 1042,
-                    "y": 97
-                }
-            },
             {
                 "card": {
                     "color": 1,
@@ -218,13 +182,13 @@
     "blockedRow": 100,
     "center": [
         536,
-        311
+        247
     ],
     "exploded": false,
     "firstSpell": 24,
     "gameMode": 2,
     "gameState": 3,
-    "isBluePlayer": false,
+    "isBluePlayer": true,
     "isMaxXFixed": true,
     "isMaxYFixed": true,
     "isMinXFixed": false,
@@ -232,52 +196,14 @@
     "maxX": 1,
     "maxY": 1,
     "minX": -1,
-    "minY": -1,
+    "minY": -2,
     "playedPositions": [
         {
             "cards": [
                 {
                     "board_position": [
-                        0,
-                        0
-                    ],
-                    "color": 0,
-                    "initial_value": 1,
-                    "is_eter": false,
-                    "is_illusion": false,
-                    "value": 1
-                }
-            ],
-            "position": {
-                "x": 0,
-                "y": 0
-            }
-        },
-        {
-            "cards": [
-                {
-                    "board_position": [
-                        0,
-                        -1
-                    ],
-                    "color": 0,
-                    "initial_value": 1,
-                    "is_eter": false,
-                    "is_illusion": false,
-                    "value": 1
-                }
-            ],
-            "position": {
-                "x": 0,
-                "y": -1
-            }
-        },
-        {
-            "cards": [
-                {
-                    "board_position": [
                         -1,
-                        0
+                        -1
                     ],
                     "color": 1,
                     "initial_value": 2,
@@ -288,11 +214,110 @@
             ],
             "position": {
                 "x": -1,
+                "y": -1
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        0
+                    ],
+                    "color": 0,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 1
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        -2
+                    ],
+                    "color": 1,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 1
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": -2
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        -1,
+                        1
+                    ],
+                    "color": 1,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 1
+                }
+            ],
+            "position": {
+                "x": -1,
+                "y": 1
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        0,
+                        1
+                    ],
+                    "color": 0,
+                    "initial_value": 2,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 2
+                }
+            ],
+            "position": {
+                "x": 0,
+                "y": 1
+            }
+        },
+        {
+            "cards": [
+                {
+                    "board_position": [
+                        1,
+                        0
+                    ],
+                    "color": 0,
+                    "initial_value": 1,
+                    "is_eter": false,
+                    "is_illusion": false,
+                    "value": 1
+                }
+            ],
+            "position": {
+                "x": 1,
                 "y": 0
             }
         }
     ],
     "possiblePositions": [
+        {
+            "x": -2,
+            "y": -2
+        },
         {
             "x": 1,
             "y": 1

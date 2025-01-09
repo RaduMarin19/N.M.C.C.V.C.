@@ -36,7 +36,6 @@ public:
 	static void Run();
 
 private:
-
 	void IRun();
 	Game();
 

@@ -174,8 +174,6 @@ void GameBoard::FixBorders(const Coordinates& position) {
     short x = position.GetX();
     short y = position.GetY();
 
-    
-    
     if (x >= m_maxX) {
         m_maxX = x;
         m_isMaxXFixed = true;
@@ -439,7 +437,7 @@ void GameBoard::SetBoundPosition(const Coordinates& position)
 
 bool GameBoard::Flurry(const Coordinates& position) {
     Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};            //getting the untranslated position
-    if (m_positions.find(position) == m_positions.end())
+    if (!m_positions.contains(position))
         return false;
 
     ExplosionCard expl(m_tableSize);        
@@ -461,7 +459,7 @@ bool GameBoard::Flurry(const Coordinates& position) {
                 }
             }
             return false;
-            };
+        };
 
         for (int i = -1; i <= 1; ++i) {
             if (i != 0) {
