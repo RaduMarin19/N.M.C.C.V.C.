@@ -5,10 +5,8 @@
 
 #include "Coordinates.h"
 
-
 ExplosionCard::ExplosionCard(short tableSize) {
 	m_tableSize = tableSize;
-
 
 	this->m_explosionMask.resize(tableSize);
 	for (int i = 0; i < tableSize; i++)

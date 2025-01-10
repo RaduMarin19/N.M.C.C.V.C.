@@ -1,7 +1,7 @@
 #include "SpellCard.h"
 
 SpellCard::SpellCard(const Coordinates& position, CardTexture* texture, ElementalType spell, unsigned short id) :
-	Card{position, texture, id}, m_spell{spell}
+	Card{position, texture, id}, m_spell{spell}, m_used{false}
 {
 }
 

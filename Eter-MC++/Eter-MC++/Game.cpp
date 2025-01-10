@@ -552,8 +552,7 @@ void Game::HandleBoardState() {
     }
 
     //Draw the board, with the possible positions and played cards;
-    if (m_board->ShouldDrawBoard())
-        DrawBoard();
+    DrawBoard();
 
     //Iterate each players' cards and draw them onto the screen
     //This is where all the in game logic will go

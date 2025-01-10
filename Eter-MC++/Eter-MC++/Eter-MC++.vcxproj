@@ -146,7 +146,6 @@
     <ClCompile Include="Coordinates.cpp" />
     <ClCompile Include="ExplosionCard.cpp" />
     <ClCompile Include="Graphics.cpp" />
-    <ClCompile Include="Mage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameBoard.cpp" />
@@ -154,6 +153,7 @@
     <ClCompile Include="PlayingCard.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="SpellCard.cpp" />
+    <ClCompile Include="WizardCard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Card.h" />
@@ -170,12 +170,12 @@
     <ClInclude Include="GameMode.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
-    <ClInclude Include="Mage.h" />
-    <ClInclude Include="MageType.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayingCard.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SpellCard.h" />
+    <ClInclude Include="WizardCard.h" />
+    <ClInclude Include="WizardType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

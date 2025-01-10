@@ -12,7 +12,6 @@
 #include "config.h"
 #include "SpellCard.h"
 #include "ElementalType.h"
-#include "MageType.h"
 #include "GameMode.h"
 #include "json.hpp"
 

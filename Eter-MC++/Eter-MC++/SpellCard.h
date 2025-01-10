@@ -2,7 +2,6 @@
 #include "Card.h"
 #include "Coordinates.h"
 #include "CardTexture.h"
-#include "MageType.h"
 #include "ElementalType.h"
 
 #include <variant>
@@ -26,6 +25,6 @@ public:
 
 private:
 	ElementalType m_spell;
-	bool m_used = false;
+	bool m_used;
 };
 

@@ -3,7 +3,6 @@
 #include "Card.h"
 #include "Color.h"
 #include "SpellCard.h"
-#include "MageType.h"
 #include "ElementalType.h"
 
 #include <vector>
