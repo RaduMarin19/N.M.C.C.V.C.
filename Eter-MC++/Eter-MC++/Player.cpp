@@ -41,8 +41,7 @@ void Player::AddCard(const PlayingCard& card)
 
 void Player::SetWizard(WizardType wizard, CardTexture* texture, Coordinates position, unsigned short cardId)
 {
-	if (m_wizard.get() != nullptr)
-		m_wizard.release();
+	m_wizard.release();
 
 	m_wizard = std::make_unique<WizardCard>(position, texture, wizard, cardId);
 }
@@ -50,6 +49,11 @@ void Player::SetWizard(WizardType wizard, CardTexture* texture, Coordinates posi
 std::unique_ptr<WizardCard>& Player::GetWizardCard()
 {
 	return m_wizard;
+}
+
+void Player::RemoveWizard()
+{
+	m_wizard.release();
 }
 
 void Player::RemoveCardFromDeck(std::vector<PlayingCard>& cards,const PlayingCard& card) {

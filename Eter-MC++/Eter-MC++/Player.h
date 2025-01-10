@@ -45,6 +45,7 @@ public:
 	void AddCard(const PlayingCard& card);
 	void SetWizard(WizardType wizard, CardTexture* texture, Coordinates position, unsigned short cardId);
 	std::unique_ptr<WizardCard>& GetWizardCard();
+	void RemoveWizard();
 
 	template <typename Container>
 	requires CardContainer<Container, PlayingCard>

@@ -54,6 +54,7 @@ private:
 	void HandleCardMovement(Player* player, Card& card);
 	void PlayerTurn(Player& player,SDL_Rect& rect,const Coordinates& possiblePosition);
 	void PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
+	void PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	void PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	bool ExplosionTurn();
 

@@ -331,8 +331,6 @@ void GameBoard::SetIsPlayingMirage(bool isPlayingMirage)
     m_isPlayingMirage = isPlayingMirage;
 }
 
-
-
 bool GameBoard::IsPlayingMirage() const
 {
     return m_isPlayingMirage;
@@ -1059,8 +1057,8 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
-    int randomIndex1 = 1/*Random::Get(0, 7)*/;
-    int randomIndex2 = 2/*Random::Get(0, 7)*/;
+    int randomIndex1 = 0/*Random::Get(0, 7)*/;
+    int randomIndex2 = 1/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 

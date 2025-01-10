@@ -214,6 +214,50 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         player.SetIsPlayingAshes(false);
     }
 }
+void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+    wizardCard->SetCoordinates({ renderRect.x, renderRect.y });
+
+    WizardType wizard = wizardCard->GetWizard();
+
+    switch (wizard) {
+    case WizardType::REMOVE_OPPONENT_CARD:
+    {
+        decltype(auto) cardDeck = m_board->GetCardsAtPosition(possiblePosition);
+        if (cardDeck.size() >= 2 && cardDeck[cardDeck.size() - 2].GetColor() == player.GetColor() && cardDeck[cardDeck.size() - 1].GetColor() != player.GetColor()) {
+            m_board->DeleteCardAtPosition(possiblePosition);
+            m_board->ChangeTurn();              //player loses its turn
+            player.RemoveWizard();
+        }
+        else {
+            m_board->ReturnCardToDeck(*wizardCard);
+        }
+        break;
+    }
+    case WizardType::REMOVE_ROW:
+
+        break;
+    case WizardType::COVER_OPPONENT_CARD:
+
+        break;
+    case WizardType::CREATE_PIT:
+
+        break;
+    case WizardType::MOVE_OWN_STACK:
+
+        break;
+    case WizardType::GAIN_ETHER_CARD:
+
+        break;
+    case WizardType::MOVE_OPPONENT_STACK:
+
+        break;
+    case WizardType::MOVE_EDGE_ROW:
+
+        break;
+    default:
+        break;
+    }
+}
 
 void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     spellCard->SetCoordinates({ renderRect.x, renderRect.y });
@@ -224,7 +268,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
         case ElementalType::FIRE: 
         {
             try {
-                Color playerColor = player.GetCards().back().GetColor();
+                Color playerColor = player.GetColor();
                 if (m_board->GetCardColorAtPosition(possiblePosition) != playerColor) //checking if the color of the chosen card is different than that of the player
                 {
                     if (m_board->RemoveIllusion(possiblePosition))   //if the illusion is successfully removed then remove the spell card
@@ -496,8 +540,6 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             m_board->FixBorders(possiblePosition);
             m_board->RemoveSpell(spellCard);
             break;
-
-        
     }
 }
 
@@ -511,6 +553,11 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
         else if (SpellCard* spellCard = dynamic_cast<SpellCard*>(pushCard)) {
             if (spellCard) 
                 PlaySpellCard(player, spellCard,renderRect,possiblePosition);
+        }
+        else if (WizardCard* wizardCard = dynamic_cast<WizardCard*>(pushCard)) {
+            if (wizardCard) {
+                PlayWizardCard(player, wizardCard, renderRect, possiblePosition);
+            }
         }
     }
     
