@@ -4,7 +4,6 @@ Player::Player() {
 	m_isGrabbingCard = false;
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
-
 	m_grabbedCard = nullptr;
 }
 
@@ -17,6 +16,10 @@ Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_color = m_cards.back().GetColor();
 
 	m_grabbedCard = nullptr;
+}
+
+void Player::SetColor(Color color) {
+	m_color = color;
 }
 
 void Player::SetIllusionTexture(std::shared_ptr<CardTexture> texture)
@@ -46,7 +49,7 @@ void Player::SetWizard(WizardType wizard, CardTexture* texture, Coordinates posi
 	m_wizard = std::make_unique<WizardCard>(position, texture, wizard, cardId);
 }
 
-std::unique_ptr<WizardCard>& Player::GetWizardCard()
+const std::unique_ptr<WizardCard>& Player::GetWizardCard() const
 {
 	return m_wizard;
 }

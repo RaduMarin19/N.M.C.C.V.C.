@@ -44,7 +44,7 @@ public:
 	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
 	void SetWizard(WizardType wizard, CardTexture* texture, Coordinates position, unsigned short cardId);
-	std::unique_ptr<WizardCard>& GetWizardCard();
+	const std::unique_ptr<WizardCard>& GetWizardCard() const;
 	void RemoveWizard();
 
 	template <typename Container>
@@ -71,6 +71,7 @@ public:
 	bool IsPlayingAshes() const;
 
 	void LoadRemovedCard(PlayingCard& card);
+	void SetColor(Color color);
 	 
 	const Color GetColor() const;
 
@@ -114,7 +115,4 @@ void Player::AddRemovedCard(Container& container, PlayingCard& card) {
 		throw std::runtime_error("Card not found in player's hand.");
 	}
 }
-
-void to_json(nlohmann::json& j,const Player& player);
-void from_json(nlohmann::json& j, Player& player);
 

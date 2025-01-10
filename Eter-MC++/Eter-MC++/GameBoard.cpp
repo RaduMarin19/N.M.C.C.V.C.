@@ -1066,17 +1066,25 @@ void GameBoard::GenerateMageDuelCards() {
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
 }
 
+void GameBoard::InitializeWizard(Player& player, short wizardId) {
+    Coordinates position;
+
+    if (player.GetColor() == BLUE)
+        position = { textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding };
+    else
+        position = { SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding };
+
+    WizardType wizard = static_cast<WizardType>(wizardId);
+
+    player.SetWizard(wizard, &m_mageCardTextures[wizardId],
+        position,
+        NextCardId());
+}
+
 void GameBoard::InitializeWizardCards(short wizardId1, short wizardId2) {
-    WizardType wizard1 = static_cast<WizardType>(wizardId1);
-    WizardType wizard2 = static_cast<WizardType>(wizardId2);
+    InitializeWizard(m_playerBlue, wizardId1);
 
-    m_playerBlue.SetWizard(wizard1,&m_mageCardTextures[wizardId1], 
-                           { textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
-                            NextCardId());
-
-    m_playerRed.SetWizard(wizard2, &m_mageCardTextures[wizardId2],
-                         { SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
-                        NextCardId());
+    InitializeWizard(m_playerRed, wizardId2);
 }
 
 void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
@@ -1496,7 +1504,14 @@ void GameBoard::SaveState(nlohmann::json& json) const {
                 }}
                 });
         }
-        };
+        playerJson["color"] = static_cast<short>(player.GetColor());
+
+        decltype(auto) wizard = player.GetWizardCard().get();
+
+        if (wizard != nullptr) {
+            playerJson["mageCard"] = static_cast<short>(wizard->GetWizard());
+        }
+    };
 
     serializePlayer(m_playerBlue, json["PlayerBlue"]);
     serializePlayer(m_playerRed, json["PlayerRed"]);
@@ -1574,6 +1589,9 @@ void GameBoard::LoadState(const nlohmann::json& json) {
             player.SetHasPlayedIllusion();
         }
 
+        if (playerJson.contains("color"))
+            player.SetColor(playerJson["color"].get<Color>());
+
         if (playerJson.contains("cards")) {
             player.ClearCards();
             for (const auto& cardEntry : playerJson["cards"]) {
@@ -1611,13 +1629,17 @@ void GameBoard::LoadState(const nlohmann::json& json) {
                 card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
 
                 // Assign the correct texture based on color
-                if (card.GetColor() == BLUE)
+                if (card.GetColor() == BLUE) 
                     card.SetTexture(&m_blueCardTextures[card.GetValue()]);
                 else
                     card.SetTexture(&m_redCardTextures[card.GetValue()]);
 
                 player.LoadRemovedCard(card); 
             }
+        }
+
+        if (playerJson.contains("mageCard")) {
+           InitializeWizard(player, playerJson["mageCard"].get<short>());
         }
     };
 

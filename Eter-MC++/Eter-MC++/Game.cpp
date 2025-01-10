@@ -222,13 +222,19 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
     switch (wizard) {
     case WizardType::REMOVE_OPPONENT_CARD:
     {
-        decltype(auto) cardDeck = m_board->GetCardsAtPosition(possiblePosition);
-        if (cardDeck.size() >= 2 && cardDeck[cardDeck.size() - 2].GetColor() == player.GetColor() && cardDeck[cardDeck.size() - 1].GetColor() != player.GetColor()) {
-            m_board->DeleteCardAtPosition(possiblePosition);
-            m_board->ChangeTurn();              //player loses its turn
-            player.RemoveWizard();
+        try {
+            decltype(auto) cardDeck = m_board->GetCardsAtPosition(possiblePosition);
+
+            if (cardDeck.size() >= 2 && cardDeck[cardDeck.size() - 2].GetColor() == player.GetColor() && cardDeck[cardDeck.size() - 1].GetColor() != player.GetColor()) {
+                m_board->DeleteCardAtPosition(possiblePosition);
+                m_board->ChangeTurn();              //player loses its turn
+                player.RemoveWizard();
+            }
+            else {
+                m_board->ReturnCardToDeck(*wizardCard);
+            }
         }
-        else {
+        catch (const std::runtime_error& e) {
             m_board->ReturnCardToDeck(*wizardCard);
         }
         break;
