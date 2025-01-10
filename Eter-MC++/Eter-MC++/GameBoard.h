@@ -84,6 +84,7 @@ public:
     void ReturnCardToDeck(Card& card);
     void DeleteCardAtPosition(const Coordinates& boardPosition);
     void ReturnTopCardAtPosition(const Coordinates& boardPosition);
+    bool RemoveRow(short row,Color color); //removes a row if has at least 3 decks and at least one card has the color specified
 
     bool IsBluePlayer() const;
     bool IsPlayingMirage() const;
@@ -91,6 +92,7 @@ public:
     void SetIsPlayingMirage(bool isPlayingMirage);
     void FixBorders(const Coordinates& position);
     void ResetPossiblePositions();
+    bool ShouldResetPositions() const;
 
     void ChangeTurn();
 
@@ -135,6 +137,7 @@ private:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash> m_positions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
     std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
+    std::unordered_set<Coordinates, Coordinates::Hash> m_positionsToErase; //keeps positions to erase in the next turn
     short m_blockedRow;
     Coordinates* m_boundPosition;
 
@@ -145,6 +148,8 @@ private:
     bool m_isMaxXFixed;
     bool m_isMinYFixed;
     bool m_isMaxYFixed;
+
+    bool m_shouldResetPositions;
 
     SpellsType m_spells;
 

@@ -240,6 +240,13 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
         break;
     }
     case WizardType::REMOVE_ROW:
+        if (m_board->RemoveRow(possiblePosition.GetY(),player.GetColor()))
+        {
+            m_board->ChangeTurn();              //player loses its turn
+            player.RemoveWizard();
+        }
+        else
+            m_board->ReturnCardToDeck(*wizardCard);
 
         break;
     case WizardType::COVER_OPPONENT_CARD:
@@ -670,6 +677,8 @@ void Game::DrawBoard() {
             m_painter->DrawCard(*card, card->GetTexture()->GetTexture());
         }
     }
+    if (m_board->ShouldResetPositions())
+        m_board->ResetPossiblePositions();
 }
 
 void Game::HandleCardMovement(Player* player,Card& card) {

@@ -204,16 +204,27 @@ void GameBoard::FixBorders(const Coordinates& position) {
         m_isMaxYFixed = false;
     }
 
-    ResetPossiblePositions();
+    m_shouldResetPositions = true;
 }
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
+    m_possiblePositions.insert({ 0,0 });
+
+    for (auto& position : m_positionsToErase) {
+        m_positions.erase(position);
+    }
 
     for (auto& [coords, cards] : m_positions) {
         m_possiblePositions.emplace(coords);
         TestPossiblePositions(coords);
     }
+    m_shouldResetPositions = false;
+}
+
+bool GameBoard::ShouldResetPositions() const
+{
+    return m_shouldResetPositions;
 }
 
 bool GameBoard::CheckScore(GameState& gameState) {
@@ -302,8 +313,8 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
         else
             m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition),card);
         if (m_positions[boardPosition].size() == 0) {
-            m_positions.erase(boardPosition);           //if there isnt any card in the deque anymore then remove the position
-            ResetPossiblePositions();
+            m_positionsToErase.insert(boardPosition);           //if there isnt any card in the deque anymore then remove the position
+            m_shouldResetPositions = true;
         }
     }
 }
@@ -369,6 +380,59 @@ void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
         }
     }
 }
+
+bool GameBoard::RemoveRow(short column, Color color)
+{
+    bool foundColor = false;
+    int count = 0;
+
+    for (short row = m_minX; row <= m_maxX; ++row) {
+        auto it = m_positions.find({ row, column });
+        if (it != m_positions.end()) {
+            const auto& deck = it->second;
+            if (!deck.empty()) {
+                ++count;
+                if (deck.back().GetColor() == color) {
+                    foundColor = true;
+                }
+            }
+        }
+    }
+    if (!foundColor || count < 3) {
+        return false;
+    }
+
+    std::unique_ptr<ExplosionCard> explosion = std::make_unique<ExplosionCard>(GetTableSize());
+    std::vector<std::pair<Coordinates, ExplosionType>> ex;
+
+    for (short row = m_minX; row <= m_maxX; ++row) {
+        Coordinates unTranslatedPosition(GetUnTranslatedPosition({ row, column }));
+        ex.emplace_back(unTranslatedPosition, ExplosionType::HOLE);
+    }
+
+    if (!validateBoardAfterEffect(explosion.get())) {
+        return false;
+    }
+
+    std::vector<Coordinates> deletedPositions;
+
+    for (short row = m_minX; row <= m_maxX; ++row) {
+        auto it = m_positions.find({ row, column });
+        if (it != m_positions.end()) {
+            unsigned short size = it->second.size();
+            while (size>0) {
+                std::cerr << "deleting x: " << it->first.GetX() << " y: " << it->first.GetY()<<"\n";
+                DeleteCardAtPosition(it->first);
+                size--;
+            }
+            m_positions.erase(it->first);
+        }
+    }
+
+    m_shouldResetPositions = true;
+    return true;
+}
+
 
 void GameBoard::Explode()
 {
@@ -968,7 +1032,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 21/*Random::Get(0, 23)*/;
+    int randomIndex1 = 11/*Random::Get(0, 23)*/;
     int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2);
@@ -1185,6 +1249,9 @@ bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
             }
         }
     }
+    if (boardState.size() == 1)  //edge case where looking for neighbours wouldnt work
+        return true;
+
     for(auto& [k, v] : boardState) {
         int curX = k.GetX();
         int curY = k.GetY();
@@ -1699,6 +1766,8 @@ void GameBoard::LoadState(const nlohmann::json& json) {
         Coordinates position(json["boundPosition"]["x"].get<int>(), json["boundPosition"]["y"].get<int>());
         SetBoundPosition(position);
     }
+
+    //TODO: save explosion
 }
 
 
