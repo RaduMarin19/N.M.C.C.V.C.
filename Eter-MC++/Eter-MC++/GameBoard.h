@@ -43,7 +43,7 @@ public:
     void SetTable(short tableSize);
     short GetTableSize() const;
     void SetGameMode(const GameMode& mode);
-    void GeneratePlayerCards(const GameMode& mode);
+    void GeneratePlayerCards();
 
     unsigned short NextCardId();
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
@@ -187,6 +187,8 @@ private:
 
     void GenerateTrainingCards();
     void GenerateElementalCards();
+    void GenerateMageDuelCards();
 
+    void InitializeWizardCards(short randomIndex1, short randomIndex2);
     void InitializeSpellCards(short spellCardId1,short spellCardId2);
 };

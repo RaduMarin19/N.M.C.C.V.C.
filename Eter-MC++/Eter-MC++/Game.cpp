@@ -81,21 +81,21 @@ void Game::IRun() {
                 //Check which button the player has pressed, and initialize the cards accordingly
                 if (m_painter->IsTrainingActive()) {
                     m_currentState = TRAINING_MODE;
-                    m_board->GeneratePlayerCards(GameMode::Training);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
-                    m_board->GeneratePlayerCards(GameMode::Elemental);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
-                    m_board->GeneratePlayerCards(GameMode::MageDuel);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsTournamentActive())
@@ -107,7 +107,7 @@ void Game::IRun() {
                 {
                     m_currentState = QUICK_MODE;
 					m_board->SetGameMode(GameMode::QuickMode);
-                    m_board->GeneratePlayerCards(GameMode::QuickMode);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
             }
@@ -119,14 +119,14 @@ void Game::IRun() {
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
-                    m_board->GeneratePlayerCards(GameMode::Elemental);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
                 else if (m_painter->IsMageDuelActive())
                 {
                     m_currentState = MAGE_DUEL;
                     m_board->SetGameMode(GameMode::MageDuel);
-                    m_board->GeneratePlayerCards(GameMode::MageDuel);
+                    m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
 
@@ -556,8 +556,8 @@ void Game::HandleBoardState() {
 
     //Iterate each players' cards and draw them onto the screen
     //This is where all the in game logic will go
-    DrawPlayersCards(m_board->GetPlayerBlue(), m_board->IsBluePlayer());
-    DrawPlayersCards(m_board->GetPlayerRed(), !m_board->IsBluePlayer());
+    DrawPlayersCards(m_board->GetPlayerBlue(), m_board->IsBluePlayer(),m_board->GetPlayerRed());
+    DrawPlayersCards(m_board->GetPlayerRed(), !m_board->IsBluePlayer(), m_board->GetPlayerBlue());
 
     if (m_explosionTurn){
         if (ExplosionTurn() == true) {
@@ -644,7 +644,7 @@ void Game::HandleCardMovement(Player* player,Card& card) {
     }
 }
 
-void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
+void Game::DrawPlayersCards(Player* player,bool isPlayersTurn,Player* otherPlayer) {
     auto DrawAndHandleCard = [&](Player* player, Card& card) {
         if (isPlayersTurn) {
             m_painter->DrawCard(card, card.GetTexture()->GetTexture());
@@ -665,6 +665,15 @@ void Game::DrawPlayersCards(Player* player,bool isPlayersTurn) {
     }
     if (isPlayersTurn) {
         decltype(auto) spells = m_board->GetSpells();
+        decltype(auto) wizard = player->GetWizardCard();
+        decltype(auto) otherWizard = otherPlayer->GetWizardCard();
+
+        if (wizard) {
+            DrawAndHandleCard(player, *wizard);
+        }
+        if (otherWizard) {
+            m_painter->DrawCard(*otherWizard, otherPlayer->GetIllusionTexture().GetTexture());
+        }
 
         if (spells) {
             auto& [spellCard1, spellCard2] = *spells;
@@ -733,7 +742,7 @@ bool Game::ExplosionTurn(){
 
 void Game::LoadSave(int saveId)
 {
-    m_board->GeneratePlayerCards(GameMode::Training);
+    m_board->GeneratePlayerCards();
     std::string filename = "save_game.json"; 
 
     std::ifstream inFile(filename);

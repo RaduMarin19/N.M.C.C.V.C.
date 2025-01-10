@@ -907,6 +907,86 @@ void GameBoard::GenerateElementalCards() {
     std::vector<PlayingCard> PlayingCardsBlue;
     std::vector<PlayingCard> PlayingCardsRed;
 
+    PlayingCard cardBlue1({ 0, 0 }, &m_blueCardTextures[1], 1, NextCardId(), BLUE);
+    PlayingCard cardRed1({ 0, 0 }, &m_redCardTextures[1], 1, NextCardId(), RED);
+    PlayingCardsBlue.emplace_back(std::move(cardBlue1));
+    PlayingCardsRed.emplace_back(std::move(cardRed1));
+
+    for (int j = 0; j < 3; j++)
+        for (int i = 2; i <= 3; i++) {
+            //Fill each deck with cards
+            PlayingCard cardBlue({ 0,  0 }, &m_blueCardTextures[i], i, NextCardId(), BLUE);
+            PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[i], i, NextCardId(), RED);
+            PlayingCardsBlue.emplace_back(std::move(cardBlue));
+            PlayingCardsRed.emplace_back(std::move(cardRed));
+        }
+    PlayingCard cardBlue4({ 0, 0 }, &m_blueCardTextures[4], 4, NextCardId(), BLUE);
+    PlayingCardsBlue.emplace_back(std::move(cardBlue4));
+
+    PlayingCard cardRed4({ 0, 0 }, &m_redCardTextures[4], 4, NextCardId(), RED);
+    PlayingCardsRed.emplace_back(std::move(cardRed4));
+
+    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCardTextures[0], 1, NextCardId(), BLUE);
+    cardBlueEter.SetEter(true);
+    PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
+
+    PlayingCard cardRedEter({ 0, 0 }, &m_redCardTextures[0], 1, NextCardId(), RED);
+    cardRedEter.SetEter(true);
+    PlayingCardsRed.emplace_back(std::move(cardRedEter));
+
+    //Set how much space we have for our deck, the whole screen - padding top/bottom
+    unsigned int totalPadding = m_playerHandPadding * 2;
+    unsigned int availableSpace = SCREEN_HEIGHT - totalPadding;
+    unsigned int availableSpacePerCard = availableSpace / PlayingCardsBlue.size() + 1;
+    unsigned int currentCardOffset = 0;
+
+    ////checking if space allocated allows leaving bottom space
+    if (availableSpacePerCard * PlayingCardsBlue.size() + m_playerHandPadding > availableSpace) {
+        availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
+    }
+
+    std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
+
+    for (auto& card : PlayingCardsBlue) {
+        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
+        card.GetTexture()->GetRect().x = m_playerHandPadding;
+        card.GetTexture()->GetRect().y = currentCardOffset;
+        card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+        card.SetInitialPosition({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+        currentCardOffset += availableSpacePerCard;
+    }
+
+
+    currentCardOffset = 0;
+    for (auto& card : PlayingCardsRed) {
+        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
+        card.GetTexture()->GetRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
+        card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
+        card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+        card.SetInitialPosition({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
+
+        currentCardOffset += availableSpacePerCard;
+    }
+    int randomIndex1 = 21/*Random::Get(0, 23)*/;
+    int randomIndex2 = 9/*Random::Get(0, 23)*/;
+
+    InitializeSpellCards(randomIndex1, randomIndex2);
+
+    //Initialize the two players with the newly generated decks
+    this->m_playerBlue = Player(PlayingCardsBlue);
+    this->m_playerRed = Player(PlayingCardsRed);
+
+    m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
+    m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+void GameBoard::GenerateMageDuelCards() {
+    std::vector<PlayingCard> PlayingCardsBlue;
+    std::vector<PlayingCard> PlayingCardsRed;
+
 
     for (int i = 0; i < 2; i++) {
         //Fill each deck with cards
@@ -974,17 +1054,31 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 21/*Random::Get(0, 23)*/;
-    int randomIndex2 = 9/*Random::Get(0, 23)*/;
 
-    InitializeSpellCards(randomIndex1, randomIndex2);
 
-    //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
+    int randomIndex1 = 1/*Random::Get(0, 7)*/;
+    int randomIndex2 = 2/*Random::Get(0, 7)*/;
+
+    InitializeWizardCards(randomIndex1,randomIndex2);
+
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+void GameBoard::InitializeWizardCards(short wizardId1, short wizardId2) {
+    WizardType wizard1 = static_cast<WizardType>(wizardId1);
+    WizardType wizard2 = static_cast<WizardType>(wizardId2);
+
+    m_playerBlue.SetWizard(wizard1,&m_mageCardTextures[wizardId1], 
+                           { textureWidth + m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+                            NextCardId());
+
+    m_playerRed.SetWizard(wizard2, &m_mageCardTextures[wizardId2],
+                         { SCREEN_WIDTH - textureWidth * 2 - m_playerHandPadding * 3 / 2 , m_playerHandPadding },
+                        NextCardId());
 }
 
 void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
@@ -1005,12 +1099,15 @@ void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
     m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 }
 
-void GameBoard::GeneratePlayerCards(const GameMode& mode) {
-    if (mode == GameMode::Training || mode == GameMode::QuickMode) {
+void GameBoard::GeneratePlayerCards() {
+    if (m_gameMode == GameMode::Training || m_gameMode == GameMode::QuickMode) {
         GenerateTrainingCards();
     }
-    else if (mode == GameMode::Elemental || mode == GameMode::MageDuel) {
+    else if (m_gameMode == GameMode::Elemental) {
         GenerateElementalCards();
+    }
+    else if (m_gameMode == GameMode::MageDuel) {
+        GenerateMageDuelCards();
     }
 
 }

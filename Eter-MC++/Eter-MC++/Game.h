@@ -47,7 +47,7 @@ private:
 
 	std::deque<PlayingCard>* m_selectedStack;
 	
-	void DrawPlayersCards(Player* player,bool isPlayersTurn);
+	void DrawPlayersCards(Player* player,bool isPlayersTurn,Player* otherPlayer);
 	void DrawBoard();
 
 	void HandleBoardState();

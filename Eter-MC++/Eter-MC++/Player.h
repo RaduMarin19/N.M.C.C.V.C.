@@ -4,6 +4,8 @@
 #include "Color.h"
 #include "SpellCard.h"
 #include "ElementalType.h"
+#include "WizardType.h"
+#include "WizardCard.h"
 
 #include <vector>
 #include <unordered_map>
@@ -41,6 +43,8 @@ public:
 
 	void SetGrabbedCard(Card* grabbedCard);
 	void AddCard(const PlayingCard& card);
+	void SetWizard(WizardType wizard, CardTexture* texture, Coordinates position, unsigned short cardId);
+	std::unique_ptr<WizardCard>& GetWizardCard();
 
 	template <typename Container>
 	requires CardContainer<Container, PlayingCard>
@@ -60,6 +64,7 @@ public:
 	void SetHasPlayedIllusion();
 	void SetIsPlayingAshes(bool isPlayingAshes);
 
+
 	bool HasPlayedIllusion() const;
 	bool& IsPlayingIllusion();
 	bool IsPlayingAshes() const;
@@ -76,6 +81,7 @@ private:
 	std::vector<PlayingCard> m_cards;
 	std::vector<PlayingCard> m_removedCards;
 	std::shared_ptr<CardTexture> m_cardIllusion;
+	std::unique_ptr<WizardCard> m_wizard;
 
 	Color m_color;
 
