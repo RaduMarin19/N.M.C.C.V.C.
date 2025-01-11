@@ -227,6 +227,11 @@ bool GameBoard::ShouldResetPositions() const
     return m_shouldResetPositions;
 }
 
+void GameBoard::SetShouldResetPositions(bool shouldResetPositions)
+{
+    m_shouldResetPositions = shouldResetPositions;
+}
+
 bool GameBoard::CheckScore(GameState& gameState) {
     int blueScore = 0;
     int redScore = 0;
@@ -320,21 +325,20 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
 }
 
 void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
-    if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
+    if(m_positions.contains(boardPosition))
     {
         m_positions[boardPosition].back().SetIllusion(false);
 
         for (PlayingCard& card : m_positions[boardPosition]) {
             if (card.GetColor() == BLUE)
-                m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition),card);           //put the card in the deleted stack of each respective player
+                m_playerBlue.AddRemovedCard(GetCardsAtPosition(boardPosition), card);           //put the card in the deleted stack of each respective player
             else
-                m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition),card);
-        }
+                m_playerRed.AddRemovedCard(GetCardsAtPosition(boardPosition), card);
+        }   
 
-        m_positions.erase(boardPosition);
-        m_possiblePositions.erase(boardPosition);
-        m_holes.insert(boardPosition);
+        m_positionsToErase.insert(boardPosition);
     }
+    m_holes.insert(boardPosition);
 }
 
 void GameBoard::SetIsPlayingMirage(bool isPlayingMirage)
@@ -369,15 +373,13 @@ void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
 
 void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
     auto it = m_positions.find(boardPosition);
-    if (it != m_positions.end()) {
-        if (!it->second.empty()) {
-            PlayingCard& card = it->second.back();
-            ReturnCardAtPosition(card);
+    if (it != m_positions.end()&&it->second.size()>0){
+          PlayingCard& card = it->second.back();
+          ReturnCardAtPosition(card);
 
-            m_positions[boardPosition].pop_back();
-            if (m_positions[boardPosition].size() == 0)      //if there isnt any card in the deque anymore then remove the position
-                m_positions.erase(boardPosition);
-        }
+          m_positions[boardPosition].pop_back();
+          if (m_positions[boardPosition].size() == 0)      //if there isnt any card in the deque anymore then remove the position
+               m_positionsToErase.insert(boardPosition);
     }
 }
 
@@ -463,6 +465,8 @@ void GameBoard::Explode()
     }
 
     m_exploded = true;
+
+    m_shouldResetPositions = true;
 }
 
 void GameBoard::UpdateBoardCenter() {
@@ -564,6 +568,11 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
 void GameBoard::SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent)
 {
     m_isPlayingCoverOpponent = isPlayingCoverOpponent;
+}
+
+bool GameBoard::IsPositionEmpty(const Coordinates& position) const
+{
+    return !m_positions.contains(position);
 }
 
 unsigned int GameBoard::GetCenterX() const {
@@ -1128,7 +1137,7 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerRed = Player(PlayingCardsRed);
 
     int randomIndex1 = 0/*Random::Get(0, 7)*/;
-    int randomIndex2 = 2/*Random::Get(0, 7)*/;
+    int randomIndex2 = 3/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 

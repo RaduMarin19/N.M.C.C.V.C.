@@ -245,8 +245,9 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
             m_board->ChangeTurn();              //player loses its turn
             player.RemoveWizard();
         }
-        else
+        else {
             m_board->ReturnCardToDeck(*wizardCard);
+        }
 
         break;
     case WizardType::COVER_OPPONENT_CARD:
@@ -254,7 +255,16 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
         player.RemoveWizard();
         break;
     case WizardType::CREATE_PIT:
+        if (m_board->IsPositionEmpty(possiblePosition)) {
+            m_board->CreateHoleAtPosition(possiblePosition);
+            m_board->SetShouldResetPositions(true);
 
+            m_board->ChangeTurn();
+            player.RemoveWizard();
+        }
+        else {
+            m_board->ReturnCardToDeck(*wizardCard);
+        }
         break;
     case WizardType::MOVE_OWN_STACK:
 
@@ -591,6 +601,9 @@ void Game::HandleBoardState() {
     else
         m_board->SetTable(4);
 
+    if (m_board->ShouldResetPositions())
+        m_board->ResetPossiblePositions();
+
     m_board->UpdateBoardCenter();
 
     bool shouldSave = false;
@@ -678,8 +691,6 @@ void Game::DrawBoard() {
             m_painter->DrawCard(*card, card->GetTexture()->GetTexture());
         }
     }
-    if (m_board->ShouldResetPositions())
-        m_board->ResetPossiblePositions();
 }
 
 void Game::HandleCardMovement(Player* player,Card& card) {

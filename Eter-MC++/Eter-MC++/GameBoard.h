@@ -94,6 +94,8 @@ public:
     void ResetPossiblePositions();
     bool ShouldResetPositions() const;
 
+    void SetShouldResetPositions(bool shouldResetPositions);
+
     void ChangeTurn();
 
     bool VerifyNeighbours(const std::array<std::array<uint8_t, 3>, 3>& mask, int x, int y);
@@ -106,6 +108,7 @@ public:
     void SetBoundPosition(const Coordinates& position);
     bool MoveStackToEmptyPosition(const Coordinates& position);
     void SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent);
+    bool IsPositionEmpty(const Coordinates& position) const;
 
     bool Flurry(const Coordinates& position);
     Coordinates GetUnTranslatedPosition(const Coordinates& position);
@@ -118,6 +121,7 @@ public:
     unsigned int GetMaxX() const;
     unsigned int GetMaxY() const;
 
+    void CreateHoleAtPosition(const Coordinates& boardPosition);
     ExplosionCard* GetExplosion();
     SpellsType& GetSpells();
     void InitializeExplosion();
@@ -186,7 +190,6 @@ private:
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
 
-    void CreateHoleAtPosition(const Coordinates& boardPosition);
 
     void ReturnCardAtPosition(PlayingCard& card);
 
