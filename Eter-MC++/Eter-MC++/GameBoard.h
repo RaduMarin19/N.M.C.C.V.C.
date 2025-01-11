@@ -105,6 +105,7 @@ public:
     bool SetBlockedRow(short row);
     void SetBoundPosition(const Coordinates& position);
     bool MoveStackToEmptyPosition(const Coordinates& position);
+    void SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent);
 
     bool Flurry(const Coordinates& position);
     Coordinates GetUnTranslatedPosition(const Coordinates& position);
@@ -143,6 +144,7 @@ private:
 
     bool m_canCoverIllusion;
     bool m_isPlayingMirage;
+    bool m_isPlayingCoverOpponent;
 
     bool m_isMinXFixed;
     bool m_isMaxXFixed;

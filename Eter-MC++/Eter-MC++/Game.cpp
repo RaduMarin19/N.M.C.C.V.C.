@@ -250,7 +250,8 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
 
         break;
     case WizardType::COVER_OPPONENT_CARD:
-
+        m_board->SetIsPlayingCoverOpponent(true);
+        player.RemoveWizard();
         break;
     case WizardType::CREATE_PIT:
 

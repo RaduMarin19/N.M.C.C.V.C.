@@ -561,7 +561,10 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
     return true;
 }
 
-
+void GameBoard::SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent)
+{
+    m_isPlayingCoverOpponent = isPlayingCoverOpponent;
+}
 
 unsigned int GameBoard::GetCenterX() const {
     return this->m_centerX;
@@ -735,7 +738,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
     }
     //Otherwise just add to the existing stack
     else {
-         if ((!otherCard.IsIllusion() && !otherCard.IsEter())||IsPlayingMirage()) { //if a card is a illusion you cannot add it to an existing stack
+         if ((!otherCard.IsIllusion() && !otherCard.IsEter()) || IsPlayingMirage()) { //if a card is a illusion you cannot add it to an existing stack
              auto it = m_positions.find(newCardCoords);
 
              if (m_boundPosition != nullptr && *m_boundPosition!=newCardCoords)
@@ -780,6 +783,9 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
              else if (lastCard.GetValue() < otherCard.GetValue()) {
                  it->second.emplace_back(otherCard);
                  ResetCardValue(lastCard);
+             }
+             else if (lastCard.GetValue() > otherCard.GetValue() && m_isPlayingCoverOpponent) {
+                 it->second.emplace_back(otherCard);        //placing the card in the stack
              }
              else
                  return IN_HAND;
@@ -1122,7 +1128,7 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerRed = Player(PlayingCardsRed);
 
     int randomIndex1 = 0/*Random::Get(0, 7)*/;
-    int randomIndex2 = 1/*Random::Get(0, 7)*/;
+    int randomIndex2 = 2/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 
@@ -1390,6 +1396,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
 {
     m_isBluePlayer = true;
     m_canCoverIllusion = false;
+    m_isPlayingCoverOpponent = false;
     m_boundPosition = nullptr;
     m_blockedRow = 100;
     m_isMinXFixed = false;
