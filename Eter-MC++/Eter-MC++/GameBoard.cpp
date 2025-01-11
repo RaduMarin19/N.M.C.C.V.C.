@@ -550,8 +550,9 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
     Coordinates emptyPosition(100,100);
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
-            if (i != 0 && j != 0 && m_possiblePositions.contains({ position.GetX() + i,position.GetY() + j })) {
-                emptyPosition = { position.GetX() + i,position.GetY() + j };
+            Coordinates newPosition{ position.GetX() + i,position.GetY() + j };
+            if (i != 0 && j != 0 &&!m_positions.contains(newPosition) && m_possiblePositions.contains(position)) {
+                emptyPosition = newPosition;
                 break;
             }
         }
@@ -1137,7 +1138,7 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerRed = Player(PlayingCardsRed);
 
     int randomIndex1 = 0/*Random::Get(0, 7)*/;
-    int randomIndex2 = 3/*Random::Get(0, 7)*/;
+    int randomIndex2 = 4/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 
