@@ -1138,7 +1138,7 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerRed = Player(PlayingCardsRed);
 
     int randomIndex1 = 0/*Random::Get(0, 7)*/;
-    int randomIndex2 = 4/*Random::Get(0, 7)*/;
+    int randomIndex2 = 6/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 

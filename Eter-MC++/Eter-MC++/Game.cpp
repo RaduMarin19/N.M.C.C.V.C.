@@ -284,7 +284,18 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
 
         break;
     case WizardType::MOVE_OPPONENT_STACK:
-
+        try {
+            if (m_board->GetCardColorAtPosition(possiblePosition) != player.GetColor() && m_board->MoveStackToEmptyPosition(possiblePosition)) {
+                m_board->ChangeTurn();
+                player.RemoveWizard();
+            }
+            else {
+                m_board->ReturnCardToDeck(*wizardCard);
+            }
+        }
+        catch (std::runtime_error& e) {
+            m_board->ReturnCardToDeck(*wizardCard);
+        }
         break;
     case WizardType::MOVE_EDGE_ROW:
 
