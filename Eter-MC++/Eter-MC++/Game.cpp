@@ -298,7 +298,13 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
         }
         break;
     case WizardType::MOVE_EDGE_ROW:
-
+        if (m_board->MoveEdgeRow(possiblePosition.GetY())) {
+            m_board->ChangeTurn();
+            player.RemoveWizard();
+        }
+        else {
+            m_board->ReturnCardToDeck(*wizardCard);
+        }
         break;
     default:
         break;
@@ -357,8 +363,8 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                     ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
                     std::vector <std::pair<Coordinates,ExplosionType>> ex;
                     ex.push_back({ unTranslatedPosition,ExplosionType::HOLE });
-                    explosion->makeExplosionFromVector(ex);
-                    if (m_board->validateBoardAfterEffect(explosion)) {
+                    explosion->MakeExplosionFromVector(ex);
+                    if (m_board->ValidateBoardAfterEffect(explosion)) {
                         while (size) {                                   //delete all cards from the game
                             m_board->DeleteCardAtPosition(possiblePosition);
                             --size;

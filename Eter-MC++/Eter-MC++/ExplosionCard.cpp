@@ -65,7 +65,7 @@ short ExplosionCard::GetAffectedPosCounter() const
 	return m_affectedPosCounter;
 }
 
-void ExplosionCard::makeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>> vec) {
+void ExplosionCard::MakeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>> vec) {
 	for (int i = 0; i < m_explosionMask.size(); ++i) {
 		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
 	}

@@ -412,7 +412,7 @@ bool GameBoard::RemoveRow(short column, Color color)
         ex.emplace_back(unTranslatedPosition, ExplosionType::HOLE);
     }
 
-    if (!validateBoardAfterEffect(explosion.get())) {
+    if (!ValidateBoardAfterEffect(explosion.get())) {
         return false;
     }
 
@@ -507,9 +507,9 @@ bool GameBoard::Flurry(const Coordinates& position) {
         return false;
 
     ExplosionCard expl(m_tableSize);        
-    expl.makeExplosionFromVector({ {unTranslatedPosition, ExplosionType::HOLE} });
+    expl.MakeExplosionFromVector({ {unTranslatedPosition, ExplosionType::HOLE} });
     
-    if (validateBoardAfterEffect(&expl)) {                  //verifying if we can remove this position
+    if (ValidateBoardAfterEffect(&expl)) {                  //verifying if we can remove this position
 
         PlayingCard& topCard = m_positions[position].back();
 
@@ -559,11 +559,15 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
     }
     if (emptyPosition.GetX() == 100)
         return false;
-    std::deque<PlayingCard> cards;
-    m_positions.emplace(emptyPosition, cards);
-    std::swap(GetCardsAtPosition(emptyPosition), GetCardsAtPosition(position));
-    m_positions.erase(position);
+    MoveStack(position, emptyPosition);
     return true;
+}
+
+void GameBoard::MoveStack(const Coordinates& target, const Coordinates& emptyPosition) {
+    std::deque<PlayingCard> cards;
+    m_positions.emplace(emptyPosition, cards);          //creating dummy stack
+    std::swap(GetCardsAtPosition(emptyPosition), GetCardsAtPosition(target));   //swapping the stack
+    m_positions.erase(target);      //deleting initial stack position(now empty, swapped with dummy stack)
 }
 
 void GameBoard::SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent)
@@ -800,7 +804,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
              else
                  return IN_HAND;
              }
-         else return IN_HAND;;
+         else return IN_HAND;
             
     }
 
@@ -1049,7 +1053,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 11/*Random::Get(0, 23)*/;
-    int randomIndex2 = 9/*Random::Get(0, 23)*/;
+    int randomIndex2 = 14/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2);
 
@@ -1138,12 +1142,50 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerRed = Player(PlayingCardsRed);
 
     int randomIndex1 = 0/*Random::Get(0, 7)*/;
-    int randomIndex2 = 6/*Random::Get(0, 7)*/;
+    int randomIndex2 = 7/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
+}
+
+bool GameBoard::MoveEdgeRow(short row) {
+    if (m_minY == m_maxY) return false; //there is only one row
+
+    short occupiedPositions = 0;
+    std::vector<Coordinates> positionsToMove;
+    for (auto& position : m_positions) {
+        if (position.first.GetY() == row) {
+            occupiedPositions += 1;
+            positionsToMove.push_back(position.first);
+        }   
+    }
+
+    if (occupiedPositions < 3)
+        return false;
+
+    short newY;
+
+    if (row == m_minY) {
+        m_minY++;
+        m_maxY++;
+        newY = m_maxY;
+    }
+    else if (row == m_maxY) {    //getting the new y
+        m_maxY--;
+        m_minY--;
+        newY = m_minY;
+    }
+    else return false;
+
+    for (auto& position : positionsToMove) {
+        Coordinates emptyPosition{ position.GetX(),newY};
+        MoveStack(position, emptyPosition);
+    }
+    m_shouldResetPositions = true;
+
+    return true;
 }
 
 void GameBoard::InitializeWizard(Player& player, short wizardId) {
@@ -1226,7 +1268,7 @@ std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetHoles()
     return m_holes;
 }
 
-bool GameBoard::validateBoardAfterEffect(ExplosionCard *card) {
+bool GameBoard::ValidateBoardAfterEffect(ExplosionCard *card) {
     auto boardState = this->m_positions;
     //copy our board state to a new object and explode it, then we run our check
 
@@ -1323,8 +1365,8 @@ void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
     std::sort(explosionSubsets.begin(), explosionSubsets.end(), [](tmp obj1, tmp obj2){return obj1.size() > obj2.size();});
     for(const auto& subset : explosionSubsets) {
         ExplosionCard *tmpCard = new ExplosionCard(m_tableSize);
-        tmpCard->makeExplosionFromVector(subset);
-        if(this->validateBoardAfterEffect(tmpCard)) {
+        tmpCard->MakeExplosionFromVector(subset);
+        if(this->ValidateBoardAfterEffect(tmpCard)) {
             this->m_validatedExplosion = std::unique_ptr<ExplosionCard>(tmpCard);
             return;
         } else {

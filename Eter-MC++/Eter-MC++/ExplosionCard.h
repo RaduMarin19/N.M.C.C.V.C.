@@ -24,7 +24,7 @@ public:
 
 	short GetAffectedPosCounter() const;
 
-	void makeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>>);
+	void MakeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>>);
 
 	ExplosionCard(const ExplosionCard&) = delete;                 
 	ExplosionCard& operator=(const ExplosionCard&) = delete;       

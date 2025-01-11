@@ -53,7 +53,7 @@ public:
     std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
     std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
     std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
-    bool validateBoardAfterEffect(ExplosionCard *card);
+    bool ValidateBoardAfterEffect(ExplosionCard *card);
     void SetValidatedExplosion(ExplosionCard *card);
     ExplosionCard* GetValidatedExplosion();
 
@@ -80,6 +80,7 @@ public:
 
     bool ChangeCardValue(PlayingCard& card, short valueChange);
     void ResetCardValue(PlayingCard& card);
+    bool MoveEdgeRow(short row);
 
     void ReturnCardToDeck(Card& card);
     void DeleteCardAtPosition(const Coordinates& boardPosition);
@@ -107,6 +108,7 @@ public:
     bool SetBlockedRow(short row);
     void SetBoundPosition(const Coordinates& position);
     bool MoveStackToEmptyPosition(const Coordinates& position);
+    void MoveStack(const Coordinates& target, const Coordinates& emptyPosition);
     void SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent);
     bool IsPositionEmpty(const Coordinates& position) const;
 
@@ -198,6 +200,7 @@ private:
     void GenerateTrainingCards();
     void GenerateElementalCards();
     void GenerateMageDuelCards();
+
 
     void InitializeWizard(Player& player, short wizardId);
     void InitializeWizardCards(short randomIndex1, short randomIndex2);
