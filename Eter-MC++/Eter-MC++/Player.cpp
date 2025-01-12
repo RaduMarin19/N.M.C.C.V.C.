@@ -105,6 +105,14 @@ std::vector<PlayingCard>& Player::GetCards()
 	return m_cards;
 }
 
+std::stack<PlayingCard> & Player::GetOrderOfPlayedCards() {
+	return this->m_OrderOfPlayedCards;
+}
+
+void Player::AddCardToOrderStack(PlayingCard card) {
+	this->m_OrderOfPlayedCards.push(card);
+}
+
 Card *Player::GetGrabbedCard() const
 {
 	return m_grabbedCard;

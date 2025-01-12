@@ -17,6 +17,7 @@
 #include <optional>
 #include <concepts>
 #include <iterator>
+#include <stack>
 
 template <typename Container, typename T>
 concept CardContainer =
@@ -58,6 +59,9 @@ public:
 	std::vector<PlayingCard>& GetRemovedCards();
 	std::vector<PlayingCard>& GetCards();
 
+	std::stack<PlayingCard>& GetOrderOfPlayedCards();
+	void AddCardToOrderStack(PlayingCard card);
+
 	Card *GetGrabbedCard() const;
 	bool IsGrabbingCard() const;
 
@@ -84,6 +88,8 @@ private:
 	std::vector<PlayingCard> m_removedCards;
 	std::shared_ptr<CardTexture> m_cardIllusion;
 	std::unique_ptr<WizardCard> m_wizard;
+
+	std::stack<PlayingCard> m_OrderOfPlayedCards;
 
 	Color m_color;
 

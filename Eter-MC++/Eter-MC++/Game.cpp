@@ -200,6 +200,8 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
     if (status == ON_BOARD) {
         m_board->SetBlockedRow(100);
         player.RemoveCardFromHand(*pushCard);
+        auto playedCardDeque = m_board->GetCardsAtPosition(possiblePosition);
+        player.AddCardToOrderStack(playedCardDeque[playedCardDeque.size() - 1]);
         if (pushCard->IsIllusion())
         {
             for (auto& cards : m_board->GetPlayedPositions())
@@ -328,6 +330,38 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
     ElementalType spell = spellCard->GetSpell(); //getting the spell type
 
     switch (spell) {
+
+        case ElementalType::DESTROY: {
+
+            auto enemyPlayedCards = this->m_board->GetPlayerBlue()->GetOrderOfPlayedCards();
+            if(this->m_board->GetPlayerBlue() == &player) {
+                enemyPlayedCards = this->m_board->GetPlayerRed()->GetOrderOfPlayedCards();
+            }
+            while(!enemyPlayedCards.empty()) {
+                auto card = enemyPlayedCards.top();
+                //Validate if the card we want to destroy still exists on the board
+                try {
+                    auto boardCardDeque = this->m_board->GetCardsAtPosition(card.GetBoardPosition());
+                    bool isValid = false;
+                    for(auto c : boardCardDeque) {
+                        if(c.GetId() == card.GetId()) {
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if(isValid) {
+                        this->m_board->DeleteCardAtPosition(card.GetBoardPosition());
+                        m_board->RemoveSpell(spellCard);
+                        return;
+                    }
+                    enemyPlayedCards.pop();
+                } catch (std::exception& e) {
+                    enemyPlayedCards.pop();
+                }
+            }
+            break;
+        }
+
         case ElementalType::FIRE: 
         {
             try {
@@ -347,11 +381,12 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
 
-        case ElementalType::SQUALL:
+        case ElementalType::SQUALL: {
             m_board->ReturnCoveredCards();      //returns all covered cards to the players hand
             m_board->RemoveSpell(spellCard);    //then remove the spell card
             m_board->ChangeTurn();              //player loses its turn
             break;
+        }
 
         case ElementalType::ASHES: {
             std::vector<PlayingCard>& cards = player.GetRemovedCards();
@@ -396,18 +431,20 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
                                  
-        case ElementalType::BOULDER:
-           try {
-               auto& cards= m_board->GetCardsAtPosition(possiblePosition);
-               if (cards.back().IsIllusion()) {
-                   m_board->SetCanCoverIllusion(true);     //telling the board that the player will be able to cover a illusion
-                   m_board->RemoveSpell(spellCard); //then remove the spell card
-               }
-           }
-           catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
-               m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
-           }
-           break;
+        case ElementalType::BOULDER: {
+            try {
+                auto& cards= m_board->GetCardsAtPosition(possiblePosition);
+                if (cards.back().IsIllusion()) {
+                    m_board->SetCanCoverIllusion(true);     //telling the board that the player will be able to cover a illusion
+                    m_board->RemoveSpell(spellCard); //then remove the spell card
+                }
+            }
+            catch (const std::runtime_error& error) {   //will throw if there is no cards at the played position
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
+
         case ElementalType::SUPPORT:
         {
             try {
@@ -427,6 +464,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             }
             break;
         }
+
         case ElementalType::SHATTER:
         {
             try {
@@ -446,6 +484,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             }
             break;
         }
+
         case ElementalType::LAVA:
         {
             try {
@@ -476,7 +515,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
 
-        case ElementalType::WHIRLWIND:
+        case ElementalType::WHIRLWIND: {
             try {
                 if (m_board->GetCardsAtPosition(possiblePosition).back().GetColor() != player.GetColor()) {
                     m_board->ReturnTopCardAtPosition(possiblePosition);
@@ -491,6 +530,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
             break;
+        }
 
         case ElementalType::MIST:
         {
@@ -550,7 +590,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
         
-        case ElementalType::TSUNAMI:
+        case ElementalType::TSUNAMI: {
             if (m_board->SetBlockedRow(possiblePosition.GetY())) {  //checking if there are other possible positions that dont contain Y
                 m_board->RemoveSpell(spellCard);         //then remove the spell card
                 m_board->ChangeTurn();
@@ -559,8 +599,9 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+        }
 
-        case ElementalType::WAVE:
+        case ElementalType::WAVE: {
             if (m_board->MoveStackToEmptyPosition(possiblePosition)) {      //if the stack was sucesfully moved
                 m_board->SetBoundPosition(possiblePosition);                //we set the bound position             
                 m_board->RemoveSpell(spellCard);         //then remove the spell card
@@ -569,8 +610,9 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+        }
 
-        case ElementalType::FLURRY:
+        case ElementalType::FLURRY: {
             if (m_board->Flurry(possiblePosition)) {
                 m_board->RemoveSpell(spellCard);         //then remove the spell card
             }
@@ -578,6 +620,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 m_board->ReturnCardToDeck(*spellCard);
             }
             break;
+        }
 
         case ElementalType::MIRAGE:
         {
@@ -599,22 +642,23 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
 
-        case ElementalType::BORDERS:
+        case ElementalType::BORDERS: {
             m_board->FixBorders(possiblePosition);
             m_board->RemoveSpell(spellCard);
             break;
+        }
 
-        case ElementalType::WHIRLPOOL:
+        case ElementalType::WHIRLPOOL: {
             if (m_board->WhirlPool(possiblePosition)) {
                 m_board->RemoveSpell(spellCard); //then remove the spell card
             }
             else {
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
-
             break;
+        }
 
-        case ElementalType::HURRICANE:
+        case ElementalType::HURRICANE: {
             if (m_board->Hurricane(possiblePosition)) {
                 m_board->RemoveSpell(spellCard); //then remove the spell card
             }
@@ -622,6 +666,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
             }
             break;
+        }
     }
 }
 
