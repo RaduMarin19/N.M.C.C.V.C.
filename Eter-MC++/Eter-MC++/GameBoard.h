@@ -71,6 +71,7 @@ public:
     bool RemoveIllusion(const Coordinates& boardPosition);
     void SetCanCoverIllusion(bool canCoverIllusion);
     bool WhirlPool(const Coordinates& position);
+    bool Hurricane(const Coordinates& position);    
 
     void ReturnCoveredCards();
     void RemoveSpell(SpellCard* spell);

@@ -368,7 +368,6 @@ void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
     else if (card.GetColor() == RED) {
         m_playerRed.AddCard(card);
     }
-    
 }
 
 void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
@@ -469,8 +468,51 @@ void GameBoard::Explode()
     m_shouldResetPositions = true;
 }
 
-bool GameBoard::WhirlPool(const Coordinates& position) {
+bool GameBoard::Hurricane(const Coordinates& position) {
+    short foundDecks = 0;
 
+    short row = position.GetY();
+    short XPos = position.GetX();
+    
+    for (short x = m_minX; x <= m_maxX; ++x) {
+        Coordinates temp{ x,row };
+        if (m_positions.contains(temp) && m_positions.at(temp).size() > 0)
+            foundDecks++;                       
+    }
+    if (foundDecks != m_tableSize)          //if we haven`t found 4 decks of cards on the desired row then we cannot perform
+        return false;   
+
+    while (!m_positions[position].empty()) {
+        ReturnTopCardAtPosition(position);          //returning the cards on the row that 'falls'
+    }
+
+    m_positionsToErase.erase(position);     //removing the position from the positions to be removed(we will use it for moving another stack in it)
+
+    //moving the decks in the desired direction and erasing the tracing position
+    if (XPos == m_maxX) {
+        for (int i = m_maxX - 1; i >= m_minX; i--)
+        {   
+            MoveStack({ i,row }, { i + 1,row });           
+        }
+        m_positions.erase({ m_minX,row });          
+        m_minX++;
+    }
+    else if (XPos == m_minX) {
+        for (int i = m_minX + 1; i <= m_maxX; i++)
+        {
+            MoveStack({ i,row }, { i - 1,row });
+        }
+        m_positions.erase({ m_maxX,row });
+        m_maxX--;
+    }
+    else return false;
+
+    m_shouldResetPositions = true;
+
+    return true;
+}
+
+bool GameBoard::WhirlPool(const Coordinates& position) {
     //TODO: give the player the option to choose which card to place over when the values are = 
     Coordinates left{ position.GetX() + 1, position.GetY() };
     Coordinates right{ position.GetX() - 1, position.GetY() };
@@ -1104,7 +1146,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 11/*Random::Get(0, 23)*/;
+    int randomIndex1 = 8/*Random::Get(0, 23)*/;
     int randomIndex2 = 15/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2);

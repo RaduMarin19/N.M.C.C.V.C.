@@ -602,6 +602,15 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             }
 
             break;
+
+        case ElementalType::HURRICANE:
+            if (m_board->Hurricane(possiblePosition)) {
+                m_board->RemoveSpell(spellCard); //then remove the spell card
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
     }
 }
 
