@@ -81,8 +81,11 @@ void Game::IRun() {
                 //Check which button the player has pressed, and initialize the cards accordingly
                 if (m_painter->IsTrainingActive()) {
                     m_currentState = TRAINING_MODE;
+                    m_board->SetGameMode(GameMode::Training);
                     m_board->GeneratePlayerCards();
                     drawThisFrame = true;
+                    m_board->SetTable(3);
+                    m_board->InitializeExplosion();
                 }
                 else if (m_painter->IsElementalActive())
                 {
@@ -90,6 +93,8 @@ void Game::IRun() {
                     m_board->SetGameMode(GameMode::Elemental);
                     m_board->GeneratePlayerCards();
                     drawThisFrame = true;
+                    m_board->SetTable(4);
+                    m_board->InitializeExplosion();
                 }
                 else if (m_painter->IsMageDuelActive())
                 {
@@ -97,11 +102,15 @@ void Game::IRun() {
                     m_board->SetGameMode(GameMode::MageDuel);
                     m_board->GeneratePlayerCards();
                     drawThisFrame = true;
+                    m_board->SetTable(4);
+                    m_board->InitializeExplosion();
                 }
                 else if (m_painter->IsTournamentActive())
                 {
                     m_currentState = TOURNAMENT;
 					drawThisFrame = true;
+                    m_board->SetTable(4);
+                    m_board->InitializeExplosion();
                 }
                 else if (m_painter->IsQuickMatchActive())
                 {
@@ -109,6 +118,8 @@ void Game::IRun() {
 					m_board->SetGameMode(GameMode::QuickMode);
                     m_board->GeneratePlayerCards();
                     drawThisFrame = true;
+                    m_board->SetTable(3);
+                    m_board->InitializeExplosion();
                 }
             }
 

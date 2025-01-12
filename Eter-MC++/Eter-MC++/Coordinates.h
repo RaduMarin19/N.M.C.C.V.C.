@@ -1,8 +1,11 @@
 #pragma once
 #include <cstddef>
 #include <functional>
-
+#if defined linux
+#include "../Dependencies/JSON/json.hpp"
+#else
 #include "json.hpp"
+#endif
 
 class Coordinates
 {

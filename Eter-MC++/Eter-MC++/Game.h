@@ -7,7 +7,12 @@
 #include "Graphics.h"
 #include "ElementalType.h"
 
+#if defined linux
+#include "../Dependencies/JSON/json.hpp"
+#else
 #include "json.hpp"
+#endif
+
 #include <SDL.h>
 
 #include <iostream>

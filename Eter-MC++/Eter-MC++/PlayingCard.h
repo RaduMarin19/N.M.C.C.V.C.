@@ -4,7 +4,12 @@
 #include "Color.h"
 #include "Card.h"
 
+#if defined linux
+#include "../Dependencies/JSON/json.hpp"
+#else
 #include "json.hpp"
+#endif
+
 
 class PlayingCard : public Card
 {

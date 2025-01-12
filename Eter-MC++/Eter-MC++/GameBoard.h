@@ -13,7 +13,12 @@
 #include "SpellCard.h"
 #include "ElementalType.h"
 #include "GameMode.h"
+#if defined linux
+#include "../Dependencies/JSON/json.hpp"
+#else
 #include "json.hpp"
+#endif
+
 
 #include <unordered_map>
 #include <unordered_set>

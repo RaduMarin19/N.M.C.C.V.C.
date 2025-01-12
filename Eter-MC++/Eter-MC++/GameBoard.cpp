@@ -1563,7 +1563,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     //Load all card textures into memory
 
     LoadTextures(renderer);
-    InitializeExplosion();
+    //InitializeExplosion();
 }
 
 unsigned short GameBoard::NextCardId() {
