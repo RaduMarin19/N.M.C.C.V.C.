@@ -70,6 +70,7 @@ public:
 
     bool RemoveIllusion(const Coordinates& boardPosition);
     void SetCanCoverIllusion(bool canCoverIllusion);
+    bool WhirlPool(const Coordinates& position);
 
     void ReturnCoveredCards();
     void RemoveSpell(SpellCard* spell);
@@ -200,7 +201,6 @@ private:
     void GenerateTrainingCards();
     void GenerateElementalCards();
     void GenerateMageDuelCards();
-
 
     void InitializeWizard(Player& player, short wizardId);
     void InitializeWizardCards(short randomIndex1, short randomIndex2);

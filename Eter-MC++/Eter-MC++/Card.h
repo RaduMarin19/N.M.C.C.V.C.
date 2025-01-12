@@ -13,7 +13,7 @@ public:
 
 	Card(Card&&) = default;               
 	Card& operator=(Card&&) = default;          
-	Card& operator=(const Card&) = delete;
+	Card& operator=(const Card&) = default;
 	virtual ~Card() = default; //for polimorphism
 
 	Coordinates GetInitialPosition() const;

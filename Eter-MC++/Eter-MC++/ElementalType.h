@@ -16,7 +16,7 @@ enum class ElementalType {
     TIDE,                 // Maree: Interschimba pozitiile a 2 teancuri de carti.                                                      !!DONE!!
     MIST,                 // Ceata: Joaca inca o iluzie. Obs: Un jucator nu poate avea 2 iluzii simultan pe tabla.                     !!DONE!! 
     WAVE,                 // Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.                         !!DONE!!
-    WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.
+    WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.        !!DONE!! + TODO
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.                                         !!DONE!!
     WATERFALL,            // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!

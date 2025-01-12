@@ -469,6 +469,55 @@ void GameBoard::Explode()
     m_shouldResetPositions = true;
 }
 
+bool GameBoard::WhirlPool(const Coordinates& position) {
+
+    //TODO: give the player the option to choose which card to place over when the values are = 
+    Coordinates left{ position.GetX() + 1, position.GetY() };
+    Coordinates right{ position.GetX() - 1, position.GetY() };
+
+    if (!m_positions.contains(left) || !m_positions.contains(right) || m_positions.contains(position))
+        return false;
+
+    ExplosionCard* explosion = new ExplosionCard(GetTableSize());
+    std::vector <std::pair<Coordinates, ExplosionType>> ex;
+
+    ex.push_back({ GetUnTranslatedPosition(left), ExplosionType::HOLE });
+    ex.push_back({ GetUnTranslatedPosition(right), ExplosionType::HOLE });
+    ex.push_back({ GetUnTranslatedPosition(position), ExplosionType::ADD });
+
+    explosion->MakeExplosionFromVector(ex);
+
+    if (!ValidateBoardAfterEffect(explosion))
+        return false;
+
+    auto& leftCard = m_positions.at(left);
+    auto& rightCard = m_positions.at(right);
+
+    if (leftCard.size() != 1 || rightCard.size() != 1)
+        return false;
+    
+    if (leftCard.back().GetValue() < rightCard.back().GetValue()) {
+        PlayingCard pushCard = rightCard.back();
+        pushCard.SetBoardPosition(left);
+        PushNewCard(pushCard);
+    }
+    else
+    {
+        PlayingCard pushCard = leftCard.back();
+        pushCard.SetBoardPosition(right);
+        PushNewCard(pushCard);
+    }
+
+    MoveStack(leftCard.back().GetBoardPosition(), position);
+    
+    rightCard.clear();
+    m_positionsToErase.insert(right);
+
+    m_shouldResetPositions = true;
+
+    return true;
+}
+
 void GameBoard::UpdateBoardCenter() {
 
     //Difference between max and min on each axis (how large is the board and in which direction it spans)
@@ -480,8 +529,11 @@ void GameBoard::UpdateBoardCenter() {
 
     //Also shift all played cards by said amount
     for (auto& [pos, cards] : m_positions) {
-        auto& card = cards.back();
-        card.SetCoordinates({ static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight) });
+        if(cards.size()>0)
+        {
+            auto& card = cards.back();
+            card.SetCoordinates({ static_cast<int>(m_centerX - pos.GetX() * textureWidth), static_cast<int>(m_centerY - pos.GetY() * textureHeight) });
+        }
     }
 }
 
@@ -1053,7 +1105,7 @@ void GameBoard::GenerateElementalCards() {
         currentCardOffset += availableSpacePerCard;
     }
     int randomIndex1 = 11/*Random::Get(0, 23)*/;
-    int randomIndex2 = 14/*Random::Get(0, 23)*/;
+    int randomIndex2 = 15/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2);
 
@@ -1303,6 +1355,12 @@ bool GameBoard::ValidateBoardAfterEffect(ExplosionCard *card) {
                                 boardState.erase(position);
                         } else boardState.erase(position);
                     }
+                }
+                else if (explosionEffects[i][j] == ExplosionType::ADD) {
+                    PlayingCard dummy;
+                    std::deque<PlayingCard> dummyDeck;
+                    dummyDeck.emplace_back(std::move(dummy));
+                    boardState.insert({ position , dummyDeck });
                 }
             }
         }

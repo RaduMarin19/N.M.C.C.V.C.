@@ -592,6 +592,16 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             m_board->FixBorders(possiblePosition);
             m_board->RemoveSpell(spellCard);
             break;
+
+        case ElementalType::WHIRLPOOL:
+            if (m_board->WhirlPool(possiblePosition)) {
+                m_board->RemoveSpell(spellCard); //then remove the spell card
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+
+            break;
     }
 }
 
