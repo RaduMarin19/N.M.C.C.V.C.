@@ -730,7 +730,7 @@ PlayingCard GameBoard::GenerateEterCard(Color color)
 
     eterCard.SetEter(true);
 
-    return std::move(eterCard);
+    return eterCard;
 }
 
 void GameBoard::PrintExplosionMask() {
@@ -1119,12 +1119,10 @@ void GameBoard::GenerateElementalCards() {
     PlayingCard cardRed4({ 0, 0 }, &m_redCardTextures[4], 4, NextCardId(), RED);
     PlayingCardsRed.emplace_back(std::move(cardRed4));
 
-    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCardTextures[0], 1, NextCardId(), BLUE);
-    cardBlueEter.SetEter(true);
+    PlayingCard cardBlueEter = GenerateEterCard(BLUE);
     PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
-    PlayingCard cardRedEter({ 0, 0 }, &m_redCardTextures[0], 1, NextCardId(), RED);
-    cardRedEter.SetEter(true);
+    PlayingCard cardRedEter = GenerateEterCard(RED);
     PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
     //Set how much space we have for our deck, the whole screen - padding top/bottom
@@ -1203,12 +1201,10 @@ void GameBoard::GenerateMageDuelCards() {
     PlayingCard cardRed({ 0, 0 }, &m_redCardTextures[4], 4, NextCardId(), RED);
     PlayingCardsRed.emplace_back(std::move(cardRed));
 
-    PlayingCard cardBlueEter({ 0, 0 }, &m_blueCardTextures[0], 1, NextCardId(), BLUE);
-    cardBlueEter.SetEter(true);
+    PlayingCard cardBlueEter = GenerateEterCard(BLUE);
     PlayingCardsBlue.emplace_back(std::move(cardBlueEter));
 
-    PlayingCard cardRedEter({ 0, 0 }, &m_redCardTextures[0], 1, NextCardId(), RED);
-    cardRedEter.SetEter(true);
+    PlayingCard cardRedEter = GenerateEterCard(RED);
     PlayingCardsRed.emplace_back(std::move(cardRedEter));
 
     //Set how much space we have for our deck, the whole screen - padding top/bottom
