@@ -1752,6 +1752,10 @@ void GameBoard::SaveState(nlohmann::json& json) const {
         }
     };
 
+    if (m_explosion.get()) {
+        m_explosion->SaveExplosionToJson(json["explosionCard"]);
+    }
+
     serializePlayer(m_playerBlue, json["PlayerBlue"]);
     serializePlayer(m_playerRed, json["PlayerRed"]);
 }
@@ -1902,8 +1906,15 @@ void GameBoard::LoadState(const nlohmann::json& json) {
     if (json.contains("blockedRow")) {
         m_blockedRow = json["blockedRow"].get<short>();
     }
+
     if (json.contains("isMinXFixed")) {
         m_isMinXFixed = json["isMinXFixed"].get<bool>();
+    }
+
+    if (json.contains("explosionCard")) {
+        m_explosion.release();
+        m_explosion = std::make_unique<ExplosionCard>(m_tableSize);
+        m_explosion->LoadExplosionFromJson(json["explosionCard"]);
     }
 
     if (json.contains("minX")) {

@@ -943,6 +943,10 @@ void Game::LoadSave(int saveId)
     nlohmann::json save;
     inFile >> save;
 
+    if (save.contains("explosionTurn")) {
+        m_explosionTurn = save["explosionTurn"].get<bool>();
+    }
+
     if (save.contains("gameState")) {
         m_currentState = save["gameState"].get<GameState>();
     }
@@ -958,6 +962,7 @@ void Game::SaveGame()
     json save;
     
     save["gameState"] = m_currentState;
+    save["explosionTurn"] = m_explosionTurn;
 
     m_board->SaveState(save);
 

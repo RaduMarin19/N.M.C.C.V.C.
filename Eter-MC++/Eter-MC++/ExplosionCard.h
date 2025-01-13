@@ -1,6 +1,11 @@
 #include "ExplosionType.h"
 #include "Random.h"
 #include "Coordinates.h"
+#if defined linux
+#include "../Dependencies/JSON/json.hpp"
+#else
+#include "json.hpp"
+#endif
 
 #include <vector>
 
@@ -22,6 +27,10 @@ public:
 	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
 	void MakeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>>);
+	
+	void SaveExplosionToJson(nlohmann::json& json);
+
+	void LoadExplosionFromJson(const nlohmann::json& json);
 
 	ExplosionCard(const ExplosionCard&) = delete;                 
 	ExplosionCard& operator=(const ExplosionCard&) = delete;       
