@@ -35,6 +35,10 @@ class GameBoard
 
 public:
     using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
+    using DeckType = std::deque<PlayingCard>;
+    using PlayingBoard = std::unordered_map<Coordinates, DeckType, Coordinates::Hash>;
+    using GamePositions = std::unordered_set<Coordinates, Coordinates::Hash>;
+
 public:
 
     GameBoard(SDL_Renderer* renderer);
@@ -53,11 +57,11 @@ public:
     unsigned short NextCardId();
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
 
-    const std::unordered_set<Coordinates, Coordinates::Hash>& GetPossiblePositions();
+    const GamePositions& GetPossiblePositions();
     const std::vector<const PlayingCard*> GetPlayedCards() const;
-    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GetPlayedPositions();
-    std::deque<PlayingCard>& GetCardsAtPosition(const Coordinates& position);
-    std::unordered_set<Coordinates, Coordinates::Hash>& GetHoles();
+    std::unordered_map<Coordinates, DeckType, Coordinates::Hash>& GetPlayedPositions();
+    DeckType& GetCardsAtPosition(const Coordinates& position);
+    GamePositions& GetHoles();
     bool ValidateBoardAfterEffect(ExplosionCard *card);
     void SetValidatedExplosion(ExplosionCard *card);
     ExplosionCard* GetValidatedExplosion();
@@ -148,10 +152,10 @@ private:
 
     static const unsigned int m_playerHandPadding{ 30 };
 
-    std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash> m_positions;
-    std::unordered_set<Coordinates, Coordinates::Hash> m_possiblePositions;
-    std::unordered_set<Coordinates, Coordinates::Hash> m_holes;
-    std::unordered_set<Coordinates, Coordinates::Hash> m_positionsToErase; //keeps positions to erase in the next turn
+    PlayingBoard m_positions;
+    GamePositions m_possiblePositions;
+    GamePositions m_holes;
+    GamePositions m_positionsToErase; //keeps positions to erase in the next turn
     short m_blockedRow;
     Coordinates* m_boundPosition;
 

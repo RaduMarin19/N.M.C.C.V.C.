@@ -351,7 +351,7 @@ bool GameBoard::IsPlayingMirage() const
     return m_isPlayingMirage;
 }
 
-std::deque<PlayingCard>& GameBoard::GetCardsAtPosition(const Coordinates& position)
+GameBoard::DeckType& GameBoard::GetCardsAtPosition(const Coordinates& position)
 {
     if (m_positions.find(position) != m_positions.end())
         return m_positions.at(position);
@@ -520,7 +520,7 @@ bool GameBoard::WhirlPool(const Coordinates& position) {
     if (!m_positions.contains(left) || !m_positions.contains(right) || m_positions.contains(position))
         return false;
 
-    ExplosionCard* explosion = new ExplosionCard(GetTableSize());
+    std::unique_ptr<ExplosionCard> explosion = std::make_unique<ExplosionCard>(GetTableSize());
     std::vector <std::pair<Coordinates, ExplosionType>> ex;
 
     ex.push_back({ GetUnTranslatedPosition(left), ExplosionType::HOLE });
@@ -529,7 +529,7 @@ bool GameBoard::WhirlPool(const Coordinates& position) {
 
     explosion->MakeExplosionFromVector(ex);
 
-    if (!ValidateBoardAfterEffect(explosion))
+    if (!ValidateBoardAfterEffect(explosion.get()))
         return false;
 
     auto& leftCard = m_positions.at(left);
@@ -658,7 +658,7 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
 }
 
 void GameBoard::MoveStack(const Coordinates& target, const Coordinates& emptyPosition) {
-    std::deque<PlayingCard> cards;
+    DeckType cards;
     m_positions.emplace(emptyPosition, cards);          //creating dummy stack
     std::swap(GetCardsAtPosition(emptyPosition), GetCardsAtPosition(target));   //swapping the stack
     m_positions.erase(target);      //deleting initial stack position(now empty, swapped with dummy stack)
@@ -836,7 +836,7 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
         if(m_boundPosition!=nullptr && *m_boundPosition != newCardCoords){      //if there is a bound position then only place card on that one
             return IN_HAND;
         }
-        std::deque<PlayingCard> cards;
+        DeckType cards;
         cards.emplace_back(otherCard);
         m_positions.emplace(newCardCoords, cards);
         if (m_boundPosition != nullptr) {           //delete it and set it to null if there is any bound position
@@ -1338,7 +1338,7 @@ Coordinates GameBoard::GetUnTranslatedPosition(const Coordinates& position) {
     return {m_maxX - position.GetX(), m_maxY - position.GetY()};
 }
 
-const std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetPossiblePositions() {
+const GameBoard::GamePositions& GameBoard::GetPossiblePositions() {
     return this->m_possiblePositions;
 }
 
@@ -1352,12 +1352,12 @@ const std::vector<const PlayingCard*> GameBoard::GetPlayedCards() const {
     return playingCards;
 }
 
-std::unordered_map<Coordinates, std::deque<PlayingCard>, Coordinates::Hash>& GameBoard::GetPlayedPositions()
+GameBoard::PlayingBoard& GameBoard::GetPlayedPositions()
 {
     return m_positions;
 }
 
-std::unordered_set<Coordinates, Coordinates::Hash>& GameBoard::GetHoles()
+GameBoard::GamePositions& GameBoard::GetHoles()
 {
     return m_holes;
 }
@@ -1400,7 +1400,7 @@ bool GameBoard::ValidateBoardAfterEffect(ExplosionCard *card) {
                 }
                 else if (explosionEffects[i][j] == ExplosionType::ADD) {
                     PlayingCard dummy;
-                    std::deque<PlayingCard> dummyDeck;
+                    DeckType dummyDeck;
                     dummyDeck.emplace_back(std::move(dummy));
                     boardState.insert({ position , dummyDeck });
                 }
@@ -1770,7 +1770,7 @@ void GameBoard::LoadState(const nlohmann::json& json) {
             position.SetX(playedPosition["position"]["x"].get<int>());
             position.SetY(playedPosition["position"]["y"].get<int>());
 
-            std::deque<PlayingCard> cards;
+            DeckType cards;
             for (const auto& cardJson : playedPosition["cards"]) {
                 PlayingCard card;
                 card.SetBoardPosition({

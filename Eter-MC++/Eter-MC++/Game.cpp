@@ -406,11 +406,11 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
 
                 if (size > 1) {                                                      //if the position has >= 2 cards
                     Coordinates unTranslatedPosition{m_board->GetUnTranslatedPosition(possiblePosition)};
-                    ExplosionCard* explosion = new ExplosionCard(m_board->GetTableSize());
+                    std::unique_ptr<ExplosionCard> explosion = std::make_unique<ExplosionCard>(m_board->GetTableSize());
                     std::vector <std::pair<Coordinates,ExplosionType>> ex;
                     ex.push_back({ unTranslatedPosition,ExplosionType::HOLE });
                     explosion->MakeExplosionFromVector(ex);
-                    if (m_board->ValidateBoardAfterEffect(explosion)) {
+                    if (m_board->ValidateBoardAfterEffect(explosion.get())) {
                         while (size) {                                   //delete all cards from the game
                             m_board->DeleteCardAtPosition(possiblePosition);
                             --size;
@@ -573,7 +573,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                     m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
                 }
                 else {
-                    std::deque<PlayingCard>* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
+                    GameBoard::DeckType* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
                     if (m_selectedStack != otherStack) {
                         std::swap(*m_selectedStack, m_board->GetCardsAtPosition(possiblePosition));         //swapping the stacks
                         m_board->RemoveSpell(spellCard);         //then remove the spell card
