@@ -10,7 +10,7 @@
 #include "PlayingCard.h"
 #include "config.h"
 
-#include<iostream>
+#include <iostream>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
 #include <string>

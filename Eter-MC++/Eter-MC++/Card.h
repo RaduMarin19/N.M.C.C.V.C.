@@ -24,7 +24,6 @@ public:
 	void SetTexture(CardTexture* texture);
 	void SetCoordinates(const Coordinates& position);
 
-
 	bool operator==(const Card& other) const;
 protected:
 	Coordinates m_position;

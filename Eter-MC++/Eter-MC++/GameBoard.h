@@ -22,17 +22,12 @@
 
 #include <unordered_map>
 #include <unordered_set>
-#include <list>
-#include <stack>
-#include <array>
 #include <vector>
 #include <iostream>
 #include <cstdlib>
-#include <variant>
 
 class GameBoard
 {
-
 public:
     using SpellsType = std::optional<std::pair<std::unique_ptr<SpellCard>, std::unique_ptr<SpellCard>>>;
     using DeckType = std::deque<PlayingCard>;

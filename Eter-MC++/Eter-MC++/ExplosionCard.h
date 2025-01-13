@@ -1,9 +1,8 @@
 #include "ExplosionType.h"
 #include "Random.h"
+#include "Coordinates.h"
 
-#include <unordered_map>
-
-class Coordinates;
+#include <vector>
 
 class ExplosionCard
 {
@@ -22,8 +21,6 @@ public:
 
 	const std::vector<std::vector<ExplosionType>>& GetExplosionMask() const;
 
-	short GetAffectedPosCounter() const;
-
 	void MakeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>>);
 
 	ExplosionCard(const ExplosionCard&) = delete;                 
@@ -33,6 +30,5 @@ public:
 
 private:
 	short m_tableSize;
-	short m_affectedPosCounter;
 	std::vector<std::vector<ExplosionType>> m_explosionMask;
 };

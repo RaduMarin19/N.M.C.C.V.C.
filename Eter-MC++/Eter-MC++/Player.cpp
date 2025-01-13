@@ -145,8 +145,6 @@ void Player::SetIsPlayingAshes(bool isPlayingAshes)
 	m_isPlayingAshes = isPlayingAshes;
 }
 
-
-
 bool Player::HasPlayedIllusion() const
 {
 	return m_hasPlayedIllusion;
