@@ -284,7 +284,7 @@ void GameBoard::CheckStatus(GameState& gameState) {
         return;
 }
 
-bool GameBoard::ChangeCardValue(PlayingCard& card,short valueChange) {
+bool GameBoard::ChangeCardValue(PlayingCard& card, short valueChange) {
     if (card.IsEter())      //cannot increase the value on an eter card
         return false;
 
@@ -645,7 +645,7 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             Coordinates newPosition{ position.GetX() + i,position.GetY() + j };
-            if (i != 0 && j != 0 &&!m_positions.contains(newPosition) && m_possiblePositions.contains(position)) {
+            if (i != 0 && j != 0 && !m_positions.contains(newPosition) && m_possiblePositions.contains(position)) {
                 emptyPosition = newPosition;
                 break;
             }
@@ -714,6 +714,23 @@ GameBoard::SpellsType& GameBoard::GetSpells()
 void GameBoard::InitializeExplosion() {
     m_explosion = std::make_unique<ExplosionCard>(m_tableSize);
     m_explosion->InitializeExplosionCard();
+}
+
+PlayingCard GameBoard::GenerateEterCard(Color color)
+{
+    PlayingCard eterCard;
+
+    if (color == BLUE) {
+        eterCard = { { 0, 0 }, &m_blueCardTextures[0], 1, NextCardId(), BLUE };
+    }
+
+    if (color == RED) {
+        eterCard = { { 0, 0 }, &m_redCardTextures[0], 1, NextCardId(), RED };
+    }
+
+    eterCard.SetEter(true);
+
+    return std::move(eterCard);
 }
 
 void GameBoard::PrintExplosionMask() {
@@ -1235,7 +1252,7 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
-    int randomIndex1 = 0/*Random::Get(0, 7)*/;
+    int randomIndex1 = 5/*Random::Get(0, 7)*/;
     int randomIndex2 = 7/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomIndex1,randomIndex2);

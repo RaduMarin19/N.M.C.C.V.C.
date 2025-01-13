@@ -293,9 +293,21 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
             m_board->ReturnCardToDeck(*wizardCard);
         }
         break;
-    case WizardType::GAIN_ETHER_CARD:
+    case WizardType::GAIN_ETER_CARD:
+    {
+        if (!m_board->GetPlayedPositions().contains(possiblePosition)) {
 
+            PlayingCard eterCard = m_board->GenerateEterCard(player.GetColor());
+            eterCard.SetBoardPosition(possiblePosition);
+            m_board->PushNewCard(eterCard);
+            m_board->ChangeTurn();
+            player.RemoveWizard();
+        }
+        else {
+            m_board->ReturnCardToDeck(*wizardCard);
+        }
         break;
+    }
     case WizardType::MOVE_OPPONENT_STACK:
         try {
             if (m_board->GetCardColorAtPosition(possiblePosition) != player.GetColor() && m_board->MoveStackToEmptyPosition(possiblePosition)) {

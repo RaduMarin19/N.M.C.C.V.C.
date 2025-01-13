@@ -134,6 +134,8 @@ public:
     SpellsType& GetSpells();
     void InitializeExplosion();
 
+    PlayingCard GenerateEterCard(Color color);
+
     void SaveState(nlohmann::json& json) const;
     void LoadState(const nlohmann::json& json);
     void Clear();
