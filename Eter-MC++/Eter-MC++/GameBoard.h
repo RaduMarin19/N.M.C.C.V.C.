@@ -208,6 +208,7 @@ private:
     void GenerateTrainingCards();
     void GenerateElementalCards();
     void GenerateMageDuelCards();
+    void GenerateMageElementalCards();
 
     void InitializeWizard(Player& player, short wizardId);
     void InitializeWizardCards(short randomIndex1, short randomIndex2);
