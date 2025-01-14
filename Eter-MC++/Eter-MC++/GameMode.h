@@ -5,5 +5,6 @@ enum class GameMode : short
     MageDuel,
     Elemental,
     Tournament,
-    QuickMode
+    QuickMode,
+    MageElemental
 };
