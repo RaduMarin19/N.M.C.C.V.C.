@@ -40,13 +40,14 @@ bool GameBoard::CheckRows(GameState& gameState) {
 
         for (int i = m_minX; i <= m_maxX; ++i)
         {
-            if (m_positions.find({ i, j }) != m_positions.end())
+            Coordinates position{ i,j };
+            if (m_positions.find(position) != m_positions.end() && m_positions.at(position).size()>0) 
             {
-                if (m_positions.find({ i, j })->second.back().GetColor() == RED)
+                if (m_positions.find(position)->second.back().GetColor() == RED)
                 {
                     stateRow++;
                 }
-                else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
+                else if (m_positions.find(position)->second.back().GetColor() == BLUE)
                 {
                     stateRow--;
                 }
@@ -74,13 +75,14 @@ bool GameBoard::CheckColumns(GameState& gameState)
 
         for (int j = m_minY; j <= m_maxY; ++j)
         {
-            if (m_positions.find({ i, j }) != m_positions.end())
+            Coordinates position{ i,j };
+            if (m_positions.find(position) != m_positions.end()&& m_positions.at(position).size()>0)
             {
-                if (m_positions.find({ i, j })->second.back().GetColor() == RED)
+                if (m_positions.find(position)->second.back().GetColor() == RED)
                 {
                     stateCol++;
                 }
-                else if (m_positions.find({ i, j })->second.back().GetColor() == BLUE)
+                else if (m_positions.find(position)->second.back().GetColor() == BLUE)
                 {
                     stateCol--;
                 }
@@ -110,9 +112,10 @@ bool GameBoard::CheckDiagonals(GameState& gameState)
 
     for (int i = 0; i < m_tableSize; ++i)
     {
-        if (m_positions.find({ indexI + i, indexJ + i }) != m_positions.end())
+        Coordinates position{ indexI + i, indexJ + i };
+        if (m_positions.find(position) != m_positions.end() && m_positions.at(position).size()>0)
         {
-            if (m_positions.find({ indexI + i, indexJ + i })->second.back().GetColor() == BLUE)
+            if (m_positions.find(position)->second.back().GetColor() == BLUE)
                 redPlayerWon = false;
             else
                 bluePlayerWon = false;
@@ -143,9 +146,10 @@ bool GameBoard::CheckDiagonals(GameState& gameState)
 
     for (int i = 0; i < m_tableSize; ++i)
     {
-        if (m_positions.find({ indexI + i, indexJ - i }) != m_positions.end())
+        Coordinates position{ indexI + i, indexJ - i };
+        if (m_positions.find(position) != m_positions.end() && m_positions.at(position).size() > 0)
         {
-            if (m_positions.find({ indexI + i, indexJ - i })->second.back().GetColor() == BLUE)
+            if (m_positions.find(position)->second.back().GetColor() == BLUE)
                 redPlayerWon = false;
             else
                 bluePlayerWon = false;
@@ -308,7 +312,7 @@ void GameBoard::ResetCardValue(PlayingCard& card) {
 }
 
 void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
-    if (m_positions.find(boardPosition) != m_positions.end() && !m_positions[boardPosition].empty())  // temporary: delete after we do explosion checks
+    if (m_positions.contains(boardPosition) && !m_positions[boardPosition].empty() && !m_positions[boardPosition].back().IsEter())
     {
         PlayingCard& card = m_positions[boardPosition].back();
         ResetCardValue(card);
@@ -325,7 +329,7 @@ void GameBoard::DeleteCardAtPosition(const Coordinates& boardPosition) {
 }
 
 void GameBoard::CreateHoleAtPosition(const Coordinates& boardPosition) {
-    if(m_positions.contains(boardPosition))
+    if(m_positions.contains(boardPosition) && !m_positions[boardPosition].back().IsEter())
     {
         m_positions[boardPosition].back().SetIllusion(false);
 
@@ -372,13 +376,15 @@ void GameBoard::ReturnCardAtPosition(PlayingCard& card) {
 
 void GameBoard::ReturnTopCardAtPosition(const Coordinates& boardPosition) {
     auto it = m_positions.find(boardPosition);
-    if (it != m_positions.end()&&it->second.size()>0){
+    if (it != m_positions.end()&&it->second.size()>0 && !it->second.back().IsEter()){
           PlayingCard& card = it->second.back();
           ReturnCardAtPosition(card);
 
           m_positions[boardPosition].pop_back();
-          if (m_positions[boardPosition].size() == 0)      //if there isnt any card in the deque anymore then remove the position
-               m_positionsToErase.insert(boardPosition);
+          if (m_positions[boardPosition].size() == 0) {     //if there isnt any card in the deque anymore then remove the position
+              m_positionsToErase.insert(boardPosition);
+              m_shouldResetPositions = true;
+          }
     }
 }
 
@@ -392,6 +398,8 @@ bool GameBoard::RemoveRow(short column, Color color)
         if (it != m_positions.end()) {
             const auto& deck = it->second;
             if (!deck.empty()) {
+                if (deck.back().IsEter())
+                    return false; //cannot remove a row with a eter card on it
                 ++count;
                 if (deck.back().GetColor() == color) {
                     foundColor = true;
@@ -476,11 +484,11 @@ bool GameBoard::Hurricane(const Coordinates& position) {
     
     for (short x = m_minX; x <= m_maxX; ++x) {
         Coordinates temp{ x,row };
-        if (m_positions.contains(temp) && m_positions.at(temp).size() > 0)
-            foundDecks++;                       
+        if (!m_positions.contains(temp))
+            return false;
+        if (m_positions.at(temp).size() == 0 || m_positions.at(temp).back().IsEter())
+            return false;
     }
-    if (foundDecks != m_tableSize)          //if we haven`t found 4 decks of cards on the desired row then we cannot perform
-        return false;   
 
     while (!m_positions[position].empty()) {
         ReturnTopCardAtPosition(position);          //returning the cards on the row that 'falls'
@@ -518,6 +526,9 @@ bool GameBoard::WhirlPool(const Coordinates& position) {
     Coordinates right{ position.GetX() - 1, position.GetY() };
 
     if (!m_positions.contains(left) || !m_positions.contains(right) || m_positions.contains(position))
+        return false;
+
+    if (m_positions[left].back().IsEter() || m_positions[right].back().IsEter())
         return false;
 
     std::unique_ptr<ExplosionCard> explosion = std::make_unique<ExplosionCard>(GetTableSize());
@@ -629,6 +640,9 @@ bool GameBoard::Flurry(const Coordinates& position) {
                 if (!m_positions.contains(position)) {
                     return false;
                 }
+                if (m_positions[position].back().IsEter()) {
+                    return false;
+                }
 
                 if (TryMoveCard(XPosition) || TryMoveCard(YPosition)) {
                     return true;
@@ -641,6 +655,9 @@ bool GameBoard::Flurry(const Coordinates& position) {
 
 bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
 {
+    if (m_positions.contains(position) && m_positions[position].back().IsEter())
+        return false;
+
     Coordinates emptyPosition(100,100);
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
@@ -658,6 +675,10 @@ bool GameBoard::MoveStackToEmptyPosition(const Coordinates& position)
 }
 
 void GameBoard::MoveStack(const Coordinates& target, const Coordinates& emptyPosition) {
+    if (!m_positions.contains(target))
+        return;
+    if (m_positions[target].back().IsEter())
+        return;
     DeckType cards;
     m_positions.emplace(emptyPosition, cards);          //creating dummy stack
     std::swap(GetCardsAtPosition(emptyPosition), GetCardsAtPosition(target));   //swapping the stack
@@ -847,10 +868,9 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
         std::cout << "Not playing card because not a possible position." << newCardCoords.GetX() << " " << newCardCoords.GetY() << "\n";
         return IN_HAND;
     }
-
-    //If there is no card at the position create a new stack and add to it
+    
     if (!m_positions.contains(newCardCoords)) {
-        if(m_boundPosition!=nullptr && *m_boundPosition != newCardCoords){      //if there is a bound position then only place card on that one
+        if (m_boundPosition != nullptr && *m_boundPosition != newCardCoords) {      //if there is a bound position then only place card on that one
             return IN_HAND;
         }
         DeckType cards;
@@ -1347,6 +1367,8 @@ bool GameBoard::MoveEdgeRow(short row) {
     std::vector<Coordinates> positionsToMove;
     for (auto& position : m_positions) {
         if (position.first.GetY() == row) {
+            if (position.second.size() == 0 || position.second.back().IsEter())
+                return false;
             occupiedPositions += 1;
             positionsToMove.push_back(position.first);
         }   
@@ -1471,6 +1493,9 @@ bool GameBoard::ValidateBoardAfterEffect(ExplosionCard *card) {
                 short translatedX = m_maxX - i;
                 short translatedY = m_maxY - j;
                 Coordinates position{ translatedX,translatedY };
+                if (boardState.contains(position) && boardState[position].back().IsEter())
+                    continue;
+
                 if (explosionEffects[i][j] == ExplosionType::DELETE) {
                     if(boardState.contains(position)) {
                         auto it = boardState.find(position);

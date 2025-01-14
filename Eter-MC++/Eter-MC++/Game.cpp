@@ -214,6 +214,17 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
 void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     wizardCard->SetCoordinates({ renderRect.x, renderRect.y });
 
+    try {
+        auto& cards = m_board->GetCardsAtPosition(possiblePosition);
+        if (cards.back().IsEter()) {
+            m_board->ReturnCardToDeck(*wizardCard);
+            return;
+        }
+    }
+    catch (std::runtime_error& e) {
+        //nothing
+    }
+
     WizardType wizard = wizardCard->GetWizard();
 
     switch (wizard) {
@@ -323,7 +334,19 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
 void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     spellCard->SetCoordinates({ renderRect.x, renderRect.y });
 
+    try {
+        auto& cards = m_board->GetCardsAtPosition(possiblePosition);
+        if (cards.back().IsEter()) {
+            m_board->ReturnCardToDeck(*spellCard);
+            return;
+        }
+    }
+    catch (std::runtime_error& e) {
+        //nothing
+    }
+
     ElementalType spell = spellCard->GetSpell(); //getting the spell type
+
 
     switch (spell) {
 
@@ -345,9 +368,19 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                             break;
                         }
                     }
-                    if(isValid) {
-                        this->m_board->DeleteCardAtPosition(card.GetBoardPosition());
-                        m_board->RemoveSpell(spellCard);
+                    if (isValid) {
+                        std::unique_ptr<ExplosionCard> expl = std::make_unique<ExplosionCard>(m_board->GetTableSize());
+                        std::vector<std::pair<Coordinates, ExplosionType>> ex;
+                        ex.push_back({m_board->GetUnTranslatedPosition(card.GetBoardPosition()), ExplosionType::DELETE});
+                        expl->MakeExplosionFromVector(ex);
+                        if (m_board->ValidateBoardAfterEffect(expl.get()) && !card.IsEter()) {
+                            this->m_board->DeleteCardAtPosition(card.GetBoardPosition());
+                            m_board->RemoveSpell(spellCard);
+                        }
+                        else
+                        {
+                            m_board->ReturnCardToDeck(*spellCard);
+                        }
                         return;
                     }
                     enemyPlayedCards.pop();
@@ -567,10 +600,12 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                 if (m_selectedStack == nullptr) {
                     m_selectedStack = &m_board->GetCardsAtPosition(possiblePosition); //getting the first stack selected
                     m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                    if (m_selectedStack->back().IsEter())
+                        m_selectedStack = nullptr;
                 }
                 else {
                     GameBoard::DeckType* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
-                    if (m_selectedStack != otherStack) {
+                    if (m_selectedStack != otherStack && !otherStack->back().IsEter()) {
                         std::swap(*m_selectedStack, m_board->GetCardsAtPosition(possiblePosition));         //swapping the stacks
                         m_board->RemoveSpell(spellCard);         //then remove the spell card
                         m_board->ChangeTurn();
@@ -623,7 +658,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             Color playerColor = player.GetColor();
             try {
                 PlayingCard& topCard = m_board->GetCardsAtPosition(possiblePosition).back();
-                if (topCard.GetColor() == playerColor&&topCard.IsIllusion()) {
+                if (topCard.GetColor() == playerColor && topCard.IsIllusion()) {
                     m_board->SetIsPlayingMirage(true);
                     m_board->SetBoundPosition(possiblePosition);
                     m_board->RemoveSpell(spellCard); //then remove the spell card
