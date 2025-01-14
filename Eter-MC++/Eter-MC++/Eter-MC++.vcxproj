@@ -167,7 +167,6 @@
     <ClInclude Include="ExplosionType.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameBoard.h" />
-    <ClInclude Include="GameMode.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Player.h" />

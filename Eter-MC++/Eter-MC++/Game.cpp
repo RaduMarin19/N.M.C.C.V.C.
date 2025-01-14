@@ -2,7 +2,7 @@
 #include <thread>
 
 Game::Game()
-    : m_currentState(WELCOME_SCREEN) {
+    : m_currentState(GameState::WELCOME_SCREEN) {
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
     m_selectedStack = nullptr;
@@ -58,123 +58,33 @@ void Game::IRun() {
             // Clear screen
             SDL_RenderClear(m_painter->GetRenderer());
 
-            if (m_currentState == WELCOME_SCREEN && !drawThisFrame) {
+            //if (drawThisFrame) continue;
 
-                //Draw the login page until user moves to the next page
-                if (m_painter->DrawLoginPage()) {
-                    m_currentState = MODE_SELECTION;
-                    drawThisFrame = true;
+            switch (m_currentState) {
+                case GameState::WELCOME_SCREEN:{
+                    if (m_painter->DrawLoginPage()) {
+                        m_currentState = GameState::MODE_SELECTION;
+                    }
+                    break;
+                }
+                case GameState::MODE_SELECTION: {
+                    HandleModeSelection();
+                    break;
+                }
+                case GameState::TOURNAMENT: {
+                     HandleTournamentSelection();
+                     break;
                 }
             }
 
-            if (m_currentState == MODE_SELECTION && !drawThisFrame) {
-
-                //Draw the mode selection menu
-                m_painter->DrawModeSelection();
-
-                bool loadSave = false;
-                m_painter->DrawButton(loadSave, { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Load Save", 14);
-                if (loadSave) {
-                    LoadSave(3);
-                }
-
-                //Check which button the player has pressed, and initialize the cards accordingly
-                if (m_painter->IsTrainingActive()) {
-                    m_currentState = TRAINING_MODE;
-                    m_board->SetGameMode(GameMode::Training);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                    m_board->SetTable(3);
-                    m_board->InitializeExplosion();
-                }
-                else if (m_painter->IsElementalActive())
-                {
-                    m_currentState = ELEMENTAL_BATTLE;
-                    m_board->SetGameMode(GameMode::Elemental);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                    m_board->SetTable(4);
-                    m_board->InitializeExplosion();
-                }
-                else if (m_painter->IsMageDuelActive())
-                {
-                    m_currentState = MAGE_DUEL;
-                    m_board->SetGameMode(GameMode::MageDuel);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                    m_board->SetTable(4);
-                    m_board->InitializeExplosion();
-                }
-                else if (m_painter->IsTournamentActive())
-                {
-                    m_currentState = TOURNAMENT;
-					drawThisFrame = true;
-                    m_board->SetTable(4);
-                    m_board->InitializeExplosion();
-                }
-                else if (m_painter->IsQuickMatchActive())
-                {
-                    m_currentState = QUICK_MODE;
-					m_board->SetGameMode(GameMode::QuickMode);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                    m_board->SetTable(3);
-                    m_board->InitializeExplosion();
-                }
-            }
-
-            if (m_currentState == TOURNAMENT && !drawThisFrame)
-            {
-                m_painter->DrawTournamentModeSelection();
-                if (m_painter->IsTrainingActive())
-                {
-                    m_currentState = TRAINING_MODE;
-                    m_board->SetGameMode(GameMode::Training);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
-                else if (m_painter->IsElementalActive())
-                {
-                    m_currentState = ELEMENTAL_BATTLE;
-                    m_board->SetGameMode(GameMode::Elemental);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
-                else if (m_painter->IsMageDuelActive())
-                {
-                    m_currentState = MAGE_DUEL;
-                    m_board->SetGameMode(GameMode::MageDuel);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
-                else if (m_painter->IsMageElementalActive())
-                {
-                    m_currentState = MAGE_ELEMENTAL;
-                    m_board->SetGameMode(GameMode::MageElemental);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
-            }
-
-            if (m_currentState == RED_PLAYER_WON || m_currentState == BLUE_PLAYER_WON || m_currentState == TIE) {
-                std::string message = (m_currentState == RED_PLAYER_WON) ? "RED player WON!" :
-                    (m_currentState == BLUE_PLAYER_WON) ? "Blue player WON!" : "TIE!";
-                m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
-
-                bool isPressed = false;
-                m_painter->DrawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
-                if (isPressed) {
-                    m_currentState = MODE_SELECTION;
-                    drawThisFrame = true;
-                    m_painter->ResetGameModes();
-                    m_board->Clear();
-                    m_explosionTurn = false;
-                }
+            if (m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE) {
+                HandleWin();
             }
             
 
-            if (m_currentState == TRAINING_MODE || m_currentState == ELEMENTAL_BATTLE ||
-                m_currentState == MAGE_DUEL || m_currentState == TOURNAMENT || m_currentState == QUICK_MODE || m_currentState == MAGE_ELEMENTAL) {
+            if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
+                m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT || 
+                m_currentState == GameState::QUICK_MODE || m_currentState == GameState::MAGE_ELEMENTAL) {
                 HandleBoardState();
             }
 
@@ -188,6 +98,67 @@ void Game::IRun() {
         }
         drawThisFrame = false;
     }
+}
+
+void Game::HandleTournamentSelection() {
+    m_painter->DrawTournamentModeSelection(m_currentState);
+
+    if (m_currentState != GameState::TOURNAMENT) {
+        if (m_currentState == GameState::TRAINING_MODE)
+            m_board->SetTable(3);
+        else
+            m_board->SetTable(4);
+
+        m_board->GeneratePlayerCards(m_currentState);
+        m_board->InitializeExplosion();
+    }
+}
+
+void Game::HandleModeSelection() {
+    m_painter->DrawModeSelection(m_currentState);
+
+    bool loadSave = false;
+    m_painter->DrawButton(loadSave, { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Load Save", 14);
+    if (loadSave) {
+        LoadSave();
+    }
+    bool switchedState = false;
+
+    switch (m_currentState) {
+    case GameState::TRAINING_MODE:
+        m_board->SetTable(3);
+        switchedState = true;
+        break;
+    case GameState::MAGE_DUEL:
+        m_board->SetTable(4);
+        switchedState = true;
+        break;
+    case GameState::ELEMENTAL_BATTLE:
+        m_board->SetTable(4);
+        switchedState = true;
+        break;
+    }
+
+    if (switchedState == true) {
+        m_board->GeneratePlayerCards(m_currentState);
+        m_board->InitializeExplosion();
+    }
+}
+
+bool Game::HandleWin(){
+    std::string message = (m_currentState == GameState::RED_PLAYER_WON) ? "RED player WON!" :
+        (m_currentState == GameState::BLUE_PLAYER_WON) ? "Blue player WON!" : "TIE!";
+    m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
+
+    bool isPressed = false;
+    m_painter->DrawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
+    if (isPressed) {
+        m_currentState = GameState::MODE_SELECTION;
+        m_board->Clear();
+        m_explosionTurn = false;
+        return true;
+    }
+    return false;
 }
 
 void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
@@ -721,10 +692,10 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
 
 void Game::HandleBoardState() {
 
-    if (m_currentState == TOURNAMENT)
+    if (m_currentState == GameState::TOURNAMENT)
         return;
 
-    if (m_currentState == TRAINING_MODE || m_currentState == QUICK_MODE)
+    if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::QUICK_MODE)
         m_board->SetTable(3);
     else
         m_board->SetTable(4);
@@ -942,9 +913,8 @@ bool Game::ExplosionTurn(){
     return false;
 }
 
-void Game::LoadSave(int saveId)
+void Game::LoadSave()
 {
-    m_board->GeneratePlayerCards();
     std::string filename = "save_game.json"; 
 
     std::ifstream inFile(filename);
@@ -962,6 +932,7 @@ void Game::LoadSave(int saveId)
 
     if (save.contains("gameState")) {
         m_currentState = save["gameState"].get<GameState>();
+        m_board->GeneratePlayerCards(m_currentState);
     }
 
     m_board->LoadState(save);

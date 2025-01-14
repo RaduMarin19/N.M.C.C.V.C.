@@ -12,7 +12,6 @@
 #include "config.h"
 #include "SpellCard.h"
 #include "ElementalType.h"
-#include "GameMode.h"
 #if defined linux
 #include "../Dependencies/JSON/json.hpp"
 #else
@@ -46,8 +45,7 @@ public:
     CardStatus PushNewCard(const PlayingCard& otherCard);
     void SetTable(short tableSize);
     short GetTableSize() const;
-    void SetGameMode(const GameMode& mode);
-    void GeneratePlayerCards();
+    void GeneratePlayerCards(GameState& gameState);
 
     unsigned short NextCardId();
     const Color GetCardColorAtPosition(const Coordinates& boardPosition) const;
@@ -139,8 +137,6 @@ public:
     void SaveState(nlohmann::json& json) const;
     void LoadState(const nlohmann::json& json);
     void Clear();
-protected:
-    GameMode m_gameMode;
 
 private:
     unsigned short m_cardId{ 0 };
@@ -200,7 +196,6 @@ private:
     bool CheckDiagonals(GameState& gameState);
     bool CheckScore(GameState& gameState);
 
-
     void ReturnCardAtPosition(PlayingCard& card);
 
     void LoadTextures(SDL_Renderer* renderer);
@@ -212,5 +207,5 @@ private:
 
     void InitializeWizard(Player& player, short wizardId);
     void InitializeWizardCards(short randomIndex1, short randomIndex2);
-    void InitializeSpellCards(short spellCardId1,short spellCardId2);
+    void InitializeSpellCards(short spellCardId1,short spellCardId2,int offset);
 };

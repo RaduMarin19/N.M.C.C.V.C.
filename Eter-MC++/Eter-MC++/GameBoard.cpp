@@ -54,12 +54,12 @@ bool GameBoard::CheckRows(GameState& gameState) {
         }
         if (stateRow == m_tableSize)
         {
-            gameState = RED_PLAYER_WON;
+            gameState = GameState::RED_PLAYER_WON;
             return true;
         }
         if (stateRow == -m_tableSize)
         {
-            gameState = BLUE_PLAYER_WON;
+            gameState = GameState::BLUE_PLAYER_WON;
             return true;
         }
     }
@@ -88,12 +88,12 @@ bool GameBoard::CheckColumns(GameState& gameState)
         }
         if (stateCol == m_tableSize)
         {
-            gameState = RED_PLAYER_WON;
+            gameState = GameState::RED_PLAYER_WON;
             return true;
         }
         if (stateCol == -m_tableSize)
         {
-            gameState = BLUE_PLAYER_WON;
+            gameState = GameState::BLUE_PLAYER_WON;
             return true;
         }
     }
@@ -126,12 +126,12 @@ bool GameBoard::CheckDiagonals(GameState& gameState)
 
     if (redPlayerWon == true)
     {
-        gameState = RED_PLAYER_WON;
+        gameState = GameState::RED_PLAYER_WON;
         return true;
     }
     if (bluePlayerWon == true)
     {
-        gameState = BLUE_PLAYER_WON;
+        gameState = GameState::BLUE_PLAYER_WON;
         return true;
     }
 
@@ -159,12 +159,12 @@ bool GameBoard::CheckDiagonals(GameState& gameState)
 
     if (redPlayerWon == true)
     {
-        gameState = RED_PLAYER_WON;
+        gameState = GameState::RED_PLAYER_WON;
         return true;
     }
     if (bluePlayerWon == true)
     {
-        gameState = BLUE_PLAYER_WON;
+        gameState = GameState::BLUE_PLAYER_WON;
         return true;
     }
     return false;
@@ -253,16 +253,16 @@ bool GameBoard::CheckScore(GameState& gameState) {
             }
         }
         if (redScore > blueScore) {
-            gameState = RED_PLAYER_WON;
+            gameState = GameState::RED_PLAYER_WON;
             return true;
         }
         if (redScore < blueScore) {
-            gameState = BLUE_PLAYER_WON;
+            gameState = GameState::BLUE_PLAYER_WON;
             return true;
         }
 
         if (redScore == blueScore) {
-            gameState = TIE;
+            gameState = GameState::TIE;
             return true;
         }
     }
@@ -982,10 +982,6 @@ short GameBoard::GetTableSize() const
     return m_tableSize;
 }
 
-void GameBoard::SetGameMode(const GameMode& mode) {
-    this->m_gameMode = mode;
-}
-
 void GameBoard::Clear() {
     m_positions.clear();
     m_possiblePositions.clear();
@@ -1164,7 +1160,7 @@ void GameBoard::GenerateElementalCards() {
     int randomIndex1 = 1/*Random::Get(0, 23)*/;
     int randomIndex2 = 19/*Random::Get(0, 23)*/;
 
-    InitializeSpellCards(randomIndex1, randomIndex2);
+    InitializeSpellCards(randomIndex1, randomIndex2,0);
 
     //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(PlayingCardsBlue);
@@ -1262,7 +1258,6 @@ void GameBoard::GenerateMageElementalCards()
     std::vector<PlayingCard> PlayingCardsBlue;
     std::vector<PlayingCard> PlayingCardsRed;
 
-
     for (int i = 0; i < 2; i++) {
         //Fill each deck with cards
         PlayingCard cardBlue({ 0, 0 }, &m_blueCardTextures[1], 1, NextCardId(), BLUE);
@@ -1339,7 +1334,7 @@ void GameBoard::GenerateMageElementalCards()
     int randomSpellIndex2 = 7/*Random::Get(0, 7)*/;
 
     InitializeWizardCards(randomMageIndex1, randomMageIndex2);
-    InitializeSpellCards(randomSpellIndex1, randomSpellIndex2);
+    InitializeSpellCards(randomSpellIndex1, randomSpellIndex2,150);
 
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
@@ -1404,16 +1399,11 @@ void GameBoard::InitializeWizardCards(short wizardId1, short wizardId2) {
     InitializeWizard(m_playerRed, wizardId2);
 }
 
-void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
+void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2,int offset) {
     std::unique_ptr<SpellCard> cardSpell1, cardSpell2;
 
     ElementalType spell1 = static_cast<ElementalType>(spellCardId1);
     ElementalType spell2 = static_cast<ElementalType>(spellCardId2);
-
-    int offset = 0;
-
-    if (m_gameMode == GameMode::MageElemental)
-        offset = 150;
 
     if (spellCardId1 != 24)
         cardSpell1 = std::make_unique<SpellCard>(SpellCard({ static_cast<int>(textureWidth + m_playerHandPadding * 3 / 2 + offset) , m_playerHandPadding },
@@ -1427,21 +1417,19 @@ void GameBoard::InitializeSpellCards(short spellCardId1,short spellCardId2) {
     m_spells.emplace(std::make_pair(std::move(cardSpell1), std::move(cardSpell2)));
 }
 
-void GameBoard::GeneratePlayerCards() {
-    if (m_gameMode == GameMode::Training || m_gameMode == GameMode::QuickMode) {
+void GameBoard::GeneratePlayerCards(GameState& gameState) {
+    if (gameState == GameState::TRAINING_MODE) {
         GenerateTrainingCards();
     }
-    else if (m_gameMode == GameMode::Elemental) {
+    else if (gameState == GameState::ELEMENTAL_BATTLE) {
         GenerateElementalCards();
     }
-    else if (m_gameMode == GameMode::MageDuel) {
+    else if (gameState == GameState::MAGE_DUEL) {
         GenerateMageDuelCards();
     }
-    else if (m_gameMode == GameMode::MageElemental) {
+    else if (gameState == GameState::MAGE_ELEMENTAL) {
         GenerateMageElementalCards();
     }
-
-
 }
 
 Coordinates GameBoard::GetUnTranslatedPosition(const Coordinates& position) {
@@ -1755,7 +1743,6 @@ void GameBoard::SaveState(nlohmann::json& json) const {
     json["center"] = { m_centerX, m_centerY };
     json["isBluePlayer"] = m_isBluePlayer;
     json["exploded"] = m_exploded;
-    json["gameMode"] = m_gameMode;
 
     json["blockedRow"] = m_blockedRow;
     json["isMinXFixed"] = m_isMinXFixed;
@@ -1992,12 +1979,8 @@ void GameBoard::LoadState(const nlohmann::json& json) {
         deserializePlayer(m_playerRed, json["PlayerRed"]);
     }
 
-    if (json.contains("gameMode")) {
-        m_gameMode = json["gameMode"].get<GameMode>();
-    }
-
     if (json.contains("firstSpell")&&json.contains("secondSpell")) {
-        InitializeSpellCards(json["firstSpell"].get<int>(), json["secondSpell"].get<int>());
+        InitializeSpellCards(json["firstSpell"].get<int>(), json["secondSpell"].get<int>(),0);
     }
 
     if (json.contains("blockedRow")) {

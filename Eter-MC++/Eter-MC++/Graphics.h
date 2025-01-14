@@ -8,6 +8,7 @@
 
 #include "Coordinates.h"
 #include "PlayingCard.h"
+#include "GameState.h"
 #include "config.h"
 
 #include <iostream>
@@ -18,12 +19,6 @@
 
 inline struct {
     std::string playerName;
-    bool tournamentActive;
-    bool mageDuelActive;
-    bool elementalBattleActive;
-    bool mageElementalActive;
-    bool trainingActive;
-    bool quickMatchActive;
 }g_config;
 
 class Graphics {
@@ -47,24 +42,16 @@ public:
     void SetMousePos(const Coordinates& pos);
     Coordinates GetMousePos();
 
-    void ResetGameModes();
     bool IsMouseInRect(const SDL_Rect& rect) const;
 
     bool DrawLoginPage();
-    void DrawModeSelection();
-	void DrawTournamentModeSelection();
+    void DrawModeSelection(GameState& gameState);
+	void DrawTournamentModeSelection(GameState& gameState);
 
     void DrawCard(const Card& card, SDL_Texture* cardTexture);
 
-    bool IsTrainingActive();
-    bool IsMageDuelActive();
-    bool IsElementalActive();
-    bool IsTournamentActive();
-    bool IsQuickMatchActive();
-    bool IsMageElementalActive();
     bool IsPressingLeftClick();
     bool IsPressingRightClick();
-
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;

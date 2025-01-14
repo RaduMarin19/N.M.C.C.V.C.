@@ -107,9 +107,6 @@
     <ClInclude Include="ElementalType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WizardCard.h">
       <Filter>Header Files</Filter>
     </ClInclude>

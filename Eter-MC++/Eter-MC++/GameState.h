@@ -1,6 +1,6 @@
 #pragma once
 
-enum GameState : short
+enum class GameState : short
 {
 	WELCOME_SCREEN,
 	MODE_SELECTION,

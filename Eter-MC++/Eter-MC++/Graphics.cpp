@@ -303,18 +303,9 @@ Coordinates Graphics::GetMousePos() {
     return {m_mouseX, m_mouseY};
 }
 
-void Graphics::ResetGameModes()
-{
-    g_config.elementalBattleActive = false;
-    g_config.trainingActive = false;
-	g_config.mageDuelActive = false;
-	g_config.tournamentActive = false;
-	g_config.quickMatchActive = false;
-}
-
 bool Graphics::IsMouseInRect(const SDL_Rect &rect) const {
     return (m_mouseX > rect.x &&m_mouseX < rect.x + rect.w
-&& m_mouseY > rect.y && m_mouseY < rect.y + rect.h);
+        && m_mouseY > rect.y && m_mouseY < rect.y + rect.h);
 }
 
 bool Graphics::DrawLoginPage() {
@@ -338,25 +329,46 @@ bool Graphics::DrawLoginPage() {
 
 }
 
-void Graphics::DrawModeSelection() {
+void Graphics::DrawModeSelection(GameState& gameState) {
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    bool tournamentActive = false;
+    bool mageDuelActive = false;
+    bool elementalBattleActive = false;
+    bool trainingActive = false;
+    bool quickMatchActive = false;
 
     // Draw and check each button
-    DrawButton(g_config.tournamentActive,      { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
-    DrawButton(g_config.mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
-    DrawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    DrawButton(g_config.trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
-    DrawButton(g_config.quickMatchActive,      { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Quick Match", 14);
+    DrawButton(tournamentActive,      { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Tournament", 14);
+    DrawButton(mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    DrawButton(elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    DrawButton(trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    DrawButton(quickMatchActive,      { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Quick Match", 14);
+
+    if (tournamentActive) {
+        gameState = GameState::TOURNAMENT;
+    }
+    if (mageDuelActive) {
+        gameState = GameState::MAGE_DUEL;
+    }
+    if (elementalBattleActive) {
+        gameState = GameState::ELEMENTAL_BATTLE;
+    }
+    if (trainingActive) {
+        gameState = GameState::TRAINING_MODE;
+    }
+    if (quickMatchActive) {
+        gameState = GameState::QUICK_MODE;
+    }
 
     SDL_RenderPresent(m_renderer);
 }
 
-void Graphics::DrawTournamentModeSelection()
+void Graphics::DrawTournamentModeSelection(GameState& gameState)
 {
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
@@ -364,12 +376,30 @@ void Graphics::DrawTournamentModeSelection()
 
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    
+    bool mageDuelActive = false;
+    bool elementalBattleActive = false;
+    bool trainingActive = false;
+    bool mageElementalActive = false;
 
     // Draw and check each button
-    DrawButton(g_config.trainingActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Training", 14);
-    DrawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
-    DrawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    DrawButton(g_config.mageElementalActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Mage + Elemental", 14);
+    DrawButton(mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    DrawButton(elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    DrawButton(trainingActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    DrawButton(mageElementalActive, { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Mage Elemental", 14);
+
+    if (mageDuelActive) {
+        gameState = GameState::MAGE_DUEL;
+    }
+    if (elementalBattleActive) {
+        gameState = GameState::ELEMENTAL_BATTLE;
+    }
+    if (trainingActive) {
+        gameState = GameState::TRAINING_MODE;
+    }
+    if (mageElementalActive) {
+        gameState = GameState::MAGE_ELEMENTAL;
+    }
 
     SDL_RenderPresent(m_renderer);
 }
@@ -415,36 +445,6 @@ void Graphics::DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
     if (SDL_RenderCopy(m_renderer, texture, NULL, &rect) != 0) {
         std::cerr << "SDL_RenderCopy Error: " << SDL_GetError() << std::endl;
     }
-}
-
-bool Graphics::IsTrainingActive()
-{
-    return g_config.trainingActive;
-}
-
-bool Graphics::IsMageDuelActive()
-{
-    return g_config.mageDuelActive;
-}
-
-bool Graphics::IsElementalActive()
-{
-    return g_config.elementalBattleActive;
-}
-
-bool Graphics::IsTournamentActive()
-{
-    return g_config.tournamentActive;
-}
-
-bool Graphics::IsQuickMatchActive()
-{
-    return g_config.quickMatchActive;
-}
-
-bool Graphics::IsMageElementalActive()
-{
-    return g_config.mageElementalActive;
 }
 
 bool Graphics::IsPressingLeftClick() {
