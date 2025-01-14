@@ -21,7 +21,6 @@ inline struct {
     bool tournamentActive;
     bool mageDuelActive;
     bool elementalBattleActive;
-    bool mageElementalActive;
     bool trainingActive;
     bool quickMatchActive;
 }g_config;
@@ -61,7 +60,6 @@ public:
     bool IsElementalActive();
     bool IsTournamentActive();
     bool IsQuickMatchActive();
-    bool IsMageElementalActive();
     bool IsPressingLeftClick();
     bool IsPressingRightClick();
 

@@ -126,14 +126,7 @@ void Game::IRun() {
             if (m_currentState == TOURNAMENT && !drawThisFrame)
             {
                 m_painter->DrawTournamentModeSelection();
-                if (m_painter->IsTrainingActive())
-                {
-                    m_currentState = TRAINING_MODE;
-                    m_board->SetGameMode(GameMode::Training);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
-                else if (m_painter->IsElementalActive())
+                if (m_painter->IsElementalActive())
                 {
                     m_currentState = ELEMENTAL_BATTLE;
                     m_board->SetGameMode(GameMode::Elemental);
@@ -147,13 +140,7 @@ void Game::IRun() {
                     m_board->GeneratePlayerCards();
                     drawThisFrame = true;
                 }
-                else if (m_painter->IsMageElementalActive())
-                {
-                    m_currentState = MAGE_ELEMENTAL;
-                    m_board->SetGameMode(GameMode::MageElemental);
-                    m_board->GeneratePlayerCards();
-                    drawThisFrame = true;
-                }
+
             }
 
             if (m_currentState == RED_PLAYER_WON || m_currentState == BLUE_PLAYER_WON || m_currentState == TIE) {
@@ -174,7 +161,7 @@ void Game::IRun() {
             
 
             if (m_currentState == TRAINING_MODE || m_currentState == ELEMENTAL_BATTLE ||
-                m_currentState == MAGE_DUEL || m_currentState == TOURNAMENT || m_currentState == QUICK_MODE || m_currentState == MAGE_ELEMENTAL) {
+                m_currentState == MAGE_DUEL || m_currentState == TOURNAMENT || m_currentState == QUICK_MODE) {
                 HandleBoardState();
             }
 

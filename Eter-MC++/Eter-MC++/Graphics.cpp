@@ -366,10 +366,8 @@ void Graphics::DrawTournamentModeSelection()
     DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     // Draw and check each button
-    DrawButton(g_config.trainingActive, { SCREEN_WIDTH / 2 - 75, 150 }, 150, 40, "Training", 14);
     DrawButton(g_config.mageDuelActive, { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
     DrawButton(g_config.elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
-    DrawButton(g_config.mageElementalActive, { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Mage + Elemental", 14);
 
     SDL_RenderPresent(m_renderer);
 }
@@ -440,11 +438,6 @@ bool Graphics::IsTournamentActive()
 bool Graphics::IsQuickMatchActive()
 {
     return g_config.quickMatchActive;
-}
-
-bool Graphics::IsMageElementalActive()
-{
-    return g_config.mageElementalActive;
 }
 
 bool Graphics::IsPressingLeftClick() {
