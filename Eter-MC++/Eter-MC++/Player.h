@@ -74,6 +74,10 @@ public:
 	bool& IsPlayingIllusion();
 	bool IsPlayingAshes() const;
 
+	int GetRoundsWon() const;
+	void SetRoundsWon(int roundsWon);
+	void IncreaseRoundsWon();
+
 	void LoadRemovedCard(PlayingCard& card);
 	void SetColor(Color color);
 	 
@@ -98,6 +102,8 @@ private:
 	bool m_isGrabbingCard;
 	bool m_hasPlayedIllusion;
 	bool m_isPlayingAshes;
+
+	int m_roundsWon;
 
 	void RemoveCardFromDeck(std::vector<PlayingCard>& cards, const PlayingCard& card);
 };

@@ -53,7 +53,7 @@ private:
 
 	GameBoard::DeckType* m_selectedStack;
 	
-	void DrawPlayersCards(Player* player,bool isPlayersTurn,Player* otherPlayer);
+	void DrawPlayersCards(Player* player, bool isPlayersTurn, Player* otherPlayer);
 	void DrawBoard();
 
 	void HandleTournamentSelection();

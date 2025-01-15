@@ -167,8 +167,23 @@ void Game::HandleModeSelection() {
 }
 
 bool Game::HandleWin(){
-    std::string message = (m_currentState == GameState::RED_PLAYER_WON) ? "RED player WON!" :
-        (m_currentState == GameState::BLUE_PLAYER_WON) ? "Blue player WON!" : "TIE!";
+    std::string message;
+
+    if (m_currentState == GameState::RED_PLAYER_WON)
+    {
+        message = "RED player WON!";
+        m_board->GetPlayerRed()->IncreaseRoundsWon();
+    }
+    else if(m_currentState == GameState::BLUE_PLAYER_WON)
+    {
+        message = "BLUE player WON!";
+        m_board->GetPlayerBlue()->IncreaseRoundsWon();
+    }
+    else
+    {
+        message = "TIE!";
+    }
+
     m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
 
     bool isPressed = false;

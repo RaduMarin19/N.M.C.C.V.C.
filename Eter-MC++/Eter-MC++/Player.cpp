@@ -5,6 +5,7 @@ Player::Player() {
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
 	m_grabbedCard = nullptr;
+	m_roundsWon = 0;
 }
 
 Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
@@ -16,6 +17,7 @@ Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_color = m_cards.back().GetColor();
 
 	m_grabbedCard = nullptr;
+	m_roundsWon = 0;
 }
 
 void Player::SetColor(Color color) {
@@ -153,6 +155,21 @@ bool Player::HasPlayedIllusion() const
 bool Player::IsPlayingAshes() const
 {
 	return m_isPlayingAshes;
+}
+
+int Player::GetRoundsWon() const
+{
+	return m_roundsWon;
+}
+
+void Player::SetRoundsWon(int roundsWon)
+{
+	m_roundsWon = roundsWon;
+}
+
+void Player::IncreaseRoundsWon()
+{
+	m_roundsWon++;
 }
 
 void Player::LoadRemovedCard(PlayingCard& card)
