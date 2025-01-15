@@ -48,7 +48,8 @@ private:
 	std::unique_ptr<GameBoard> m_board = nullptr;
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
-	bool m_explosionTurn = false;
+	bool m_explosionTurn;
+	bool m_isQuickMatch;
 
 	GameBoard::DeckType* m_selectedStack;
 	
@@ -56,6 +57,7 @@ private:
 	void DrawBoard();
 
 	void HandleTournamentSelection();
+	void HandleQuickModeSelection();
 	void HandleModeSelection();
 	bool HandleWin();
 	void HandleBoardState();

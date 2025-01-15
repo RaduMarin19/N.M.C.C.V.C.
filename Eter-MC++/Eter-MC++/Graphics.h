@@ -47,6 +47,7 @@ public:
     bool DrawLoginPage();
     void DrawModeSelection(GameState& gameState);
 	void DrawTournamentModeSelection(GameState& gameState);
+	void DrawQuickModeSelection(GameState& gameState);
 
     void DrawCard(const Card& card, SDL_Texture* cardTexture);
 

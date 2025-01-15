@@ -6,6 +6,8 @@ Game::Game()
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
     m_selectedStack = nullptr;
+    m_isQuickMatch = false;
+    m_explosionTurn = false;
 }
 
 Game& Game::GetInstance()
@@ -75,6 +77,11 @@ void Game::IRun() {
                      HandleTournamentSelection();
                      break;
                 }
+                case GameState::QUICK_MODE: {
+                     m_isQuickMatch = true;         // TODO: quickMatch timer
+                     HandleQuickModeSelection();
+                     break;
+                }
             }
 
             if (m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE) {
@@ -102,6 +109,20 @@ void Game::IRun() {
 
 void Game::HandleTournamentSelection() {
     m_painter->DrawTournamentModeSelection(m_currentState);
+
+    if (m_currentState != GameState::TOURNAMENT) {
+        if (m_currentState == GameState::TRAINING_MODE)
+            m_board->SetTable(3);
+        else
+            m_board->SetTable(4);
+
+        m_board->GeneratePlayerCards(m_currentState);
+        m_board->InitializeExplosion();
+    }
+}
+
+void Game::HandleQuickModeSelection() { //// QUICK MODE
+    m_painter->DrawQuickModeSelection(m_currentState);
 
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE)
@@ -727,10 +748,11 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
 
 void Game::HandleBoardState() {
 
-    if (m_currentState == GameState::TOURNAMENT)
+    if (m_currentState == GameState::TOURNAMENT|| m_currentState == GameState::QUICK_MODE)
         return;
 
-    if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::QUICK_MODE)
+
+    if (m_currentState == GameState::TRAINING_MODE)
         m_board->SetTable(3);
     else
         m_board->SetTable(4);

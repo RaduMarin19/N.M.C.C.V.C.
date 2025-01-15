@@ -368,6 +368,48 @@ void Graphics::DrawModeSelection(GameState& gameState) {
     SDL_RenderPresent(m_renderer);
 }
 
+
+void Graphics::DrawQuickModeSelection(GameState& gameState)
+{
+    //Prepare the context for drawing
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderClear(m_renderer);
+
+    //Draw our elements onto the screen, a text item and our buttons
+    DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+
+    bool mageDuelActive = false;
+    bool elementalBattleActive = false;
+    bool trainingActive = false;
+    bool mageElementalActive = false;
+    bool tournamentActive = false;
+
+    // Draw and check each button
+    DrawButton(mageDuelActive,        { SCREEN_WIDTH / 2 - 75, 200 }, 150, 40, "Mage Duel", 14);
+    DrawButton(elementalBattleActive, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Elemental Battle", 14);
+    DrawButton(trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
+    DrawButton(mageElementalActive,   { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Mage Elemental", 14);
+    DrawButton(tournamentActive,      { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Tournament", 14);
+
+    if (mageDuelActive) {
+        gameState = GameState::MAGE_DUEL;
+    }
+    if (elementalBattleActive) {
+        gameState = GameState::ELEMENTAL_BATTLE;
+    }
+    if (trainingActive) {
+        gameState = GameState::TRAINING_MODE;
+    }
+    if (mageElementalActive) {
+        gameState = GameState::MAGE_ELEMENTAL;
+    }
+    if (tournamentActive) {
+        gameState = GameState::TOURNAMENT;
+    }
+
+    SDL_RenderPresent(m_renderer);
+}
+
 void Graphics::DrawTournamentModeSelection(GameState& gameState)
 {
     //Prepare the context for drawing
