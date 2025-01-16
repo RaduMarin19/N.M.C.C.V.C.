@@ -84,7 +84,7 @@ void Game::IRun() {
                 }
             }
 
-            if (m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE) {
+            if ((m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE)) {
                 HandleWin();
             }
 
@@ -172,29 +172,37 @@ void Game::HandleModeSelection() {
 
 bool Game::HandleWin(){
     std::string message;
+    static bool incrementWin = true;
 
     if (m_currentState == GameState::RED_PLAYER_WON)
     {
         message = "RED player WON";
-        m_board->GetPlayerRed()->IncreaseRoundsWon();
-        std::cout << "Red rounds won: " << m_board->GetPlayerRed()->GetRoundsWon() << '\n';
+        if(incrementWin)
+        {
+            m_board->IncreaseRoundsWon(GameState::RED_PLAYER_WON);
+        }
+        std::cout << "Red rounds won: " << m_board->GetRedRoundsWon() << '\n';
+        incrementWin = false;
     }
     else if(m_currentState == GameState::BLUE_PLAYER_WON)
     {
         message = "BLUE player WON";
-        m_board->GetPlayerBlue()->IncreaseRoundsWon();
-        std::cout << "Blue rounds won: " << m_board->GetPlayerBlue()->GetRoundsWon() << '\n';
+        if(incrementWin)
+        {
+            m_board->IncreaseRoundsWon(GameState::BLUE_PLAYER_WON);
+        }
+        std::cout << "Blue rounds won: " << m_board->GetBlueRoundsWon() << '\n';
+        incrementWin = false;
     }
     else
     {
         message = "TIE!";
     }
 
-    
-
     bool isNextRoundButton = false;
     bool isReset = false;
-    if(m_board->GetPlayerBlue()->GetRoundsWon() == m_bestOf / 2 + 1 || m_board->GetPlayerRed()->GetRoundsWon() == m_bestOf / 2 + 1 || m_isQuickMatch)
+
+    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_isQuickMatch)
     {
         m_painter->DrawText(message + " the MATCH!", {SCREEN_WIDTH / 2, 50}, 14, true);
         m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
@@ -206,18 +214,23 @@ bool Game::HandleWin(){
         else
             m_painter->DrawText(message + " the ROUND!", { SCREEN_WIDTH / 2, 50 }, 14, true);
         m_painter->DrawButton(isNextRoundButton, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);
+        /*m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);*/
     }
 
     if (isReset) {
         m_currentState = GameState::MODE_SELECTION;
         m_board->Clear();
+        m_board->SetBlueRoundsWon(0);
+        m_board->SetRedRoundsWon(0);
         m_explosionTurn = false;
+        incrementWin = true;
         return true;
     }
     else if (isNextRoundButton) {
         m_currentState = m_nextRoundState;
         m_board->ResetRound(m_currentState);
         m_explosionTurn = false;
+        incrementWin = true;
         return true;
     }
     return false;
@@ -890,7 +903,7 @@ void Game::DrawBoard() {
     }
 }
 
-void Game::HandleCardMovement(Player* player,Card& card) {
+void Game::HandleCardMovement(Player* player, Card& card) {
     SDL_Rect cardRect{};
     cardRect.x = card.GetCoordinates().GetX();
     cardRect.y = card.GetCoordinates().GetY();
@@ -915,7 +928,7 @@ void Game::HandleCardMovement(Player* player,Card& card) {
     }
 }
 
-void Game::DrawPlayersCards(Player* player,bool isPlayersTurn,Player* otherPlayer) {
+void Game::DrawPlayersCards(Player* player, bool isPlayersTurn, Player* otherPlayer) {
     auto DrawAndHandleCard = [&](Player* player, Card& card) {
         if (isPlayersTurn) {
             m_painter->DrawCard(card, card.GetTexture()->GetTexture());

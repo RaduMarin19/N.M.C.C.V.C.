@@ -1628,6 +1628,34 @@ Player* GameBoard::GetPlayerBlue() {
     return &m_playerBlue;
 }
 
+void GameBoard::IncreaseRoundsWon(GameState state)
+{
+    if (state == GameState::BLUE_PLAYER_WON)
+        m_blueRoundsWon++;
+    else if (state == GameState::RED_PLAYER_WON)
+        m_redRoundsWon++;
+}
+
+short GameBoard::GetBlueRoundsWon() const
+{
+    return m_blueRoundsWon;
+}
+
+short GameBoard::GetRedRoundsWon() const
+{
+    return m_redRoundsWon;
+}
+
+void GameBoard::SetBlueRoundsWon(short value)
+{
+    m_blueRoundsWon = value;
+}
+
+void GameBoard::SetRedRoundsWon(short value)
+{
+    m_redRoundsWon = value;
+}
+
 const CardTexture& GameBoard::GetBlueIllusionTexture() const {
     return *m_blueCardIllusion;
 }

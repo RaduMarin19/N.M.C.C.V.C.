@@ -62,6 +62,12 @@ public:
     Player* GetPlayerRed();
     Player* GetPlayerBlue();
 
+    void IncreaseRoundsWon(GameState state);
+    short GetBlueRoundsWon() const;
+    short GetRedRoundsWon() const;
+    void SetBlueRoundsWon(short value);
+    void SetRedRoundsWon(short value);
+
     bool CanUseExplosion();
     bool DidExplode() const;
     void Explode();
@@ -168,6 +174,9 @@ private:
 
     Player m_playerBlue;
     Player m_playerRed;
+
+    short m_blueRoundsWon;
+    short m_redRoundsWon;
 
     std::vector<CardTexture> m_blueCardTextures;
     std::vector<CardTexture> m_redCardTextures;
