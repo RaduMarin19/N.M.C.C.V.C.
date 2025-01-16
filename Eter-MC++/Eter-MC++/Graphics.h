@@ -35,6 +35,7 @@ public:
     void DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
+    void DrawTimer(unsigned int seconds, const Coordinates& pos, int fontSize);
 
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);

@@ -489,6 +489,9 @@ void Graphics::DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
     }
 }
 
+void Graphics::DrawTimer(unsigned int seconds, const Coordinates &pos, int fontSize) {
+}
+
 bool Graphics::IsPressingLeftClick() {
     return this->m_isPressingLeftClick;
 }

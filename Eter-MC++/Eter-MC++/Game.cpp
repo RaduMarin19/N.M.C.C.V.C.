@@ -134,6 +134,10 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
 
         m_board->GeneratePlayerCards(m_currentState);
         m_board->InitializeExplosion();
+        m_board->GetPlayerBlue()->setDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerRed()->setDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerBlue()->setTimeRemaining(180);
+        m_board->GetPlayerRed()->setTimeRemaining(180);
     }
 }
 
@@ -172,11 +176,11 @@ void Game::HandleModeSelection() {
     }
 }
 
-bool Game::HandleWin(){
+bool Game::HandleWin() {
     std::string message;
     static bool incrementWin = true;
 
-    if (m_currentState == GameState::RED_PLAYER_WON)
+    if (m_currentState == GameState::RED_PLAYER_WON || m_board->GetPlayerBlue()->GetTimeRemaining() <= 0)
     {
         message = "RED player WON";
         if(incrementWin)
@@ -186,7 +190,7 @@ bool Game::HandleWin(){
         std::cout << "Red rounds won: " << m_board->GetRedRoundsWon() << '\n';
         incrementWin = false;
     }
-    else if(m_currentState == GameState::BLUE_PLAYER_WON)
+    else if(m_currentState == GameState::BLUE_PLAYER_WON || m_board->GetPlayerRed()->GetTimeRemaining() <= 0)
     {
         message = "BLUE player WON";
         if(incrementWin)
@@ -808,10 +812,40 @@ void Game::HandleBoardState() {
         return;
 
 
-    if (m_currentState == GameState::TRAINING_MODE)
-        m_board->SetTable(3);
-    else
-        m_board->SetTable(4);
+    // if (m_currentState == GameState::TRAINING_MODE)
+    //     m_board->SetTable(3);
+    // else
+    //     m_board->SetTable(4);
+
+    //logic for quickMatch
+    if(m_board->getPlayingQuickMatch()) {
+        Player* blue = m_board->GetPlayerBlue();
+        auto blueTime = blue->GetTimeRemaining();
+        Player* red = m_board->GetPlayerRed();
+        auto redTime = red->GetTimeRemaining();
+
+        m_painter->DrawTimer(blueTime, {100, 100}, 14);
+        m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, 100}, 14);
+        if(m_board->IsBluePlayer()) {
+            unsigned int timeDiff = SDL_GetTicks() - blue->GetDeltaTime();
+            if(timeDiff >= 1000) {
+                //std::cout << "Blue player time ticked down to: " << blueTime << '\n';
+                blue->setDeltaTime(SDL_GetTicks());
+                blue->setTimeRemaining(blueTime - (timeDiff / 1000));
+            }
+        } else {
+            unsigned int timeDiff = SDL_GetTicks() - red->GetDeltaTime();
+            if(timeDiff >= 1000) {
+                //std::cout << "Red player time ticked down to: " << blueTime << '\n';
+                red->setDeltaTime(SDL_GetTicks());
+                red->setTimeRemaining(blueTime - (timeDiff / 1000));
+            }
+        }
+
+        if(blue->GetTimeRemaining() <= 0 || red->GetTimeRemaining() <= 0) {
+            HandleWin();
+        }
+    }
 
     if (m_board->ShouldResetPositions())
         m_board->ResetPossiblePositions();

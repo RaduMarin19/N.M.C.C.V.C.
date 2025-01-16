@@ -5,6 +5,8 @@ Player::Player() {
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
 	m_grabbedCard = nullptr;
+	m_timeRemaining = 0;
+	m_deltaTime = 0;
 
 	std::cout << "Called Player() constructor\n";
 }
@@ -14,6 +16,8 @@ Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_hasPlayedIllusion = false;
 	m_isPlayingIllusion = false;
 	m_isPlayingAshes = false;
+	m_timeRemaining = 0;
+	m_deltaTime = 0;
 
 	m_color = m_cards.back().GetColor();
 
