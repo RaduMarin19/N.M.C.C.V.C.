@@ -202,3 +202,7 @@ void Player::setDeltaTime(unsigned int deltaTime) {
 unsigned int Player::GetDeltaTime() const {
 	return m_deltaTime;
 }
+
+bool Player::getIsPlayingIllusion() const {
+	return m_isPlayingIllusion;
+}

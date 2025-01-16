@@ -1839,6 +1839,10 @@ void GameBoard::SaveState(nlohmann::json& json) const {
     json["minY"] = m_minY;
     json["maxY"] = m_maxY;
 
+    json["isPlayingQuickMatch"] = m_isPlayingQuickMatch;
+
+    json["isPlayingMirage"] = m_isPlayingMirage;
+
     if (m_spells.has_value()) {
         if (m_spells->first.get()) {
             json["firstSpell"] = static_cast<int>(m_spells->first->GetSpell());
@@ -1883,6 +1887,8 @@ void GameBoard::SaveState(nlohmann::json& json) const {
         playerJson["cards"] = nlohmann::json::array();
         playerJson["removed"] = nlohmann::json::array();
 
+        playerJson["isPlayingIllusion"] = player.getIsPlayingIllusion();
+
         for (const auto& card : player.GetCards()) {
             playerJson["cards"].push_back({
                 {"position", { {"x", card.GetInitialPosition().GetX()}, {"y", card.GetInitialPosition().GetY()} }},
@@ -1913,6 +1919,7 @@ void GameBoard::SaveState(nlohmann::json& json) const {
         if (wizard != nullptr) {
             playerJson["mageCard"] = static_cast<short>(wizard->GetWizard());
         }
+        playerJson["timeRemaining"] = player.GetTimeRemaining();
     };
 
     if (m_explosion.get()) {
@@ -1939,6 +1946,14 @@ void GameBoard::LoadState(const nlohmann::json& json) {
 
     if (json.contains("exploded")) {
         m_exploded = json["exploded"].get<bool>();
+    }
+
+    if(json.contains("isPlayingQuickMatch")) {
+        m_isPlayingQuickMatch = json["isPlayingQuickMatch"].get<bool>();
+    }
+
+    if(json.contains("isPlayingMirage")) {
+        m_isPlayingMirage = json["isPlayingMirage"].get<bool>();
     }
 
     // Deserialize played positions
@@ -1991,6 +2006,17 @@ void GameBoard::LoadState(const nlohmann::json& json) {
 
     // Deserialize players
     auto deserializePlayer = [&](Player& player, const nlohmann::json& playerJson) {
+
+        if(playerJson.contains("timeRemaining")) {
+            player.setTimeRemaining(playerJson["timeRemaining"].get<unsigned int>());
+            player.setDeltaTime(SDL_GetTicks());
+            std::cout << player.GetTimeRemaining() << std::endl;
+        }
+
+        if(playerJson.contains("isPlayingIllusion")) {
+            player.IsPlayingIllusion() = playerJson["isPlayingIllusion"].get<bool>();
+        }
+
         if (playerJson.contains("hasPlayedIllusion")&& playerJson["hasPlayedIllusion"].get<bool>()==true) {
             player.SetHasPlayedIllusion();
         }
@@ -2010,6 +2036,7 @@ void GameBoard::LoadState(const nlohmann::json& json) {
                 card.SetInitialValue(cardEntry["card"]["initial_value"].get<short>());
                 card.SetColor(static_cast<Color>(cardEntry["card"]["color"].get<int>()));
                 card.SetEter(cardEntry["card"]["is_eter"].get<bool>());
+                card.SetIllusion(false);
 
                 // Assign the correct texture based on color
                 if (card.GetColor() == BLUE)
@@ -2040,7 +2067,7 @@ void GameBoard::LoadState(const nlohmann::json& json) {
                 else
                     card.SetTexture(&m_redCardTextures[card.GetValue()]);
 
-                player.LoadRemovedCard(card); 
+                player.LoadRemovedCard(card);
             }
         }
 
@@ -2108,8 +2135,6 @@ void GameBoard::LoadState(const nlohmann::json& json) {
         Coordinates position(json["boundPosition"]["x"].get<int>(), json["boundPosition"]["y"].get<int>());
         SetBoundPosition(position);
     }
-
-    //TODO: save explosion
 }
 
 

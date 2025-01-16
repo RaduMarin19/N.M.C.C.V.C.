@@ -89,6 +89,8 @@ public:
 	void setDeltaTime(unsigned int deltaTime);
 	unsigned int GetDeltaTime() const;
 
+	bool getIsPlayingIllusion() const;
+
 private:
 	std::vector<PlayingCard> m_cards;
 	std::vector<PlayingCard> m_removedCards;

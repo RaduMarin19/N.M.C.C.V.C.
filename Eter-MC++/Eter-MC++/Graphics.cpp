@@ -2,6 +2,8 @@
 
 #include "Graphics.h"
 
+#include <format>
+
 Graphics::Graphics() {
 
     //Initialize the color pallete, currently "magic numbers"
@@ -49,7 +51,9 @@ Graphics::Graphics() {
             throw std::runtime_error("TTF Initialization Failed");
         }
 
-    m_font = TTF_OpenFont(FONT_PATH, 40);
+    if(m_font == nullptr)
+        m_font = TTF_OpenFont(FONT_PATH, 40);
+
     if(!m_font) {
         printf("Unable to load font: '%s'!\n"
                "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
@@ -65,7 +69,7 @@ Graphics::~Graphics()
     SDL_Quit();
 }
 
-void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
+void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int fontSize, bool isCentered, SDL_Color textColor) {
 
     //Initialize a texture and rectangle for the text
     SDL_Texture *texture = NULL;
@@ -74,11 +78,11 @@ void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int font
     textRect.x = pos.GetX();
     textRect.y = pos.GetY();
 
-    SDL_Color textColor = m_accentColor;
-    textColor.a = 255;
+    SDL_Color texColor = m_accentColor;
+    texColor.a = 255;
 
     //Try to load our text buffer onto a surface
-    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buf.c_str(), SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buf.c_str(), textColor, texColor);
 
     if(!textSurface) {
         printf("Unable to render text surface!\n"
@@ -137,16 +141,18 @@ void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
     SDL_Color textColor = m_accentColor;
     textColor.a = 30;
 
-    char *buffer;
+    static char *buffer = nullptr;
     bool isPlaceholder = false;
 
     //If the given buffer is empty, replace it with placeholder text
     if(buf.empty()) {
         char placeHolder[] = "Enter text...";
-        buffer = new char[strlen(placeHolder) + 1];
+        if(buffer == nullptr)
+            buffer = new char[strlen(placeHolder) + 1];
         strcpy(buffer, placeHolder);
         isPlaceholder = true;
     } else {
+        delete buffer;
         buffer = new char[strlen(buf.c_str()) + 1];
         strcpy(buffer, buf.c_str());
     }
@@ -490,6 +496,15 @@ void Graphics::DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture) {
 }
 
 void Graphics::DrawTimer(unsigned int seconds, const Coordinates &pos, int fontSize) {
+
+    std::string formattedTime = std::format("{:02}:{:02}", seconds / 60, seconds % 60);
+
+    SDL_Color color;
+    if(seconds >= 60)
+        color = {255, 255, 255};
+    else
+        color = {180, 0, 0};
+    this->DrawText(formattedTime, pos, fontSize, true, color);
 }
 
 bool Graphics::IsPressingLeftClick() {

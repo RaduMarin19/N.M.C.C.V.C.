@@ -16,6 +16,8 @@
 #include <SDL_ttf.h>
 #include <string>
 #include <cstring>
+#include <stdio.h>
+#include <stdlib.h>
 
 inline struct {
     std::string playerName;
@@ -31,7 +33,7 @@ public:
     Graphics(Graphics&&) = delete;
     Graphics& operator=(Graphics&&) = delete;
 
-    void DrawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
+    void DrawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered, SDL_Color textColor = {255,255,255});
     void DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
@@ -57,7 +59,7 @@ public:
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
-    TTF_Font *m_font;
+    TTF_Font *m_font = nullptr;
     SDL_Color m_mainColor;
     SDL_Color m_accentColor;
     SDL_Event m_event;

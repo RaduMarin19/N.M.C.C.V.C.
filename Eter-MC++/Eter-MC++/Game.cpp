@@ -170,7 +170,7 @@ void Game::HandleModeSelection() {
         break;
     }
 
-    if (switchedState == true) {
+    if (switchedState == true && !loadSave) {
         m_board->GeneratePlayerCards(m_currentState);
         m_board->InitializeExplosion();
     }
@@ -243,6 +243,7 @@ bool Game::HandleWin() {
 }
 
 void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
+
     pushCard->SetBoardPosition(possiblePosition);
     pushCard->SetCoordinates({ renderRect.x, renderRect.y });
     if (pushCard->IsEter()) {
@@ -798,6 +799,7 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
                 PlayWizardCard(player, wizardCard, renderRect, possiblePosition);
             }
         }
+        SaveGame();
     }
     
     //returning cards to deck if they are moved
@@ -824,9 +826,11 @@ void Game::HandleBoardState() {
         Player* red = m_board->GetPlayerRed();
         auto redTime = red->GetTimeRemaining();
 
-        m_painter->DrawTimer(blueTime, {100, 100}, 14);
-        m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, 100}, 14);
+
+        m_painter->DrawTimer(blueTime, {300, SCREEN_HEIGHT - 100}, 14);
+        m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100}, 14);
         if(m_board->IsBluePlayer()) {
+            red->setDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - blue->GetDeltaTime();
             if(timeDiff >= 1000) {
                 //std::cout << "Blue player time ticked down to: " << blueTime << '\n';
@@ -834,11 +838,12 @@ void Game::HandleBoardState() {
                 blue->setTimeRemaining(blueTime - (timeDiff / 1000));
             }
         } else {
+            blue->setDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - red->GetDeltaTime();
             if(timeDiff >= 1000) {
                 //std::cout << "Red player time ticked down to: " << blueTime << '\n';
                 red->setDeltaTime(SDL_GetTicks());
-                red->setTimeRemaining(blueTime - (timeDiff / 1000));
+                red->setTimeRemaining(redTime - (timeDiff / 1000));
             }
         }
 
@@ -852,13 +857,13 @@ void Game::HandleBoardState() {
 
     m_board->UpdateBoardCenter();
 
-    bool shouldSave = false;
+    //bool shouldSave = false;
 
-    m_painter->DrawButton(shouldSave, { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 180 }, 120, 50, "Save game", 14);
+    //m_painter->DrawButton(shouldSave, { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 180 }, 120, 50, "Save game", 14);
 
-    if (shouldSave) {
-        SaveGame();
-    }
+    //if (shouldSave) {
+    //    SaveGame();
+    //}
 
     // Common logic for all modes
 
@@ -1009,7 +1014,7 @@ bool Game::ExplosionTurn(){
     static bool checkExplosion = false;
     static bool isExplosionValidated = false;
     bool dontExplode = false;
-    m_painter->DrawButton(dontExplode, {SCREEN_WIDTH - 700, SCREEN_HEIGHT - 100 }, 150, 50, "Skip explosion!", 14);
+    m_painter->DrawButton(dontExplode, {SCREEN_WIDTH - 600, SCREEN_HEIGHT - 100 }, 150, 50, "Skip explosion!", 14);
 
     if (dontExplode) {
         return true;
@@ -1045,7 +1050,7 @@ bool Game::ExplosionTurn(){
 
         m_drawThisFrame = false;
         bool exploded = false;
-        m_painter->DrawButton(exploded, { SCREEN_WIDTH - 850, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
+        m_painter->DrawButton(exploded, { SCREEN_WIDTH - 750, SCREEN_HEIGHT - 100 }, 100, 50, "Explode!", 14);
 
         if (exploded) {
             m_board->Explode();
@@ -1062,7 +1067,7 @@ bool Game::ExplosionTurn(){
 
 void Game::LoadSave()
 {
-    std::string filename = "save_game.json"; 
+    std::string filename = "save_game.json";
 
     std::ifstream inFile(filename);
     if (!inFile) {
