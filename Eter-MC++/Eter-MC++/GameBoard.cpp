@@ -1690,6 +1690,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_canCoverIllusion = false;
     m_isPlayingCoverOpponent = false;
     m_boundPosition = nullptr;
+    m_isPlayingMirage = false;
     m_blockedRow = 100;
     m_isMinXFixed = false;
     m_isMaxXFixed = false;
@@ -1703,7 +1704,6 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     //Load all card textures into memory
 
     LoadTextures(renderer);
-    //InitializeExplosion();
 }
 
 unsigned short GameBoard::NextCardId() {
