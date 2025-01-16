@@ -1016,7 +1016,24 @@ void GameBoard::Clear() {
     m_explosion->InitializeExplosionCard();
     m_holes.clear();
     m_isBluePlayer = true;
+}
 
+void GameBoard::ResetRound(GameState gameState)
+{
+    Clear();
+    if (gameState == GameState::TRAINING_MODE)
+        SetTable(3);
+    else
+        SetTable(4);
+
+    if (gameState == GameState::TRAINING_MODE)
+        GenerateTrainingCards();
+    if (gameState == GameState::MAGE_DUEL)
+        GenerateTrainingCards();
+    if (gameState == GameState::ELEMENTAL_BATTLE)
+        GenerateTrainingCards();
+    if (gameState == GameState::MAGE_ELEMENTAL)
+        GenerateTrainingCards();
 }
 
 bool GameBoard::CanUseExplosion() {

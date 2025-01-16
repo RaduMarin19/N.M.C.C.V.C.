@@ -137,6 +137,7 @@ public:
     void SaveState(nlohmann::json& json) const;
     void LoadState(const nlohmann::json& json);
     void Clear();
+    void ResetRound(GameState gameState);
 
 private:
     unsigned short m_cardId{ 0 };

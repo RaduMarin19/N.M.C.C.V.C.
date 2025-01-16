@@ -87,7 +87,6 @@ void Game::IRun() {
             if (m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE) {
                 HandleWin();
             }
-            
 
             if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
                 m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT || 
@@ -109,6 +108,7 @@ void Game::IRun() {
 
 void Game::HandleTournamentSelection() {
     m_painter->DrawTournamentModeSelection(m_currentState);
+    m_nextRoundState = m_currentState;
 
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE)
@@ -137,6 +137,7 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
 
 void Game::HandleModeSelection() {
     m_painter->DrawModeSelection(m_currentState);
+    m_nextRoundState = m_currentState;
 
     bool loadSave = false;
     m_painter->DrawButton(loadSave, { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Load Save", 14);
@@ -148,14 +149,17 @@ void Game::HandleModeSelection() {
     switch (m_currentState) {
     case GameState::TRAINING_MODE:
         m_board->SetTable(3);
+        m_bestOf = 3;
         switchedState = true;
         break;
     case GameState::MAGE_DUEL:
         m_board->SetTable(4);
+        m_bestOf = 5;
         switchedState = true;
         break;
     case GameState::ELEMENTAL_BATTLE:
         m_board->SetTable(4);
+        m_bestOf = 5;
         switchedState = true;
         break;
     }
@@ -171,26 +175,48 @@ bool Game::HandleWin(){
 
     if (m_currentState == GameState::RED_PLAYER_WON)
     {
-        message = "RED player WON!";
+        message = "RED player WON";
         m_board->GetPlayerRed()->IncreaseRoundsWon();
+        std::cout << "Red rounds won: " << m_board->GetPlayerRed()->GetRoundsWon() << '\n';
     }
     else if(m_currentState == GameState::BLUE_PLAYER_WON)
     {
-        message = "BLUE player WON!";
+        message = "BLUE player WON";
         m_board->GetPlayerBlue()->IncreaseRoundsWon();
+        std::cout << "Blue rounds won: " << m_board->GetPlayerBlue()->GetRoundsWon() << '\n';
     }
     else
     {
         message = "TIE!";
     }
 
-    m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
+    
 
-    bool isPressed = false;
-    m_painter->DrawButton(isPressed, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
-    if (isPressed) {
+    bool isNextRoundButton = false;
+    bool isReset = false;
+    if(m_board->GetPlayerBlue()->GetRoundsWon() == m_bestOf / 2 + 1 || m_board->GetPlayerRed()->GetRoundsWon() == m_bestOf / 2 + 1 || m_isQuickMatch)
+    {
+        m_painter->DrawText(message + " the MATCH!", {SCREEN_WIDTH / 2, 50}, 14, true);
+        m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
+    }
+    else
+    {
+        if(message == "TIE!")
+            m_painter->DrawText(message, { SCREEN_WIDTH / 2, 50 }, 14, true);
+        else
+            m_painter->DrawText(message + " the ROUND!", { SCREEN_WIDTH / 2, 50 }, 14, true);
+        m_painter->DrawButton(isNextRoundButton, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);
+    }
+
+    if (isReset) {
         m_currentState = GameState::MODE_SELECTION;
         m_board->Clear();
+        m_explosionTurn = false;
+        return true;
+    }
+    else if (isNextRoundButton) {
+        m_currentState = m_nextRoundState;
+        m_board->ResetRound(m_currentState);
         m_explosionTurn = false;
         return true;
     }

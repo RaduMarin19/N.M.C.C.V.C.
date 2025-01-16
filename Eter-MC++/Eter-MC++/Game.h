@@ -45,6 +45,8 @@ private:
 	Game();
 
 	GameState m_currentState = GameState::WELCOME_SCREEN;
+	GameState m_nextRoundState;
+	int m_bestOf = -1;
 	std::unique_ptr<GameBoard> m_board = nullptr;
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
@@ -52,7 +54,7 @@ private:
 	bool m_isQuickMatch;
 
 	GameBoard::DeckType* m_selectedStack;
-	
+
 	void DrawPlayersCards(Player* player, bool isPlayersTurn, Player* otherPlayer);
 	void DrawBoard();
 
