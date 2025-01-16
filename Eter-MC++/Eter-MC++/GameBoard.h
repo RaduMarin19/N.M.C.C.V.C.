@@ -145,6 +145,9 @@ public:
     void Clear();
     void ResetRound(GameState gameState);
 
+    void setPlayingQuickMatch(bool val);
+    bool getPlayingQuickMatch() const;
+
 private:
     unsigned short m_cardId{ 0 };
     short m_minX{ 0 }, m_maxX{ 0 }, m_minY{ 0 }, m_maxY{ 0 };
@@ -162,6 +165,8 @@ private:
     bool m_canCoverIllusion;
     bool m_isPlayingMirage;
     bool m_isPlayingCoverOpponent;
+
+    bool m_isPlayingQuickMatch;
 
     bool m_isMinXFixed;
     bool m_isMaxXFixed;

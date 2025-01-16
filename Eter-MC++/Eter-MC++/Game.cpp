@@ -6,7 +6,6 @@ Game::Game()
     m_painter = std::make_unique<Graphics>();
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
     m_selectedStack = nullptr;
-    m_isQuickMatch = false;
     m_explosionTurn = false;
 }
 
@@ -78,7 +77,6 @@ void Game::IRun() {
                      break;
                 }
                 case GameState::QUICK_MODE: {
-                     m_isQuickMatch = true;         // TODO: quickMatch timer
                      HandleQuickModeSelection();
                      break;
                 }
@@ -90,7 +88,7 @@ void Game::IRun() {
 
             if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
                 m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT || 
-                m_currentState == GameState::QUICK_MODE || m_currentState == GameState::MAGE_ELEMENTAL) {
+                m_currentState == GameState::MAGE_ELEMENTAL) {
                 HandleBoardState();
             }
 
@@ -125,10 +123,14 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
     m_painter->DrawQuickModeSelection(m_currentState);
 
     if (m_currentState != GameState::TOURNAMENT) {
-        if (m_currentState == GameState::TRAINING_MODE)
+        if (m_currentState == GameState::TRAINING_MODE) {
             m_board->SetTable(3);
-        else
+            m_board->setPlayingQuickMatch(true);
+        }
+        else {
             m_board->SetTable(4);
+            m_board->setPlayingQuickMatch(true);
+        }
 
         m_board->GeneratePlayerCards(m_currentState);
         m_board->InitializeExplosion();
@@ -202,7 +204,7 @@ bool Game::HandleWin(){
     bool isNextRoundButton = false;
     bool isReset = false;
 
-    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_isQuickMatch)
+    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_board->getPlayingQuickMatch())
     {
         m_painter->DrawText(message + " the MATCH!", {SCREEN_WIDTH / 2, 50}, 14, true);
         m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
@@ -802,7 +804,7 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
 
 void Game::HandleBoardState() {
 
-    if (m_currentState == GameState::TOURNAMENT|| m_currentState == GameState::QUICK_MODE)
+    if (m_currentState == GameState::TOURNAMENT)
         return;
 
 

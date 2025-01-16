@@ -182,3 +182,19 @@ void Player::Reset()
 	m_cards.clear();
 	m_grabbedCard = nullptr;
 }
+
+void Player::setTimeRemaining(unsigned int timeRemaining) {
+	m_timeRemaining = timeRemaining;
+}
+
+unsigned int Player::GetTimeRemaining() const {
+	return m_timeRemaining;
+}
+
+void Player::setDeltaTime(unsigned int deltaTime) {
+	m_deltaTime = deltaTime;
+}
+
+unsigned int Player::GetDeltaTime() const {
+	return m_deltaTime;
+}

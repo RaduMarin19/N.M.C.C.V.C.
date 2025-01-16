@@ -1036,6 +1036,14 @@ void GameBoard::ResetRound(GameState gameState)
         GenerateTrainingCards();
 }
 
+void GameBoard::setPlayingQuickMatch(bool val) {
+    m_isPlayingQuickMatch = val;
+}
+
+bool GameBoard::getPlayingQuickMatch() const {
+    return m_isPlayingQuickMatch;
+}
+
 bool GameBoard::CanUseExplosion() {
     if (m_exploded)
         return false;
@@ -1724,6 +1732,7 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_isMaxXFixed = false;
     m_isMinYFixed = false;
     m_isMaxYFixed = false;
+    m_isPlayingQuickMatch = false;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);
 

@@ -376,7 +376,7 @@ void Graphics::DrawQuickModeSelection(GameState& gameState)
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode for Quick Match!", { SCREEN_WIDTH / 2, 50 }, 18, true);
 
     bool mageDuelActive = false;
     bool elementalBattleActive = false;

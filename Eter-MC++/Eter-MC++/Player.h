@@ -84,6 +84,11 @@ public:
 	void ClearRemovedCards();
 	void Reset();
 
+	void setTimeRemaining(unsigned int timeRemaining);
+	unsigned int GetTimeRemaining() const;
+	void setDeltaTime(unsigned int deltaTime);
+	unsigned int GetDeltaTime() const;
+
 private:
 	std::vector<PlayingCard> m_cards;
 	std::vector<PlayingCard> m_removedCards;
@@ -99,6 +104,9 @@ private:
 	bool m_isGrabbingCard;
 	bool m_hasPlayedIllusion;
 	bool m_isPlayingAshes;
+
+	unsigned int m_timeRemaining;
+	unsigned int m_deltaTime;
 
 	void RemoveCardFromDeck(std::vector<PlayingCard>& cards, const PlayingCard& card);
 };
