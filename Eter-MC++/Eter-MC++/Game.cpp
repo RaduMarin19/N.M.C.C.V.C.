@@ -7,6 +7,7 @@ Game::Game()
     m_board = std::make_unique<GameBoard>(m_painter.get()->GetRenderer());
     m_selectedStack = nullptr;
     m_explosionTurn = false;
+    m_quickModeTimer = 0;
 }
 
 Game& Game::GetInstance()
@@ -120,7 +121,7 @@ void Game::HandleTournamentSelection() {
 }
 
 void Game::HandleQuickModeSelection() { //// QUICK MODE
-    m_painter->DrawQuickModeSelection(m_currentState);
+    m_painter->DrawQuickModeSelection(m_currentState, m_quickModeTimer);
 
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE) {
@@ -136,8 +137,8 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
         m_board->InitializeExplosion();
         m_board->GetPlayerBlue()->setDeltaTime(SDL_GetTicks());
         m_board->GetPlayerRed()->setDeltaTime(SDL_GetTicks());
-        m_board->GetPlayerBlue()->setTimeRemaining(180);
-        m_board->GetPlayerRed()->setTimeRemaining(180);
+        m_board->GetPlayerBlue()->setTimeRemaining(m_quickModeTimer);
+        m_board->GetPlayerRed()->setTimeRemaining(m_quickModeTimer);
     }
 }
 
@@ -813,12 +814,6 @@ void Game::HandleBoardState() {
     if (m_currentState == GameState::TOURNAMENT)
         return;
 
-
-    // if (m_currentState == GameState::TRAINING_MODE)
-    //     m_board->SetTable(3);
-    // else
-    //     m_board->SetTable(4);
-
     //logic for quickMatch
     if(m_board->getPlayingQuickMatch()) {
         Player* blue = m_board->GetPlayerBlue();
@@ -1033,9 +1028,10 @@ bool Game::ExplosionTurn(){
         m_painter->DrawTexturedRect(explosionRect, m_board->GetExplosionBoardTexture()->GetTexture());
         auto explosion = m_board->GetExplosion();
         decltype(auto) explosionMask = explosion->GetExplosionMask();
+        int spriteSize = m_board->GetTableSize() == 3 ? 32 : 26;
         for (int i = 0; i < m_board->GetTableSize(); i++) {
             for (int j = 0; j < m_board->GetTableSize(); j++) {
-                SDL_Rect spriteRect{ explosionRect.x + 12 + (i * 34), explosionRect.y + 6 + (j * 32), 32, 32 };
+                SDL_Rect spriteRect{ explosionRect.x + 6 + (i * (spriteSize + 6)), explosionRect.y + (j * (spriteSize + 2)), spriteSize, spriteSize };
                 if (explosionMask[i][j] == ExplosionType::HOLE) {
                     m_painter->DrawTexturedRect(spriteRect, m_board->GetExplosionSprite(2)->GetTexture());
                 }

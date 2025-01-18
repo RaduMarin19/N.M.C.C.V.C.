@@ -780,7 +780,7 @@ void GameBoard::PrintExplosionMask() {
 }
 
 std::unique_ptr<CardTexture>& GameBoard::GetExplosionBoardTexture() {
-    return this->m_explosionBoard;
+    return this->m_tableSize == 3 ? this->m_explosionBoard[0] : this->m_explosionBoard[1];
 }
 
 CardTexture* GameBoard::GetExplosionSprite(const int& offset) {
@@ -1683,7 +1683,8 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
-    m_explosionBoard = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank.jpg");
+    m_explosionBoard[0] = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank0.png");
+    m_explosionBoard[1] = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/explosion_blank1.jpg");
 
     for (int i = 0; i < 8; i++) {
         m_mageCardTextures.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/mage_" + std::to_string(i) + ".jpg");
@@ -1705,7 +1706,8 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     for (int i = 0; i < 3; i++) {
         m_explosionSprites.emplace_back(renderer, "Dependencies/textures/explosionSprite_" + std::to_string(i) + ".png");
     }
-    m_explosionBoard = std::make_unique<CardTexture>(renderer, "Dependencies/textures/explosion_blank.jpg");
+    m_explosionBoard[0] = std::make_unique<CardTexture>(renderer, "Dependencies/textures/explosion_blank0.png");
+    m_explosionBoard[1] = std::make_unique<CardTexture>(renderer, "Dependencies/textures/explosion_blank1.jpg");
 
     for (int i = 0; i < 8; i++) {
         m_mageCardTextures.emplace_back(renderer, "Dependencies/textures/mage_" + std::to_string(i) + ".jpg");

@@ -38,6 +38,7 @@ public:
     void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
     void DrawTimer(unsigned int seconds, const Coordinates& pos, int fontSize);
+    void DrawSlider(int& value, const int& minValue, const int& maxValue, const int& step, const Coordinates& pos, const int& width, const int& height);
 
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);
@@ -50,7 +51,7 @@ public:
     bool DrawLoginPage();
     void DrawModeSelection(GameState& gameState);
 	void DrawTournamentModeSelection(GameState& gameState);
-	void DrawQuickModeSelection(GameState& gameState);
+	void DrawQuickModeSelection(GameState& gameState, int& timer);
 
     void DrawCard(const Card& card, SDL_Texture* cardTexture);
 

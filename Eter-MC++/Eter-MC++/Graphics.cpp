@@ -375,7 +375,7 @@ void Graphics::DrawModeSelection(GameState& gameState) {
 }
 
 
-void Graphics::DrawQuickModeSelection(GameState& gameState)
+void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
 {
     //Prepare the context for drawing
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
@@ -396,6 +396,7 @@ void Graphics::DrawQuickModeSelection(GameState& gameState)
     DrawButton(trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
     DrawButton(mageElementalActive,   { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Mage Elemental", 14);
     DrawButton(tournamentActive,      { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Tournament", 14);
+    DrawSlider(timer, 30, 120, 30, { SCREEN_WIDTH / 2 - 75, 450 }, 150, 40);
 
     if (mageDuelActive) {
         gameState = GameState::MAGE_DUEL;
@@ -505,6 +506,11 @@ void Graphics::DrawTimer(unsigned int seconds, const Coordinates &pos, int fontS
     else
         color = {180, 0, 0};
     this->DrawText(formattedTime, pos, fontSize, true, color);
+}
+
+void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, const int& step, const Coordinates& pos, const int& width, const int& height) {
+    value = minValue;
+
 }
 
 bool Graphics::IsPressingLeftClick() {

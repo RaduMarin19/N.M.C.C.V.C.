@@ -189,7 +189,7 @@ private:
     std::vector<CardTexture> m_mageCardTextures;
     std::vector<CardTexture> m_explosionSprites;
 
-    std::unique_ptr<CardTexture> m_explosionBoard;
+    std::array<std::unique_ptr<CardTexture>, 2> m_explosionBoard;
     std::shared_ptr<CardTexture> m_blueCardIllusion;
     std::shared_ptr<CardTexture> m_redCardIllusion;
 
