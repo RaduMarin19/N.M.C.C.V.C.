@@ -822,7 +822,7 @@ void Game::HandleBoardState() {
         auto redTime = red->GetTimeRemaining();
 
 
-        m_painter->DrawTimer(blueTime, {300, SCREEN_HEIGHT - 100}, 14);
+        m_painter->DrawTimer(blueTime, {300, SCREEN_HEIGHT - 100}, 40);
         m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100}, 14);
         if(m_board->IsBluePlayer()) {
             red->setDeltaTime(SDL_GetTicks());

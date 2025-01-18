@@ -51,13 +51,16 @@ Graphics::Graphics() {
             throw std::runtime_error("TTF Initialization Failed");
         }
 
-    if(m_font == nullptr)
-        m_font = TTF_OpenFont(FONT_PATH, 40);
+    for(int i =0; i < m_font.size(); i++) {
+        if(m_font[i] == nullptr) {
+            m_font[i] = TTF_OpenFont(FONT_PATH, 15 * (i+1));
+        }
 
-    if(!m_font) {
-        printf("Unable to load font: '%s'!\n"
-               "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
-        exit(-1);
+        if(!m_font[i]) {
+            printf("Unable to load font: '%s'!\n"
+                   "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
+            exit(-1);
+        }
     }
 }
 
@@ -82,7 +85,7 @@ void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int font
     texColor.a = 255;
 
     //Try to load our text buffer onto a surface
-    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buf.c_str(), textColor, texColor);
+    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font[fontSize < 15 ? 0 : 1], buf.c_str(), textColor, texColor);
 
     if(!textSurface) {
         printf("Unable to render text surface!\n"
@@ -158,7 +161,7 @@ void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
     }
 
     //Try to load our text buffer onto a surface
-    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, buffer, isPlaceholder ? SDL_Color(80, 80, 80, 240) : SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
+    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font[fontSize < 15 ? 0 : 1], buffer, isPlaceholder ? SDL_Color(80, 80, 80, 240) : SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
 
     if(!textSurface) {
         printf("Unable to render text surface!\n"
@@ -244,7 +247,7 @@ void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int h
     SDL_SetRenderDrawColor(m_renderer, chosenColor.r, chosenColor.g, chosenColor.b, chosenColor.a);
 
     //Try to load our text buffer onto a surface
-    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font, text.c_str(), SDL_Color(255.f, 255.f, 255.f, 255.f), chosenColor);
+    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font[1], text.c_str(), SDL_Color(255.f, 255.f, 255.f, 255.f), chosenColor);
 
     if(!textSurface) {
         printf("Unable to render text surface!\n"
@@ -321,8 +324,8 @@ bool Graphics::DrawLoginPage() {
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item, a text box and a button
-    DrawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 14, true);
-    DrawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 14, true);
+    DrawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 40, true);
+    DrawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 40, true);
 
     bool buttonActive = false;
     DrawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
@@ -341,7 +344,7 @@ void Graphics::DrawModeSelection(GameState& gameState) {
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    DrawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 40, true);
     bool tournamentActive = false;
     bool mageDuelActive = false;
     bool elementalBattleActive = false;
@@ -382,7 +385,7 @@ void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    DrawText("Choose Your Game Mode for Quick Match!", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode for Quick Match!", { SCREEN_WIDTH / 2, 50 }, 40, true);
 
     bool mageDuelActive = false;
     bool elementalBattleActive = false;
@@ -396,7 +399,7 @@ void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
     DrawButton(trainingActive,        { SCREEN_WIDTH / 2 - 75, 300 }, 150, 40, "Training", 14);
     DrawButton(mageElementalActive,   { SCREEN_WIDTH / 2 - 75, 350 }, 150, 40, "Mage Elemental", 14);
     DrawButton(tournamentActive,      { SCREEN_WIDTH / 2 - 75, 400 }, 150, 40, "Tournament", 14);
-    DrawSlider(timer, 30, 120, 30, { SCREEN_WIDTH / 2 - 75, 450 }, 150, 40);
+    DrawSlider(timer, 30, 120, 30, { SCREEN_WIDTH / 2 - 75, 450 }, 150, 20);
 
     if (mageDuelActive) {
         gameState = GameState::MAGE_DUEL;
@@ -424,7 +427,7 @@ void Graphics::DrawTournamentModeSelection(GameState& gameState)
     SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
-    DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 18, true);
+    DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 40, true);
     
     bool mageDuelActive = false;
     bool elementalBattleActive = false;
@@ -509,7 +512,70 @@ void Graphics::DrawTimer(unsigned int seconds, const Coordinates &pos, int fontS
 }
 
 void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, const int& step, const Coordinates& pos, const int& width, const int& height) {
-    value = minValue;
+
+    value = std::clamp(value, minValue, maxValue);
+    float percentageDraggedSlider = (float)(value - minValue) / (float)(maxValue - minValue);
+
+    //slider contains 4 parts:
+    //1) the outside rectangle
+    //2) the inside filled rectangle showing chosen value
+    //3) the slider head which we can drag
+    //4) the text marking on the slider head indicating the chosen value
+    SDL_Rect outlineRect = { pos.GetX() - 1, pos.GetY() - 1, width + 1, height + 1 };
+
+    SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
+
+    //Render our rectangles and the texture onto the screen
+    SDL_RenderDrawRect(m_renderer, &outlineRect);
+
+    SDL_Rect filledRect = {pos.GetX(), pos.GetY(), (int)(width * percentageDraggedSlider), height};
+
+    SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
+
+    SDL_RenderFillRect(m_renderer, &filledRect);
+
+    SDL_Rect sliderHeadRect = {pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY(), (int)(height*1.25), (int)(height*1.25)};
+
+
+
+
+
+    if(this->IsMouseInRect(sliderHeadRect)) {
+        //we are hovering the rectangle
+        if(this->IsPressingLeftClick()) {
+            SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
+            //we are interacting with the slider
+            int mouseXOffset = this->m_mouseX - pos.GetX();
+            float offsetVal = (float)mouseXOffset / (float)width;
+            offsetVal = std::clamp(offsetVal, 0.f, 1.f);
+            std::cout << offsetVal << std::endl;
+            value = minValue + (maxValue - minValue) * offsetVal;
+            value = std::clamp(value, minValue, maxValue);
+
+        } else {
+            SDL_SetRenderDrawColor(m_renderer, (m_accentColor.r + m_mainColor.r) / 2,
+        (m_accentColor.g + m_mainColor.g) / 2,
+        (m_accentColor.b + m_mainColor.b) / 2,
+        (m_accentColor.a + m_mainColor.a) / 2);
+
+            value = value - (value % step);
+        }
+    }
+    else {
+        SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
+        value = value - (value % step);
+    }
+
+
+
+    SDL_RenderFillRect(m_renderer, &sliderHeadRect);
+
+    //also render the value below the slider head
+
+    char text[10];
+    SDL_itoa(value, text, 10);
+
+    this->DrawText(text, {pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY() + height + 7}, 14, false);
 
 }
 

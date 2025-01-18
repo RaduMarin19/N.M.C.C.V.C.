@@ -60,7 +60,7 @@ public:
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
-    TTF_Font *m_font = nullptr;
+    std::array<TTF_Font*, 2> m_font;
     SDL_Color m_mainColor;
     SDL_Color m_accentColor;
     SDL_Event m_event;
