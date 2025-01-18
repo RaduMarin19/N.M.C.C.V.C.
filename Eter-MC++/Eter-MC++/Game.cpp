@@ -102,6 +102,7 @@ void Game::IRun() {
 void Game::HandleTournamentSelection() {
     m_painter->DrawTournamentModeSelection(m_currentState);
     m_nextRoundState = m_currentState;
+    m_bestOf = 5;
 
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE)
@@ -175,7 +176,7 @@ bool Game::HandleWin() {
     std::string message;
     static bool incrementWin = true;
 
-    if (m_currentState == GameState::RED_PLAYER_WON || m_board->GetPlayerBlue()->GetTimeRemaining() <= 0)
+    if (m_currentState == GameState::RED_PLAYER_WON || (m_board->GetPlayerBlue()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
     {
         message = "RED player WON";
         if(incrementWin)
@@ -185,7 +186,7 @@ bool Game::HandleWin() {
         std::cout << "Red rounds won: " << m_board->GetRedRoundsWon() << '\n';
         incrementWin = false;
     }
-    else if(m_currentState == GameState::BLUE_PLAYER_WON || m_board->GetPlayerRed()->GetTimeRemaining() <= 0)
+    else if (m_currentState == GameState::BLUE_PLAYER_WON || (m_board->GetPlayerRed()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
     {
         message = "BLUE player WON";
         if(incrementWin)
@@ -215,7 +216,6 @@ bool Game::HandleWin() {
         else
             m_painter->DrawText(message + " the ROUND!", { SCREEN_WIDTH / 2, 50 }, 14, true);
         m_painter->DrawButton(isNextRoundButton, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);
-        /*m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);*/
     }
 
     if (isReset) {
@@ -223,6 +223,7 @@ bool Game::HandleWin() {
         m_board->Clear();
         m_board->SetBlueRoundsWon(0);
         m_board->SetRedRoundsWon(0);
+        m_board->SetPlayingQuickMatch(false);
         m_explosionTurn = false;
         incrementWin = true;
         return true;
