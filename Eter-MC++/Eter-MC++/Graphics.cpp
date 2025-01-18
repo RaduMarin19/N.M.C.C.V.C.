@@ -128,6 +128,8 @@ void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int font
 
         SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
 
+        SDL_DestroyTexture(texture);
+
         //Delete the created surface
         SDL_FreeSurface(textSurface);
     }
@@ -218,6 +220,8 @@ void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
 
         SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
 
+        SDL_DestroyTexture(texture);
+
         //Delete the created surface
         SDL_FreeSurface(textSurface);
     }
@@ -276,6 +280,8 @@ void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int h
     SDL_RenderCopy(m_renderer, texture, NULL, &buttonRect);
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+
+    SDL_DestroyTexture(texture);
 
     //Delete the created surface
     SDL_FreeSurface(textSurface);
