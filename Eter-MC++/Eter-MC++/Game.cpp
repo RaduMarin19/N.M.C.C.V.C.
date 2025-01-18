@@ -849,12 +849,12 @@ void Game::HandleBoardState() {
     // Common logic for all modes
 
     //drawing the play illusion buttons
-    if (m_board->GetPlayerBlue()->HasPlayedIllusion() == false && m_board->IsBluePlayer()) {
-        m_painter->DrawButton(m_board->GetPlayerBlue()->IsPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+    if (m_board->GetPlayerBlue()->HasPlayedIllusion() == false && m_board->IsBluePlayer() && m_painter->IsPressingRightClick()) {
+        m_board->GetPlayerBlue()->IsPlayingIllusion() = !m_board->GetPlayerBlue()->IsPlayingIllusion();
     }
 
-    if (m_board->GetPlayerRed()->HasPlayedIllusion() == false && !m_board->IsBluePlayer()) {
-        m_painter->DrawButton(m_board->GetPlayerRed()->IsPlayingIllusion(), { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 100 }, 120, 50, "Play illusion!", 14);
+    if (m_board->GetPlayerRed()->HasPlayedIllusion() == false && !m_board->IsBluePlayer() && m_painter->IsPressingRightClick()) {
+        m_board->GetPlayerRed()->IsPlayingIllusion() = !m_board->GetPlayerRed()->IsPlayingIllusion();
     }
 
     //Draw the board, with the possible positions and played cards;
