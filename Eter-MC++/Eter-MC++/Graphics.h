@@ -42,7 +42,7 @@ public:
 
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);
-    void resetEvent();
+    void ResetEvent();
 
     void SetMousePos(const Coordinates& pos);
     Coordinates GetMousePos();

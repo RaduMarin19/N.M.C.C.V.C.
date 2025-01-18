@@ -95,7 +95,7 @@ void Game::IRun() {
         if(TARGET_FRAME_TIME > frameTime) {
             SDL_Delay(TARGET_FRAME_TIME - frameTime);
         }
-        m_painter->resetEvent();
+        m_painter->ResetEvent();
     }
 }
 
@@ -120,19 +120,19 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE) {
             m_board->SetTable(3);
-            m_board->setPlayingQuickMatch(true);
+            m_board->SetPlayingQuickMatch(true);
         }
         else {
             m_board->SetTable(4);
-            m_board->setPlayingQuickMatch(true);
+            m_board->SetPlayingQuickMatch(true);
         }
 
         m_board->GeneratePlayerCards(m_currentState);
         m_board->InitializeExplosion();
-        m_board->GetPlayerBlue()->setDeltaTime(SDL_GetTicks());
-        m_board->GetPlayerRed()->setDeltaTime(SDL_GetTicks());
-        m_board->GetPlayerBlue()->setTimeRemaining(m_quickModeTimer);
-        m_board->GetPlayerRed()->setTimeRemaining(m_quickModeTimer);
+        m_board->GetPlayerBlue()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerRed()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
+        m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
     }
 }
 
@@ -203,7 +203,7 @@ bool Game::HandleWin() {
     bool isNextRoundButton = false;
     bool isReset = false;
 
-    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_board->getPlayingQuickMatch())
+    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_board->GetPlayingQuickMatch())
     {
         m_painter->DrawText(message + " the MATCH!", {SCREEN_WIDTH / 2, 50}, 14, true);
         m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
@@ -824,7 +824,7 @@ void Game::HandleBoardState() {
         return;
 
     //logic for quickMatch
-    if(m_board->getPlayingQuickMatch()) {
+    if(m_board->GetPlayingQuickMatch()) {
         Player* blue = m_board->GetPlayerBlue();
         auto blueTime = blue->GetTimeRemaining();
         Player* red = m_board->GetPlayerRed();
@@ -832,22 +832,22 @@ void Game::HandleBoardState() {
 
 
         m_painter->DrawTimer(blueTime, {300, SCREEN_HEIGHT - 100}, 40);
-        m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100}, 14);
+        m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100}, 40);
         if(m_board->IsBluePlayer()) {
-            red->setDeltaTime(SDL_GetTicks());
+            red->SetDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - blue->GetDeltaTime();
             if(timeDiff >= 1000) {
                 //std::cout << "Blue player time ticked down to: " << blueTime << '\n';
-                blue->setDeltaTime(SDL_GetTicks());
-                blue->setTimeRemaining(blueTime - (timeDiff / 1000));
+                blue->SetDeltaTime(SDL_GetTicks());
+                blue->SetTimeRemaining(blueTime - (timeDiff / 1000));
             }
         } else {
-            blue->setDeltaTime(SDL_GetTicks());
+            blue->SetDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - red->GetDeltaTime();
             if(timeDiff >= 1000) {
                 //std::cout << "Red player time ticked down to: " << blueTime << '\n';
-                red->setDeltaTime(SDL_GetTicks());
-                red->setTimeRemaining(redTime - (timeDiff / 1000));
+                red->SetDeltaTime(SDL_GetTicks());
+                red->SetTimeRemaining(redTime - (timeDiff / 1000));
             }
         }
 

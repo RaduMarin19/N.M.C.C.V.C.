@@ -242,7 +242,10 @@ void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int h
                 active = !active;
             //Set the button color depending on the mouse action
             chosenColor = m_mainColor;
-        } else chosenColor = m_accentColor;
+        } else chosenColor = SDL_Color((m_accentColor.r + m_mainColor.r) / 2,
+            (m_accentColor.g + m_mainColor.g) / 2,
+            (m_accentColor.b + m_mainColor.b) / 2,
+            (m_accentColor.a + m_mainColor.a) / 2);
     } else {
         chosenColor = m_accentColor;
     }
@@ -315,7 +318,7 @@ void Graphics::SetEvent(const SDL_Event &event) {
     }
 }
 
-void Graphics::resetEvent() {
+void Graphics::ResetEvent() {
     this->m_isPressingLeftClick = false;
     this->m_isPressingRightClick = false;
     this->m_PressedKeyThisFrame = false;
@@ -541,7 +544,6 @@ void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, 
             int mouseXOffset = this->m_mouseX - pos.GetX() - height / 2;
             float offsetVal = (float)mouseXOffset / (float)width;
             offsetVal = std::clamp(offsetVal, 0.f, 1.f);
-            std::cout << offsetVal << std::endl;
             value = std::round(minValue + (maxValue - minValue) * offsetVal);
         } else {
             SDL_SetRenderDrawColor(m_renderer, (m_accentColor.r + m_mainColor.r) / 2,

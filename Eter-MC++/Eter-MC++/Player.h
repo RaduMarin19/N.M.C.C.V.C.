@@ -84,12 +84,12 @@ public:
 	void ClearRemovedCards();
 	void Reset();
 
-	void setTimeRemaining(unsigned int timeRemaining);
+	void SetTimeRemaining(unsigned int timeRemaining);
 	unsigned int GetTimeRemaining() const;
-	void setDeltaTime(unsigned int deltaTime);
+	void SetDeltaTime(unsigned int deltaTime);
 	unsigned int GetDeltaTime() const;
 
-	bool getIsPlayingIllusion() const;
+	bool GetIsPlayingIllusion() const;
 
 private:
 	std::vector<PlayingCard> m_cards;

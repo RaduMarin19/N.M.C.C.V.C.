@@ -187,7 +187,7 @@ void Player::Reset()
 	m_grabbedCard = nullptr;
 }
 
-void Player::setTimeRemaining(unsigned int timeRemaining) {
+void Player::SetTimeRemaining(unsigned int timeRemaining) {
 	m_timeRemaining = timeRemaining;
 }
 
@@ -195,7 +195,7 @@ unsigned int Player::GetTimeRemaining() const {
 	return m_timeRemaining;
 }
 
-void Player::setDeltaTime(unsigned int deltaTime) {
+void Player::SetDeltaTime(unsigned int deltaTime) {
 	m_deltaTime = deltaTime;
 }
 
@@ -203,6 +203,6 @@ unsigned int Player::GetDeltaTime() const {
 	return m_deltaTime;
 }
 
-bool Player::getIsPlayingIllusion() const {
+bool Player::GetIsPlayingIllusion() const {
 	return m_isPlayingIllusion;
 }

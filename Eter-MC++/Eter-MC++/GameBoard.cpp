@@ -1043,11 +1043,11 @@ void GameBoard::ResetRound(GameState gameState)
         GenerateTrainingCards();
 }
 
-void GameBoard::setPlayingQuickMatch(bool val) {
+void GameBoard::SetPlayingQuickMatch(bool val) {
     m_isPlayingQuickMatch = val;
 }
 
-bool GameBoard::getPlayingQuickMatch() const {
+bool GameBoard::GetPlayingQuickMatch() const {
     return m_isPlayingQuickMatch;
 }
 
@@ -1707,6 +1707,9 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
+    m_tokenSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_blue.png");
+    m_tokenSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_red.png");
+
 #else
     for (int i = 0; i < 5; i++) {
         m_blueCardTextures.emplace_back(renderer, "Dependencies/textures/blue_" + std::to_string(i) + ".jpg");
@@ -1729,6 +1732,9 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
 
     m_blueCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/red_back.jpg");
+
+    m_tokenSprites.emplace_back(renderer, "/Dependencies/textures/token_blue.png");
+    m_tokenSprites.emplace_back(renderer, "/Dependencies/textures/token_red.png");
 #endif
 }
 
@@ -1899,7 +1905,7 @@ void GameBoard::SaveState(nlohmann::json& json) const {
         playerJson["cards"] = nlohmann::json::array();
         playerJson["removed"] = nlohmann::json::array();
 
-        playerJson["isPlayingIllusion"] = player.getIsPlayingIllusion();
+        playerJson["isPlayingIllusion"] = player.GetIsPlayingIllusion();
 
         for (const auto& card : player.GetCards()) {
             playerJson["cards"].push_back({
@@ -2020,8 +2026,8 @@ void GameBoard::LoadState(const nlohmann::json& json) {
     auto deserializePlayer = [&](Player& player, const nlohmann::json& playerJson) {
 
         if(playerJson.contains("timeRemaining")) {
-            player.setTimeRemaining(playerJson["timeRemaining"].get<unsigned int>());
-            player.setDeltaTime(SDL_GetTicks());
+            player.SetTimeRemaining(playerJson["timeRemaining"].get<unsigned int>());
+            player.SetDeltaTime(SDL_GetTicks());
             std::cout << player.GetTimeRemaining() << std::endl;
         }
 

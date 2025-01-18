@@ -146,8 +146,8 @@ public:
     void Clear();
     void ResetRound(GameState gameState);
 
-    void setPlayingQuickMatch(bool val);
-    bool getPlayingQuickMatch() const;
+    void SetPlayingQuickMatch(bool val);
+    bool GetPlayingQuickMatch() const;
 
 private:
     unsigned short m_cardId{ 0 };
@@ -189,6 +189,7 @@ private:
     std::vector<CardTexture> m_elementalCardTextures;
     std::vector<CardTexture> m_mageCardTextures;
     std::vector<CardTexture> m_explosionSprites;
+    std::vector<CardTexture> m_tokenSprites;
 
     std::array<std::unique_ptr<CardTexture>, 2> m_explosionBoard;
     std::shared_ptr<CardTexture> m_blueCardIllusion;
