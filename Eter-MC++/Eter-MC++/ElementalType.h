@@ -6,7 +6,7 @@ enum class ElementalType {
     FIRE,                 // Flacari: Intoarce iluzia adversarului cu fata in sus si joaca o carte pe oricare pozitie de pe tabla.     !!DONE!!
     LAVA,                 // Lava: Toate cartile vizibile cu un numar specific se intorc in mainile proprietarilor.                    !!DONE!!
     ASHES,                // Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat.                                    !!DONE!!
-    SPARKS,               // Scantei: Alege orice carte proprie acoperita de adversar si joac-o pe alta pozitie.
+    SPARKS,               // Scantei: Alege orice carte proprie acoperita de adversar si joac-o pe alta pozitie.                       !!DONE!!
     WHIRLWIND,            // Vifor: Intoarce o carte vizibila a oponentului in mana sa.                                                !!DONE!!
     SQUALL,               // Vijelie: Toate cartile acoperite de alte carti se intorc in mainile proprietarilor.                       !!DONE!!
     HURRICANE,            // Uragan: Shift-eaza un rand complet ocupat cu 1 pozitie in directia dorita.                                !!DONE!!
@@ -16,7 +16,7 @@ enum class ElementalType {
     TIDE,                 // Maree: Interschimba pozitiile a 2 teancuri de carti.                                                      !!DONE!!
     MIST,                 // Ceata: Joaca inca o iluzie. Obs: Un jucator nu poate avea 2 iluzii simultan pe tabla.                     !!DONE!! 
     WAVE,                 // Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.                         !!DONE!!
-    WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.        !!DONE!! + TODO
+    WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.        !!DONE!!
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.                                         !!DONE!! 
     WATERFALL,            // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!

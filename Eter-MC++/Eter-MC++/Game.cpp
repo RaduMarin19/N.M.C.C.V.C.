@@ -734,6 +734,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
         {
             m_board->ReturnCoveredCards();
             m_board->RemoveSpell(spellCard);
+            break;
         }
 
         case ElementalType::MIRAGE:
