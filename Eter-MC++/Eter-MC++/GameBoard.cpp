@@ -213,8 +213,14 @@ void GameBoard::FixBorders(const Coordinates& position) {
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
-    m_possiblePositions.insert({ 0,0 });
-
+    for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
+        if (!it->second.empty())
+        {
+            m_possiblePositions.insert(it->first);
+            break;
+        }
+    }
+    
     for (auto& position : m_positionsToErase) {
         m_positions.erase(position);
     }
@@ -1203,7 +1209,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 0/*Random::Get(0, 23)*/;
+    int randomIndex1 = 7/*Random::Get(0, 23)*/;
     int randomIndex2 = 19/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2,0);
@@ -1285,7 +1291,6 @@ void GameBoard::GenerateMageDuelCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-
 
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
@@ -1420,7 +1425,9 @@ bool GameBoard::MoveEdgeRow(short row) {
     for (auto& position : positionsToMove) {
         Coordinates emptyPosition{ position.GetX(),newY};
         MoveStack(position, emptyPosition);
+        m_positionsToErase.insert(position);
     }
+
     m_shouldResetPositions = true;
 
     return true;
