@@ -39,7 +39,8 @@ Graphics::Graphics() {
     }
 
     // Create renderer
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
     if (!m_renderer) {
         std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         throw std::runtime_error("SDL Renderer Creation Failed");
@@ -197,9 +198,9 @@ void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
         //Typing logic, if the mouse is on the element, we can type in it
         //TODO: Change this logic to be on click instead
         if(this->IsMouseInRect(outlineRect)) {
-            if(m_event.type == SDL_KEYDOWN) {
+            if(m_PressedKeyThisFrame) {
                 //Get the key ASCII id
-                unsigned short key = m_event.key.keysym.sym;
+                unsigned short key = m_PressedKey;
 
                 //If we pressed backspace, delete a character instead of adding it
                 //TODO: This logic should delete multiple characters if backspace is held down
@@ -233,10 +234,8 @@ void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int h
     //Is the mouse hovering our button?
     if(IsMouseInRect(buttonRect)) {
         //If we are hovering and we pressed on it, invert its state
-        if(m_event.type == SDL_MOUSEBUTTONDOWN) {
-            if(m_event.button.button == SDL_BUTTON_LEFT) {
+        if(m_isPressingLeftClick) {
                 active = !active;
-            }
             //Set the button color depending on the mouse action
             chosenColor = m_mainColor;
         } else chosenColor = m_accentColor;
@@ -291,16 +290,29 @@ void Graphics::SetEvent(const SDL_Event &event) {
     m_event = event;
     SDL_GetMouseState(&m_mouseX, &m_mouseY);
 
+    if(event.type == SDL_KEYDOWN) {
+        m_PressedKey = event.key.keysym.sym;
+        m_PressedKeyThisFrame = true;
+    }
+
     if(event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONDOWN) {
         m_isPressingLeftClick = true;
+        m_isDraggingMouse = true;
     }
 
     if(event.button.button == SDL_BUTTON_RIGHT && event.type == SDL_MOUSEBUTTONDOWN) {
         m_isPressingRightClick = true;
     }
-    if(event.type == SDL_MOUSEBUTTONUP) {
-        m_isPressingLeftClick = false;
+
+    if(event.button.button == SDL_BUTTON_LEFT && event.type == SDL_MOUSEBUTTONUP) {
+        m_isDraggingMouse = false;
     }
+}
+
+void Graphics::resetEvent() {
+    this->m_isPressingLeftClick = false;
+    this->m_isPressingRightClick = false;
+    this->m_PressedKeyThisFrame = false;
 }
 
 void Graphics::SetMousePos(const Coordinates &pos) {
@@ -319,10 +331,6 @@ bool Graphics::IsMouseInRect(const SDL_Rect &rect) const {
 
 bool Graphics::DrawLoginPage() {
 
-    //Prepare the context for drawing
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
-
     //Draw our elements onto the screen, a text item, a text box and a button
     DrawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 40, true);
     DrawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 40, true);
@@ -330,18 +338,12 @@ bool Graphics::DrawLoginPage() {
     bool buttonActive = false;
     DrawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
 
-    // Present the updated render
-    SDL_RenderPresent(m_renderer);
-
     //If the user pressed the button return true, otherwise return false;
     return buttonActive;
 
 }
 
 void Graphics::DrawModeSelection(GameState& gameState) {
-    //Prepare the context for drawing
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode", { SCREEN_WIDTH / 2, 50 }, 40, true);
@@ -373,16 +375,11 @@ void Graphics::DrawModeSelection(GameState& gameState) {
     if (quickMatchActive) {
         gameState = GameState::QUICK_MODE;
     }
-
-    SDL_RenderPresent(m_renderer);
 }
 
 
 void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
 {
-    //Prepare the context for drawing
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode for Quick Match!", { SCREEN_WIDTH / 2, 50 }, 40, true);
@@ -416,15 +413,10 @@ void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
     if (tournamentActive) {
         gameState = GameState::TOURNAMENT;
     }
-
-    SDL_RenderPresent(m_renderer);
 }
 
 void Graphics::DrawTournamentModeSelection(GameState& gameState)
 {
-    //Prepare the context for drawing
-    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_renderer);
 
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 40, true);
@@ -452,8 +444,6 @@ void Graphics::DrawTournamentModeSelection(GameState& gameState)
     if (mageElementalActive) {
         gameState = GameState::MAGE_ELEMENTAL;
     }
-
-    SDL_RenderPresent(m_renderer);
 }
 
 void Graphics::DrawCard(const Card& card, SDL_Texture* cardTexture)
@@ -534,39 +524,32 @@ void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, 
 
     SDL_RenderFillRect(m_renderer, &filledRect);
 
-    SDL_Rect sliderHeadRect = {pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY(), (int)(height*1.25), (int)(height*1.25)};
-
-
-
-
+    int sliderHeadX = pos.GetX() + std::round(width * percentageDraggedSlider);
+    SDL_Rect sliderHeadRect = { sliderHeadX, pos.GetY() - (int)(height * 0.25) / 2, (int)(height * 1.25), (int)(height * 1.25) };
 
     if(this->IsMouseInRect(sliderHeadRect)) {
         //we are hovering the rectangle
-        if(this->IsPressingLeftClick()) {
+        if(this->IsDraggingMouse()) {
             SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
             //we are interacting with the slider
-            int mouseXOffset = this->m_mouseX - pos.GetX();
+            int mouseXOffset = this->m_mouseX - pos.GetX() - height / 2;
             float offsetVal = (float)mouseXOffset / (float)width;
             offsetVal = std::clamp(offsetVal, 0.f, 1.f);
             std::cout << offsetVal << std::endl;
-            value = minValue + (maxValue - minValue) * offsetVal;
-            value = std::clamp(value, minValue, maxValue);
-
+            value = std::round(minValue + (maxValue - minValue) * offsetVal);
         } else {
             SDL_SetRenderDrawColor(m_renderer, (m_accentColor.r + m_mainColor.r) / 2,
         (m_accentColor.g + m_mainColor.g) / 2,
         (m_accentColor.b + m_mainColor.b) / 2,
         (m_accentColor.a + m_mainColor.a) / 2);
 
-            value = value - (value % step);
+            value = minValue + std::round((value - minValue) / (float)step) * step;
         }
     }
     else {
         SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
-        value = value - (value % step);
+        value = minValue + std::round((value - minValue) / (float)step) * step;
     }
-
-
 
     SDL_RenderFillRect(m_renderer, &sliderHeadRect);
 
@@ -575,7 +558,7 @@ void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, 
     char text[10];
     SDL_itoa(value, text, 10);
 
-    this->DrawText(text, {pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY() + height + 7}, 14, false);
+    this->DrawText(text, {4 + pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY() + height + 10}, 14, false);
 
 }
 
@@ -585,5 +568,9 @@ bool Graphics::IsPressingLeftClick() {
 
 bool Graphics::IsPressingRightClick() {
     return this->m_isPressingRightClick;
+}
+
+bool Graphics::IsDraggingMouse() {
+    return m_isDraggingMouse;
 }
 

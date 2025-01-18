@@ -42,66 +42,60 @@ void Game::IRun() {
         //Get start time of current frame
         unsigned int frameStart = SDL_GetTicks();
 
-        //We poll all events in the list, use this variable to only draw the next menu on the next frame, not the next event
-        static bool drawThisFrame = false;
-
         while (SDL_PollEvent(&e) != 0)
         {
-            
             m_painter->SetEvent(e);
             if (e.type == SDL_QUIT)
             {
                 quit = true;
             }
-
-            // Initialize renderer color white for the background
-            SDL_SetRenderDrawColor(m_painter->GetRenderer(), 0x0f, 0x0f, 0x0f, 0xFF);
-
-            // Clear screen
-            SDL_RenderClear(m_painter->GetRenderer());
-
-            //if (drawThisFrame) continue;
-
-            switch (m_currentState) {
-                case GameState::WELCOME_SCREEN:{
-                    if (m_painter->DrawLoginPage()) {
-                        m_currentState = GameState::MODE_SELECTION;
-                    }
-                    break;
-                }
-                case GameState::MODE_SELECTION: {
-                    HandleModeSelection();
-                    break;
-                }
-                case GameState::TOURNAMENT: {
-                     HandleTournamentSelection();
-                     break;
-                }
-                case GameState::QUICK_MODE: {
-                     HandleQuickModeSelection();
-                     break;
-                }
-            }
-
-            if ((m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE)) {
-                HandleWin();
-            }
-
-            if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
-                m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT || 
-                m_currentState == GameState::MAGE_ELEMENTAL) {
-                HandleBoardState();
-            }
-
-            // Update screen
-            SDL_RenderPresent(m_painter->GetRenderer());
         }
+
+        // Initialize renderer color white for the background
+        SDL_SetRenderDrawColor(m_painter->GetRenderer(), 0, 0, 0, 255);
+
+        // Clear screen
+        SDL_RenderClear(m_painter->GetRenderer());
+
+        switch (m_currentState) {
+            case GameState::WELCOME_SCREEN: {
+                if (m_painter->DrawLoginPage()) {
+                    m_currentState = GameState::MODE_SELECTION;
+                }
+                break;
+            }
+            case GameState::MODE_SELECTION: {
+                HandleModeSelection();
+                break;
+            }
+            case GameState::TOURNAMENT: {
+                HandleTournamentSelection();
+                break;
+            }
+            case GameState::QUICK_MODE: {
+                HandleQuickModeSelection();
+                break;
+            }
+        }
+
+        if ((m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE)) {
+            HandleWin();
+        }
+        else if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
+            m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT ||
+            m_currentState == GameState::MAGE_ELEMENTAL) {
+            HandleBoardState();
+            }
+
+        // Update screen
+        SDL_RenderPresent(m_painter->GetRenderer());
+
         //Get total elapsed time since we started to draw the frame, if less than the target frame time, sleep
         unsigned int frameTime = SDL_GetTicks() - frameStart;
         if(TARGET_FRAME_TIME > frameTime) {
             SDL_Delay(TARGET_FRAME_TIME - frameTime);
         }
-        drawThisFrame = false;
+        m_painter->resetEvent();
     }
 }
 
@@ -852,14 +846,6 @@ void Game::HandleBoardState() {
 
     m_board->UpdateBoardCenter();
 
-    //bool shouldSave = false;
-
-    //m_painter->DrawButton(shouldSave, { SCREEN_WIDTH - 320, SCREEN_HEIGHT - 180 }, 120, 50, "Save game", 14);
-
-    //if (shouldSave) {
-    //    SaveGame();
-    //}
-
     // Common logic for all modes
 
     //drawing the play illusion buttons
@@ -886,7 +872,7 @@ void Game::HandleBoardState() {
         }
     }
 
-    if (!m_painter->IsPressingLeftClick() && (m_board->GetPlayerRed()->IsGrabbingCard() || m_board->GetPlayerBlue()->IsGrabbingCard())) {
+    if (!m_painter->IsDraggingMouse() && (m_board->GetPlayerRed()->IsGrabbingCard() || m_board->GetPlayerBlue()->IsGrabbingCard())) {
         //std::cout << "Player stopped grabbing a card\n";
         m_board->GetPlayerRed()->SetIsGrabbingCard(false);
         m_board->GetPlayerBlue()->SetIsGrabbingCard(false);
@@ -906,10 +892,10 @@ void Game::DrawBoard() {
         if (m_painter->IsMouseInRect(renderRect)) {
             SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
 
-            if (m_board->IsBluePlayer() && m_board->GetPlayerBlue()->IsGrabbingCard() && !m_painter->IsPressingLeftClick()) {
+            if (m_board->IsBluePlayer() && m_board->GetPlayerBlue()->IsGrabbingCard() && !m_painter->IsDraggingMouse()) {
                 PlayerTurn(*m_board->GetPlayerBlue(), renderRect, possiblePosition);
             }
-            else if (m_board->GetPlayerRed()->IsGrabbingCard() && !m_painter->IsPressingLeftClick()) {
+            else if (m_board->GetPlayerRed()->IsGrabbingCard() && !m_painter->IsDraggingMouse()) {
                 PlayerTurn(*m_board->GetPlayerRed(), renderRect, possiblePosition);
             }
         }
@@ -948,7 +934,7 @@ void Game::HandleCardMovement(Player* player, Card& card) {
     if (m_painter->IsMouseInRect(cardRect)) {
         SDL_SetRenderDrawColor(m_painter->GetRenderer(), 250, 250, 50, 255);
         SDL_RenderDrawRect(m_painter->GetRenderer(), &cardRect);
-        if (m_painter->IsPressingLeftClick() && !player->IsGrabbingCard()) {
+        if (m_painter->IsDraggingMouse() && !player->IsGrabbingCard()) {
             player->SetIsGrabbingCard(true);
             player->SetGrabbedCard(&card);
         }

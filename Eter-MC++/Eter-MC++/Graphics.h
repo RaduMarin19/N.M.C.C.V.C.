@@ -42,6 +42,7 @@ public:
 
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);
+    void resetEvent();
 
     void SetMousePos(const Coordinates& pos);
     Coordinates GetMousePos();
@@ -57,6 +58,7 @@ public:
 
     bool IsPressingLeftClick();
     bool IsPressingRightClick();
+    bool IsDraggingMouse();
 private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
@@ -65,8 +67,11 @@ private:
     SDL_Color m_accentColor;
     SDL_Event m_event;
     int m_mouseX, m_mouseY;
+    bool m_isDraggingMouse;
     bool m_isPressingLeftClick;
     bool m_isPressingRightClick;
+    bool m_PressedKeyThisFrame;
+    unsigned short m_PressedKey;
 };
 
 
