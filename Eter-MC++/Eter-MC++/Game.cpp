@@ -730,6 +730,12 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
 
+        case ElementalType::SPARKS:
+        {
+            m_board->ReturnCoveredCards();
+            m_board->RemoveSpell(spellCard);
+        }
+
         case ElementalType::MIRAGE:
         {
             Color playerColor = player.GetColor();

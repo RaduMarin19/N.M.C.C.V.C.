@@ -1202,7 +1202,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 1/*Random::Get(0, 23)*/;
+    int randomIndex1 = 5/*Random::Get(0, 23)*/;
     int randomIndex2 = 19/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2,0);
