@@ -733,6 +733,7 @@ GameBoard::SpellsType& GameBoard::GetSpells()
 }
 
 void GameBoard::InitializeExplosion() {
+    m_explosion.release();
     m_explosion = std::make_unique<ExplosionCard>(m_tableSize);
     m_explosion->InitializeExplosionCard();
 }
@@ -1202,7 +1203,7 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 5/*Random::Get(0, 23)*/;
+    int randomIndex1 = 0/*Random::Get(0, 23)*/;
     int randomIndex2 = 19/*Random::Get(0, 23)*/;
 
     InitializeSpellCards(randomIndex1, randomIndex2,0);

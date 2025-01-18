@@ -571,6 +571,17 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             break;
         }
 
+        case ElementalType::CONTROLLED_EXPLOSION:
+        {
+            if (m_board->DidExplode()) {
+                m_board->InitializeExplosion();
+            }
+            m_board->Explode();
+            m_board->RemoveSpell(spellCard); //then remove the spell card
+            m_board->ChangeTurn();
+            break;
+        }
+
         case ElementalType::SHATTER:
         {
             try {
