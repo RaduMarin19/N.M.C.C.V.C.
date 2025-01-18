@@ -606,12 +606,9 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
         {
             try {
                 short cardValue = m_board->GetCardsAtPosition(possiblePosition).back().GetValue();  //getting the value of the card under the spell
-                short cardsCount = 0;
-                for (const PlayingCard* card : m_board->GetPlayedCards()) {
-                    if (card->GetValue() == cardValue) {
-                        ++cardsCount;                                       //counting the cards with equal value
-                    }
-                }
+                short cardsCount = std::ranges::count_if(m_board->GetPlayedCards(), [cardValue](const PlayingCard* card) {
+                    return card->GetValue() == cardValue;
+                    });
 
                 if (cardsCount >= 2) {
                     for (const auto& card : m_board->GetPlayedCards()) {                    

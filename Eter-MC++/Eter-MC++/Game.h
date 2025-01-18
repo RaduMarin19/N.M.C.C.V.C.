@@ -20,6 +20,7 @@
 #include <memory>
 #include <vector>
 #include <stack>
+#include <ranges>
 
 
 #define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)

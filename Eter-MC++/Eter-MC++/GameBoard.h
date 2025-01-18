@@ -24,6 +24,7 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <ranges>
 
 class GameBoard
 {

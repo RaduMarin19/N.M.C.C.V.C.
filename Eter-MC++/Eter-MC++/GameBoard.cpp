@@ -1618,7 +1618,9 @@ void GameBoard::SetValidatedExplosion(ExplosionCard *card) {
         }
         explosionSubsets.emplace_back(subset);
     }
-    std::sort(explosionSubsets.begin(), explosionSubsets.end(), [](tmp obj1, tmp obj2){return obj1.size() > obj2.size();});
+    std::ranges::sort(explosionSubsets, [](const tmp& obj1, const tmp& obj2) {
+        return obj1.size() > obj2.size();
+        });
     for(const auto& subset : explosionSubsets) {
         ExplosionCard *tmpCard = new ExplosionCard(m_tableSize);
         tmpCard->MakeExplosionFromVector(subset);
