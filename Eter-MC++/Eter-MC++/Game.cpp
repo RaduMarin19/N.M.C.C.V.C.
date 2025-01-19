@@ -1098,7 +1098,81 @@ void Game::AddTokenToArena(const Coordinates &pos, const unsigned int& team) {
 }
 
 void Game::CheckArenaForWin() {
-    //handle win if one column/row/diagonal is filled.
+
+    //check rows
+    for(int i = 0; i < m_miniArena.size(); i++) {
+        short blueTokens = 0, redTokens = 0;
+        for(int j = 0; j < m_miniArena[i].size(); j++) {
+
+            if(m_miniArena[i][j] == nullptr) continue;
+
+            if(m_miniArena[i][j]->GetTeam() == 0) blueTokens++;
+            if(m_miniArena[i][j]->GetTeam() == 1) redTokens++;
+        }
+        if(blueTokens == m_miniArena.size()) {
+            m_currentState = GameState::BLUE_PLAYER_WON;
+            return;
+        }
+        if(redTokens == m_miniArena.size()) {
+            m_currentState = GameState::RED_PLAYER_WON;
+            return;
+        }
+    }
+
+    //check columns
+    for(int j = 0; j < m_miniArena.size(); j++) {
+        short blueTokens = 0, redTokens = 0;
+        for(int i = 0; i < m_miniArena[j].size(); i++) {
+
+            if(m_miniArena[i][j] == nullptr) continue;
+
+            if(m_miniArena[i][j]->GetTeam() == 0) blueTokens++;
+            if(m_miniArena[i][j]->GetTeam() == 1) redTokens++;
+        }
+        if(blueTokens == m_miniArena.size()) {
+            m_currentState = GameState::BLUE_PLAYER_WON;
+            return;
+        }
+        if(redTokens == m_miniArena.size()) {
+            m_currentState = GameState::RED_PLAYER_WON;
+            return;
+        }
+    }
+
+    //check diagonals
+    short blueTokens = 0, redTokens = 0;
+    for(int i = 0; i < m_miniArena.size(); i++) {
+        if(m_miniArena[i][i] == nullptr) break;
+
+        if(m_miniArena[i][i]->GetTeam() == 0) blueTokens++;
+        if(m_miniArena[i][i]->GetTeam() == 1) redTokens++;
+    }
+
+    if(blueTokens == m_miniArena.size()) {
+        m_currentState = GameState::BLUE_PLAYER_WON;
+        return;
+    }
+    if(redTokens == m_miniArena.size()) {
+        m_currentState = GameState::RED_PLAYER_WON;
+        return;
+    }
+
+    blueTokens = 0, redTokens = 0;
+    for(int i = 0; i < m_miniArena.size(); i++) {
+        if(m_miniArena[i][m_miniArena.size() - i - 1] == nullptr) break;
+
+        if(m_miniArena[i][m_miniArena.size() - i - 1]->GetTeam() == 0) blueTokens++;
+        if(m_miniArena[i][m_miniArena.size() - i - 1]->GetTeam() == 1) redTokens++;
+    }
+
+    if(blueTokens == m_miniArena.size()) {
+        m_currentState = GameState::BLUE_PLAYER_WON;
+        return;
+    }
+    if(redTokens == m_miniArena.size()) {
+        m_currentState = GameState::RED_PLAYER_WON;
+        return;
+    }
 }
 
 void Game::LoadSave()
