@@ -61,6 +61,8 @@ private:
 
 	void DrawPlayersCards(Player* player, bool isPlayersTurn, Player* otherPlayer);
 	void DrawBoard();
+	std::string ElementToString(ElementalType element);
+	std::string WizardToString(WizardType mage);
 
 	void HandleTournamentSelection();
 	void HandleQuickModeSelection();

@@ -333,6 +333,64 @@ void Game::PlayRegularCard(Player& player,PlayingCard* pushCard, SDL_Rect& rende
         player.SetIsPlayingAshes(false);
     }
 }
+std::string Game::ElementToString(ElementalType element)
+{
+    switch (element) {
+    case ElementalType::CONTROLLED_EXPLOSION:
+        return "Explozie controlata: Tabla explodeaza! Obs: Conditii speciale in functie de regula jocului.";
+    case ElementalType::DESTROY:
+        return "Distrugere: Elimina din joc ultima carte jucata de adversar.";
+    case ElementalType::FIRE:
+        return "Flacari: Intoarce iluzia adversarului cu fata in sus si joaca o carte pe oricare pozitie de pe tabla.";
+    case ElementalType::LAVA:
+        return "Lava: Toate cartile vizibile cu un numar specific se intorc in mainile proprietarilor.";
+    case ElementalType::ASHES:
+        return "Din cenusa: Alege o carte proprie eliminata din joc si joac-o imediat.";
+    case ElementalType::SPARKS:
+        return "Scantei: Alege orice carte proprie acoperita de adversar si joac-o pe alta pozitie.";
+    case ElementalType::WHIRLWIND:
+        return "Vifor: Intoarce o carte vizibila a oponentului in mana sa.";
+    case ElementalType::SQUALL:
+        return "Vijelie: Toate cartile acoperite de alte carti se intorc in mainile proprietarilor.";
+    case ElementalType::HURRICANE:
+        return "Uragan: Shift-eaza un rand complet ocupat cu 1 pozitie in directia dorita.";
+    case ElementalType::FLURRY:
+        return "Rafala: Muta o carte vizibila pe o pozitie adiacenta cu o carte cu un numar mai mic.";
+    case ElementalType::MIRAGE:
+        return "Miraj: Inlocuieste propria iluzie plasata cu o alta iluzie. Obs: Disponibil doar daca se joaca cu iluzii.";
+    case ElementalType::STORM:
+        return "Furtuna: Elimina din joc orice teanc de carti ce contine 2 sau mai multe carti.";
+    case ElementalType::TIDE:
+        return "Maree: Interschimba pozitiile a 2 teancuri de carti.";
+    case ElementalType::MIST:
+        return "Ceata: Joaca inca o iluzie. Obs: Un jucator nu poate avea 2 iluzii simultan pe tabla.";
+    case ElementalType::WAVE:
+        return "Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.";
+    case ElementalType::WHIRLPOOL:
+        return "Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.";
+    case ElementalType::TSUNAMI:
+        return "Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.";
+    case ElementalType::WATERFALL:
+        return "Cascada: Teancurile de pe un rand \"cad\" spre o margine, formand un teanc.";
+    case ElementalType::SUPPORT:
+        return "Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.";
+    case ElementalType::EARTHQUAKE:
+        return "Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.";
+    case ElementalType::SHATTER:
+        return "Sfarama: Valoarea unei carti a adversarului 2/3/4 scade cu 1.";
+    case ElementalType::BORDERS:
+        return "Granite: Plaseaza o carte neutra pentru a defini o granita a tablei.";
+    case ElementalType::AVALANCHE:
+        return "Avalansa: Shift-eaza doua teancuri adiacente pe orizontala/verticala cu 1 pozitie.";
+    case ElementalType::BOULDER:
+        return "Bolovan: Acopera orice iluzie cu o carte, fara a intoarce iluzia.";
+    case ElementalType::NO_ELEMENT:
+        return "Niciun element.";
+    default:
+        return "Element necunoscut.";
+    }
+
+}
 void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& renderRect, const Coordinates& possiblePosition) {
     wizardCard->SetCoordinates({ renderRect.x, renderRect.y });
 
@@ -450,6 +508,29 @@ void Game::PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& rend
         break;
     default:
         break;
+    }
+}
+
+std::string Game::WizardToString(WizardType mage) {
+    switch (mage) {
+    case WizardType::REMOVE_OPPONENT_CARD:
+        return "Remove Opponent Card: Elimina o carte a adversarului de pe tabla care acopera o carte proprie.";
+    case WizardType::REMOVE_ROW:
+        return "Remove Row: Elimina un intreg rand de carti de pe tabla (minim 3 pozitii, cu o carte proprie vizibila).";
+    case WizardType::COVER_OPPONENT_CARD:
+        return "Cover Opponent Card: Acopera o carte a oponentului cu o carte proprie de valoare mai mica din mana.";
+    case WizardType::CREATE_PIT:
+        return "Create Pit: Transforma un spatiu gol de pe tabla intr-o groapa.";
+    case WizardType::MOVE_OWN_STACK:
+        return "Move Own Stack: Muta un teanc de carti cu propria carte deasupra pe o alta pozitie goala pe tabla.";
+    case WizardType::GAIN_ETER_CARD:
+        return "Gain Eter Card: Capata o extra carte Eter care se plaseaza imediat pe tabla.";
+    case WizardType::MOVE_OPPONENT_STACK:
+        return "Move Opponent Stack: Muta un teanc de carti cu cartea adversarului deasupra pe o alta pozitie goala pe tabla.";
+    case WizardType::MOVE_EDGE_ROW:
+        return "Move Edge Row: Muta un rand de la \"marginea\" tablei pe o alta \"margine\" (minim 3 pozitii).";
+    default:
+        return "Unknown WizardType.";
     }
 }
 
@@ -1050,6 +1131,12 @@ void Game::HandleCardMovement(Player* player, Card& card) {
                 mousePos.SetY(mousePos.GetY() - (textureHeight / 2));
                 card.SetCoordinates(mousePos);
             }
+        }
+        else if (SpellCard* spellCard = dynamic_cast<SpellCard*>(&card)) {
+            m_painter->DrawText(ElementToString(spellCard->GetSpell()), m_painter->GetMousePos(), 14, true);
+        }
+        else if (WizardCard* wizardCard = dynamic_cast<WizardCard*>(&card)) {
+            m_painter->DrawText(WizardToString(wizardCard->GetWizard()), m_painter->GetMousePos(), 14, true);
         }
     }
 }

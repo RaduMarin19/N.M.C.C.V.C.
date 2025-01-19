@@ -1360,8 +1360,6 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
         while (randomIndex2 == randomIndex1) {
             int randomIndex2 = Random::Get(0, 23);
         }
-        randomIndex1 = 22;
-        randomIndex2 = 17;
 
         InitializeSpellCards(randomIndex1, randomIndex2, 0);
     }

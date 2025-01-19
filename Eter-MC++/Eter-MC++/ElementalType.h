@@ -27,3 +27,4 @@ enum class ElementalType {
     BOULDER,               // Bolovan: Acopera orice iluzie cu o carte, fara a intoarce iluzia.                                        !!DONE!!
     NO_ELEMENT //!DONE :)
 };
+
