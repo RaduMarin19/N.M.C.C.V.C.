@@ -1499,11 +1499,11 @@ void GameBoard::GenerateMageElementalCards(bool shouldGenerateNewElements)
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
-    int randomMageIndex1 = Random::Get(0, 23);
-    int randomMageIndex2 = Random::Get(0, 23);
+    int randomMageIndex1 = Random::Get(0, 7);
+    int randomMageIndex2 = Random::Get(0, 7);
 
     while (randomMageIndex2 == randomMageIndex1) {
-        int randomMageIndex2 = Random::Get(0, 23);
+        int randomMageIndex2 = Random::Get(0, 7);
     }
 
     InitializeWizardCards(randomMageIndex1, randomMageIndex2);

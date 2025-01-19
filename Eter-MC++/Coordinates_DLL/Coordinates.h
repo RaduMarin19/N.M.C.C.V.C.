@@ -1,9 +1,15 @@
 #pragma once
+
+#ifdef EXPORTING_DLL
+#define DLL_API __declspec(dllexport)
+#else
+#define DLL_API __declspec(dllimport)
+#endif
+
 #include <cstddef>
 #include <functional>
 
-
-class Coordinates
+class DLL_API Coordinates
 {
 public:
 	struct Hash {
@@ -18,9 +24,9 @@ public:
 	Coordinates(int x, int y);
 	Coordinates(const Coordinates& other);
 
-	Coordinates& operator=(const Coordinates& other) = default; 
-	Coordinates(Coordinates&& other) noexcept = default;  
-	Coordinates& operator=(Coordinates&& other) noexcept = default; 
+	Coordinates& operator=(const Coordinates& other) = default;
+	Coordinates(Coordinates&& other) noexcept = default;
+	Coordinates& operator=(Coordinates&& other) noexcept = default;
 	~Coordinates() = default;
 
 	bool operator==(const Coordinates& other) const;
