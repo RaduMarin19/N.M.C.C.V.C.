@@ -213,11 +213,6 @@ void GameBoard::FixBorders(const Coordinates& position) {
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
-    m_possiblePositions.insert({ 0,0 });
-    m_maxX = 0;
-    m_minX = 0;
-    m_maxY = 0;
-    m_minY = 0;
     for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
         if (!it->second.empty())
         {
