@@ -215,6 +215,10 @@ void GameBoard::FixBorders(const Coordinates& position) {
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
+    m_maxX = 0;
+    m_minX = 0;
+    m_maxY = 0;
+    m_minY = 0;
     for (auto it = m_positions.begin(); it != m_positions.end(); ++it) {
         if (!it->second.empty())
         {
@@ -618,17 +622,34 @@ bool GameBoard::MoveStacksToEmptyPosition(const Coordinates& stack1, const Coord
     if (stack1.GetY() == stack2.GetY()) {
         Coordinates emptyPosition(100, 100);
         for (int i = -1; i <= 1; ++i) {
-                Coordinates newPosition{ stack1.GetX() + i,stack1.GetY()};
-                if (i != 0 && !m_positions.contains(newPosition)) {
-                    emptyPosition = newPosition;
-                    break;
-                }
+            if (i == 0) continue;
+            Coordinates newPosition{ stack1.GetX() + i,stack1.GetY()};
+
+            if (i != 0 && !m_positions.contains(newPosition)) {
+                std::unique_ptr<ExplosionCard> ex = std::make_unique<ExplosionCard>(m_tableSize);
+                std::vector<std::pair<Coordinates, ExplosionType>> expl;
+                expl.push_back({ GetUnTranslatedPosition(newPosition),ExplosionType::ADD });
+                expl.push_back({ GetUnTranslatedPosition(stack2),ExplosionType::HOLE });
+
+                ex->MakeExplosionFromVector(expl);
+                if (!ValidateBoardAfterEffect(ex.get())) continue;
+                emptyPosition = newPosition;
+                break;
+            }
         }
         if (emptyPosition.GetX() == 100)
         {
             for (int i = -1; i <= 1; ++i) {
+                if (i == 0) continue;
                 Coordinates newPosition{ stack2.GetX() + i,stack1.GetY() };
                 if (i != 0 && !m_positions.contains(newPosition)) {
+                    std::unique_ptr<ExplosionCard> ex = std::make_unique<ExplosionCard>(m_tableSize);
+                    std::vector<std::pair<Coordinates, ExplosionType>> expl;
+                    expl.push_back({ GetUnTranslatedPosition(newPosition),ExplosionType::ADD });
+                    expl.push_back({ GetUnTranslatedPosition(stack1),ExplosionType::HOLE });
+
+                    ex->MakeExplosionFromVector(expl);
+                    if (!ValidateBoardAfterEffect(ex.get())) continue;
                     emptyPosition = newPosition;
                     break;
                 }
@@ -650,15 +671,26 @@ bool GameBoard::MoveStacksToEmptyPosition(const Coordinates& stack1, const Coord
     Coordinates emptyPosition1(100, 100);
     Coordinates emptyPosition2(100, 100);
     for (int i = -1; i <= 1; ++i) {
-            Coordinates newPosition1{ stack1.GetX() + i, stack1.GetY() };
-            Coordinates newPosition2{ stack2.GetX() + i, stack2.GetY() };
-            if (i != 0 && !m_positions.contains(newPosition1) && !m_positions.contains(newPosition2)) {
-                emptyPosition1 = newPosition1;
-                emptyPosition2 = newPosition2;
-                m_positionsToErase.insert(stack1);
-                m_positionsToErase.insert(stack2);
-                break;
-            }
+        if (i == 0) continue;
+        Coordinates newPosition1{ stack1.GetX() + i, stack1.GetY() };
+        Coordinates newPosition2{ stack2.GetX() + i, stack2.GetY() };
+        std::unique_ptr<ExplosionCard> ex = std::make_unique<ExplosionCard>(m_tableSize);
+        std::vector<std::pair<Coordinates, ExplosionType>> expl;
+        expl.push_back({ GetUnTranslatedPosition(newPosition1),ExplosionType::ADD });
+        expl.push_back({ GetUnTranslatedPosition(newPosition2),ExplosionType::ADD });
+        expl.push_back({ GetUnTranslatedPosition(stack1),ExplosionType::HOLE });
+        expl.push_back({ GetUnTranslatedPosition(stack2),ExplosionType::HOLE });
+
+        ex->MakeExplosionFromVector(expl);
+        if (!ValidateBoardAfterEffect(ex.get())) continue;
+
+        if (i != 0 && !m_positions.contains(newPosition1) && !m_positions.contains(newPosition2)) {
+            emptyPosition1 = newPosition1;
+            emptyPosition2 = newPosition2;
+            m_positionsToErase.insert(stack1);
+            m_positionsToErase.insert(stack2);
+            break;
+        }
     }
     if (emptyPosition1.GetX() == 100)
         return false;
@@ -682,7 +714,8 @@ bool GameBoard::WaterFall(const Coordinates& position)
             if (pos.second.size() == 0 || pos.second.back().IsEter())
                 return false;
             occupiedPositions++;
-            ex.push_back({ GetUnTranslatedPosition(pos.second.back().GetBoardPosition()), ExplosionType::HOLE });
+            if (pos.second.back().GetBoardPosition().GetX() != position.GetX())
+                ex.push_back({ GetUnTranslatedPosition(pos.second.back().GetBoardPosition()), ExplosionType::HOLE });
         }
     }
 
@@ -1327,6 +1360,8 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
         while (randomIndex2 == randomIndex1) {
             int randomIndex2 = Random::Get(0, 23);
         }
+        randomIndex1 = 22;
+        randomIndex2 = 17;
 
         InitializeSpellCards(randomIndex1, randomIndex2, 0);
     }

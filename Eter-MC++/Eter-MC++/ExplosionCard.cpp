@@ -72,6 +72,7 @@ void ExplosionCard::MakeExplosionFromVector(std::vector<std::pair<Coordinates, E
 		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
 	}
 	for (const auto& [pos, eff] : vec) {
+		if (pos.GetX() < 0 || pos.GetY() < 0) continue;
 		m_explosionMask[pos.GetX()][pos.GetY()] = eff;
 	}
 }
