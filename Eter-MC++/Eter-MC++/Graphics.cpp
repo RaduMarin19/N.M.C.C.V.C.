@@ -428,7 +428,6 @@ void Graphics::DrawQuickModeSelection(GameState& gameState, int& timer)
 
 void Graphics::DrawTournamentModeSelection(GameState& gameState)
 {
-
     //Draw our elements onto the screen, a text item and our buttons
     DrawText("Choose Your Game Mode for Tournament", { SCREEN_WIDTH / 2, 50 }, 40, true);
     

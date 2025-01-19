@@ -136,11 +136,15 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
 
     if (m_currentState != GameState::TOURNAMENT) {
         if (m_currentState == GameState::TRAINING_MODE) {
+            m_nextRoundState = m_currentState;
             m_board->SetTable(3);
             m_board->SetPlayingQuickMatch(true);
+            m_bestOf = 3;
         }
         else {
             m_board->SetTable(4);
+            m_nextRoundState = m_currentState;
+            m_bestOf = 5;
             m_board->SetPlayingQuickMatch(true);
         }
 
@@ -153,6 +157,7 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
     }
     else if (m_currentState != GameState::QUICK_MODE) {
         m_board->SetPlayingQuickMatch(true);
+        m_nextRoundState = m_currentState;
     }
 
 }
@@ -196,7 +201,7 @@ bool Game::HandleWin() {
     std::string message;
     static bool incrementWin = true;
 
-    if (m_currentState == GameState::RED_PLAYER_WON || (m_board->GetPlayerBlue()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
+    if (m_currentState == GameState::RED_PLAYER_WON)
     {
         message = "RED player WON";
         if(incrementWin)
@@ -212,7 +217,7 @@ bool Game::HandleWin() {
         }
         incrementWin = false;
     }
-    else if (m_currentState == GameState::BLUE_PLAYER_WON || (m_board->GetPlayerRed()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
+    else if (m_currentState == GameState::BLUE_PLAYER_WON)
     {
         message = "BLUE player WON";
         if(incrementWin)
