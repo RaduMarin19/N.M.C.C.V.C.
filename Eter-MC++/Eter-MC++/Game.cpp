@@ -816,6 +816,17 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             }
             break;
         }
+
+        case ElementalType::WATERFALL:
+        {
+            if (m_board->WaterFall(possiblePosition)) {
+                m_board->RemoveSpell(spellCard);
+            }
+            else {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
     }
 }
 

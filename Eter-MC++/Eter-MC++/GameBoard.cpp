@@ -614,6 +614,55 @@ void GameBoard::SetBoundPosition(const Coordinates& position)
     m_boundPosition = new Coordinates(position);
 }
 
+bool GameBoard::WaterFall(const Coordinates& position)
+{
+    int row = position.GetY();
+
+    short occupiedPositions = 0;
+
+    std::unique_ptr<ExplosionCard> expl= std::make_unique<ExplosionCard>(m_tableSize);
+    std::vector<std::pair<Coordinates, ExplosionType>> ex;
+
+    for (auto& pos : m_positions) {
+        if (pos.first.GetY() == row) {
+            if (pos.second.size() == 0 || pos.second.back().IsEter())
+                return false;
+            occupiedPositions++;
+            ex.push_back({ GetUnTranslatedPosition(pos.second.back().GetBoardPosition()), ExplosionType::HOLE });
+        }
+    }
+
+    expl->MakeExplosionFromVector(ex);
+
+    if (!ValidateBoardAfterEffect(expl.get()))
+        return false;
+
+    if (occupiedPositions < 3) {
+        return false;
+    }
+
+    if (position.GetX() == m_maxX) {
+        for (int i = m_maxX-1; i >= m_minX; --i) {
+            Coordinates temp{ i,row };
+            m_positions[position].insert(m_positions[position].end(), m_positions[temp].begin(), m_positions[temp].end());
+            m_positions[temp].clear();
+            m_positionsToErase.insert(temp);
+        }
+    }
+    else if (position.GetX() == m_minX) {
+        for (int i = m_minX+1; i <= m_maxX; ++i) {
+            Coordinates temp{ i,row };
+            m_positions[position].insert(m_positions[position].end(), m_positions[temp].begin(), m_positions[temp].end());
+            m_positions[temp].clear();
+            m_positionsToErase.insert(temp);
+        }
+    }
+    else return false;
+
+    m_shouldResetPositions = true;
+    return true;
+}
+
 bool GameBoard::Flurry(const Coordinates& position) {
     Coordinates unTranslatedPosition{GetUnTranslatedPosition(position)};            //getting the untranslated position
     if (!m_positions.contains(position))
@@ -1225,6 +1274,8 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
             int randomIndex2 = Random::Get(0, 23);
         }
 
+        randomIndex1 = 22;
+        randomIndex2 = 17;
         InitializeSpellCards(randomIndex1, randomIndex2, 0);
     }
 

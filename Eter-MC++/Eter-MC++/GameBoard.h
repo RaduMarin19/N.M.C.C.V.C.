@@ -125,6 +125,7 @@ public:
     void SetIsPlayingCoverOpponent(bool isPlayingCoverOpponent);
     bool IsPositionEmpty(const Coordinates& position) const;
 
+    bool WaterFall(const Coordinates& position);
     bool Flurry(const Coordinates& position);
     Coordinates GetUnTranslatedPosition(const Coordinates& position) const;
 

@@ -15,7 +15,13 @@ ExplosionCard::ExplosionCard(short tableSize) {
 
 void ExplosionCard::InitializeExplosionCard() {
 	unsigned short maxIndex = this->m_tableSize * this->m_tableSize - 1;
-	unsigned short numberEffects = Random::Get(2, 4);
+	unsigned short numberEffects;
+	if (m_tableSize == 3) {
+		numberEffects = Random::Get(2, 4);
+	}
+	else {
+		numberEffects = Random::Get(3, 6);
+	}
 
 	for (int i = 0; i < m_explosionMask.size(); ++i) {
 		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
