@@ -53,6 +53,7 @@ private:
 	bool m_drawThisFrame;
 	bool m_explosionTurn;
 	int m_quickModeTimer;
+	std::vector<std::vector<tokenCard*>> m_miniArena;
 
 	GameBoard::DeckType* m_selectedStack;
 

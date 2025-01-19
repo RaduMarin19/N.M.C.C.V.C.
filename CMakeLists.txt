@@ -134,6 +134,8 @@ add_executable(N_M_C_C_V_C_
         Eter-MC++/Eter-MC++/WizardType.h
         Eter-MC++/Eter-MC++/WizardCard.h
         Eter-MC++/Eter-MC++/WizardCard.cpp
-        Eter-MC++/Eter-MC++/SpellCard.h)
+        Eter-MC++/Eter-MC++/SpellCard.h
+        Eter-MC++/Eter-MC++/TokenCard.cpp
+        Eter-MC++/Eter-MC++/TokenCard.h)
 
 target_link_libraries(N_M_C_C_V_C_ ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRAY} SDL2_ttf::SDL2_ttf -lSDL2_image)
