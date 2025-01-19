@@ -1,5 +1,4 @@
 ﻿#include "Game.h"
-#include <thread>
 
 Game::Game()
     : m_currentState(GameState::WELCOME_SCREEN) {
