@@ -153,6 +153,7 @@
     <ClCompile Include="PlayingCard.cpp" />
     <ClCompile Include="Random.cpp" />
     <ClCompile Include="SpellCard.cpp" />
+    <ClCompile Include="TokenCard.cpp" />
     <ClCompile Include="WizardCard.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@
     <ClInclude Include="PlayingCard.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="SpellCard.h" />
+    <ClInclude Include="TokenCard.h" />
     <ClInclude Include="WizardCard.h" />
     <ClInclude Include="WizardType.h" />
   </ItemGroup>

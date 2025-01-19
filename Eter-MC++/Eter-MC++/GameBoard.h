@@ -135,7 +135,7 @@ public:
     unsigned int GetMinY() const;
     unsigned int GetMaxX() const;
     unsigned int GetMaxY() const;
-
+    
     void CreateHoleAtPosition(const Coordinates& boardPosition);
     ExplosionCard* GetExplosion();
     SpellsType& GetSpells();
@@ -198,7 +198,7 @@ private:
     std::shared_ptr<CardTexture> m_blueCardIllusion;
     std::shared_ptr<CardTexture> m_redCardIllusion;
 
-    std::array<TokenCard*, 2> m_tokenCards;
+    std::array<std::unique_ptr<TokenCard>, 2> m_tokenCards;
 
     bool m_isBluePlayer;
     bool m_exploded = false;

@@ -100,35 +100,3 @@ bool PlayingCard::operator==(const PlayingCard& other) const
 {
 	return (m_position == other.m_position) && (m_value == other.m_value);
 }
-
-void to_json(nlohmann::json& j, const PlayingCard& card) {
-	j = nlohmann::json{
-		{"board_position", {card.GetBoardPosition().GetX(), card.GetBoardPosition().GetY()}},
-		{"color", static_cast<int>(card.GetColor())},
-		{"value", card.GetValue()},
-		{"initial_value", card.GetInitialValue()},
-		{"is_illusion", card.IsIllusion()},
-		{"is_eter", card.IsEter()}
-	};
-}
-
-void from_json(const nlohmann::json& j, PlayingCard& card) {
-	Coordinates position;
-
-	position.SetX(j.at("board_position").at(0));
-	position.SetY(j.at("board_position").at(1));
-
-	Color color = static_cast<Color>(j.at("color").get<int>());
-	short value = j.at("value").get<short>();
-	short initialValue = j.at("initial_value").get<short>();
-	bool isIllusion = j.at("is_illusion").get<bool>();
-	bool isEter = j.at("is_eter").get<bool>();
-
-	card.SetBoardPosition(position);
-	card.SetValue(value);
-	card.SetInitialValue(initialValue);
-	card.SetIllusion(isIllusion);
-	card.SetEter(isEter);
-	
-	card.SetColor(color);
-}

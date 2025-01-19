@@ -196,7 +196,6 @@ bool Game::HandleWin() {
                 }
             }
         }
-        std::cout << "Red rounds won: " << m_board->GetRedRoundsWon() << '\n';
         incrementWin = false;
 
 
@@ -216,7 +215,6 @@ bool Game::HandleWin() {
                 }
             }
         }
-        std::cout << "Blue rounds won: " << m_board->GetBlueRoundsWon() << '\n';
         incrementWin = false;
     }
     else
@@ -247,6 +245,7 @@ bool Game::HandleWin() {
     if (isReset) {
         m_currentState = GameState::MODE_SELECTION;
         m_board->Clear();
+        m_miniArena.clear();
         m_board->SetBlueRoundsWon(0);
         m_board->SetRedRoundsWon(0);
         m_board->SetPlayingQuickMatch(false);
@@ -836,9 +835,9 @@ void Game::PlayerTurn(Player& player, SDL_Rect& renderRect, const Coordinates& p
                 PlayWizardCard(player, wizardCard, renderRect, possiblePosition);
             }
         }
-        SaveGame();
     }
-    
+    SaveGame();
+
     //returning cards to deck if they are moved
     for (PlayingCard& card : player.GetCards()) {
         m_board->ReturnCardToDeck(card);
@@ -923,7 +922,7 @@ void Game::HandleBoardState() {
 }
 
 void Game::DrawBoard() {
-    for (const auto& possiblePosition : m_board->GetPossiblePositions()) { //positions should be shared ptr
+    for (const auto& possiblePosition : m_board->GetPossiblePositions()) { 
         if (&possiblePosition == nullptr) continue;
         SDL_Rect renderRect{};
         renderRect.x = m_board->GetCenterX() - (possiblePosition.GetX() * textureWidth);
@@ -1192,9 +1191,40 @@ void Game::LoadSave()
         m_explosionTurn = save["explosionTurn"].get<bool>();
     }
 
+    if (save.contains("bestOf")) {
+        m_bestOf = save["bestOf"].get<int>();
+    }
+
     if (save.contains("gameState")) {
         m_currentState = save["gameState"].get<GameState>();
         m_board->GeneratePlayerCards(m_currentState);
+    }
+    
+    if (save.contains("nextRoundState")) {
+        m_nextRoundState = save["nextRoundState"].get<GameState>();
+    }
+    
+    if (save.contains("isPlayingTournament")) {
+        m_isPlayingTournament = save["isPlayingTournament"].get<bool>();
+    }
+
+    if (save.contains("miniArena")) {
+        const auto size = m_board->GetTableSize();
+        m_miniArena.resize(size);
+
+        for (decltype(auto) row : m_miniArena) {
+            row.resize(size, nullptr);
+        }
+
+        for (const auto& token : save["miniArena"]) {
+            int i = token["board_position"][0].get<int>();
+            int j = token["board_position"][1].get<int>();
+
+            int team = token["team"].get<unsigned int>();
+            
+            m_miniArena[i][j] = m_board->GetTokenCard(team);
+        }
+
     }
 
     m_board->LoadState(save);
@@ -1205,13 +1235,29 @@ void Game::LoadSave()
 
 void Game::SaveGame()
 {
-    return;
     json save;
     
     save["gameState"] = m_currentState;
+    save["nextRoundState"] = m_nextRoundState;
     save["explosionTurn"] = m_explosionTurn;
 
+    save["isPlayingTournament"] = m_isPlayingTournament;
+    save["bestOf"] = m_bestOf;
+    save["miniArena"] = nlohmann::json::array();
+
+    for (int i = 0; i < m_miniArena.size(); ++i) {
+        for (int j = 0; j < m_miniArena[i].size(); ++j) {
+            if (m_miniArena[i][j] != nullptr) {
+                save["miniArena"].push_back({
+                    {"board_position", {i, j}},
+                    {"team", m_miniArena[i][j]->GetTeam()}
+                });
+            }
+        }
+    }
+
     m_board->SaveState(save);
+    std::cout << "saved\n";
 
     std::ofstream outFile("save_game.json");
 
