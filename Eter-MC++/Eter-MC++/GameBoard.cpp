@@ -1038,11 +1038,11 @@ void GameBoard::ResetRound(GameState gameState)
     if (gameState == GameState::TRAINING_MODE)
         GenerateTrainingCards();
     if (gameState == GameState::MAGE_DUEL)
-        GenerateTrainingCards();
+        GenerateMageDuelCards();
     if (gameState == GameState::ELEMENTAL_BATTLE)
-        GenerateTrainingCards();
+        GenerateElementalCards(false);
     if (gameState == GameState::MAGE_ELEMENTAL)
-        GenerateTrainingCards();
+        GenerateMageElementalCards(false);
 }
 
 void GameBoard::SetPlayingQuickMatch(bool val) {
@@ -1149,7 +1149,7 @@ void GameBoard::GenerateTrainingCards() {
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
 }
 
-void GameBoard::GenerateElementalCards() {
+void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
     //Initialize a deck for each player
     std::vector<PlayingCard> PlayingCardsBlue;
     std::vector<PlayingCard> PlayingCardsRed;
@@ -1215,10 +1215,18 @@ void GameBoard::GenerateElementalCards() {
 
         currentCardOffset += availableSpacePerCard;
     }
-    int randomIndex1 = 7/*Random::Get(0, 23)*/;
-    int randomIndex2 = 19/*Random::Get(0, 23)*/;
 
-    InitializeSpellCards(randomIndex1, randomIndex2,0);
+    if(shouldGenerateNewElements)
+    {
+        int randomIndex1 = Random::Get(0, 23);
+        int randomIndex2 = Random::Get(0, 23);
+
+        while (randomIndex2 == randomIndex1) {
+            int randomIndex2 = Random::Get(0, 23);
+        }
+
+        InitializeSpellCards(randomIndex1, randomIndex2, 0);
+    }
 
     //Initialize the two players with the newly generated decks
     this->m_playerBlue = Player(PlayingCardsBlue);
@@ -1301,8 +1309,12 @@ void GameBoard::GenerateMageDuelCards() {
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
-    int randomIndex1 = 5/*Random::Get(0, 7)*/;
-    int randomIndex2 = 7/*Random::Get(0, 7)*/;
+    int randomIndex1 = Random::Get(0, 7);
+    int randomIndex2 = Random::Get(0, 7);
+
+    while (randomIndex2 == randomIndex1) {
+        int randomIndex2 = Random::Get(0, 7);
+    }
 
     InitializeWizardCards(randomIndex1,randomIndex2);
 
@@ -1310,7 +1322,7 @@ void GameBoard::GenerateMageDuelCards() {
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
 }
 
-void GameBoard::GenerateMageElementalCards()
+void GameBoard::GenerateMageElementalCards(bool shouldGenerateNewElements)
 {
     std::vector<PlayingCard> PlayingCardsBlue;
     std::vector<PlayingCard> PlayingCardsRed;
@@ -1384,14 +1396,25 @@ void GameBoard::GenerateMageElementalCards()
     this->m_playerBlue = Player(PlayingCardsBlue);
     this->m_playerRed = Player(PlayingCardsRed);
 
-    int randomMageIndex1 = 5/*Random::Get(0, 7)*/;
-    int randomMageIndex2 = 7/*Random::Get(0, 7)*/;
-    
-    int randomSpellIndex1 = 5/*Random::Get(0, 7)*/;
-    int randomSpellIndex2 = 7/*Random::Get(0, 7)*/;
+    int randomMageIndex1 = Random::Get(0, 23);
+    int randomMageIndex2 = Random::Get(0, 23);
+
+    while (randomMageIndex2 == randomMageIndex1) {
+        int randomMageIndex2 = Random::Get(0, 23);
+    }
 
     InitializeWizardCards(randomMageIndex1, randomMageIndex2);
-    InitializeSpellCards(randomSpellIndex1, randomSpellIndex2,150);
+
+    if(shouldGenerateNewElements)
+    {
+        int randomSpellIndex1 = Random::Get(0, 23);
+        int randomSpellIndex2 = Random::Get(0, 23);
+
+        while (randomSpellIndex2 == randomSpellIndex1) {
+            int randomSpellIndex2 = Random::Get(0, 23);
+        }
+        InitializeSpellCards(randomSpellIndex1, randomSpellIndex2,150);
+    }
 
     m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
     m_playerRed.SetIllusionTexture(m_redCardIllusion);
@@ -1483,13 +1506,13 @@ void GameBoard::GeneratePlayerCards(GameState& gameState) {
         GenerateTrainingCards();
     }
     else if (gameState == GameState::ELEMENTAL_BATTLE) {
-        GenerateElementalCards();
+        GenerateElementalCards(true);
     }
     else if (gameState == GameState::MAGE_DUEL) {
         GenerateMageDuelCards();
     }
     else if (gameState == GameState::MAGE_ELEMENTAL) {
-        GenerateMageElementalCards();
+        GenerateMageElementalCards(true);
     }
 }
 

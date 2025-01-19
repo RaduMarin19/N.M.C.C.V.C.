@@ -223,9 +223,9 @@ private:
     void LoadTextures(SDL_Renderer* renderer);
 
     void GenerateTrainingCards();
-    void GenerateElementalCards();
+    void GenerateElementalCards(bool shouldGenerateNewElements);
     void GenerateMageDuelCards();
-    void GenerateMageElementalCards();
+    void GenerateMageElementalCards(bool shouldGenerateNewElements);
 
     void InitializeWizard(Player& player, short wizardId);
     void InitializeWizardCards(short randomIndex1, short randomIndex2);
