@@ -101,6 +101,10 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
+# Explicitly include .dll and .lib files
+!*.dll
+!*.lib
+
 # Chutzpah Test files
 _Chutzpah*
 

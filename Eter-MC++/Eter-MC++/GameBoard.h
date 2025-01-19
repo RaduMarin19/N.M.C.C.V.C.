@@ -18,7 +18,6 @@
 #include "json.hpp"
 #endif
 
-
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
