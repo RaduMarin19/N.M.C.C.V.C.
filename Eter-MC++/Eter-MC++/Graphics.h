@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+class TokenCard;
+
 inline struct {
     std::string playerName;
 }g_config;
@@ -39,6 +41,7 @@ public:
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
     void DrawTimer(unsigned int seconds, const Coordinates& pos, int fontSize);
     void DrawSlider(int& value, const int& minValue, const int& maxValue, const int& step, const Coordinates& pos, const int& width, const int& height);
+    void DrawMiniArena(const std::vector<std::vector<TokenCard*>>& arena);
 
     SDL_Renderer* GetRenderer();
     void SetEvent(const SDL_Event &event);

@@ -26,6 +26,8 @@
 #include <cstdlib>
 #include <ranges>
 
+#include "TokenCard.h"
+
 class GameBoard
 {
 public:
@@ -124,7 +126,7 @@ public:
     bool IsPositionEmpty(const Coordinates& position) const;
 
     bool Flurry(const Coordinates& position);
-    Coordinates GetUnTranslatedPosition(const Coordinates& position);
+    Coordinates GetUnTranslatedPosition(const Coordinates& position) const;
 
     unsigned int GetCenterX() const;
     unsigned int GetCenterY() const;
@@ -148,6 +150,8 @@ public:
 
     void SetPlayingQuickMatch(bool val);
     bool GetPlayingQuickMatch() const;
+
+    TokenCard* GetTokenCard(const unsigned int& team) const;
 
 private:
     unsigned short m_cardId{ 0 };
@@ -189,11 +193,12 @@ private:
     std::vector<CardTexture> m_elementalCardTextures;
     std::vector<CardTexture> m_mageCardTextures;
     std::vector<CardTexture> m_explosionSprites;
-    std::vector<CardTexture> m_tokenSprites;
 
     std::array<std::unique_ptr<CardTexture>, 2> m_explosionBoard;
     std::shared_ptr<CardTexture> m_blueCardIllusion;
     std::shared_ptr<CardTexture> m_redCardIllusion;
+
+    std::array<TokenCard*, 2> m_tokenCards;
 
     bool m_isBluePlayer;
     bool m_exploded = false;

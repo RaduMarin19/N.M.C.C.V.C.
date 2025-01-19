@@ -1,5 +1,7 @@
 ﻿#include "GameBoard.h"
 
+#include "TokenCard.h"
+
 void GameBoard::TestPossiblePosition(short x, short y)
 {
     //If the board is at it's max size and our point is outside the bounds then it is not valid
@@ -1051,6 +1053,10 @@ bool GameBoard::GetPlayingQuickMatch() const {
     return m_isPlayingQuickMatch;
 }
 
+TokenCard * GameBoard::GetTokenCard(const unsigned int& team) const {
+    return m_tokenCards[team];
+}
+
 bool GameBoard::CanUseExplosion() {
     if (m_exploded)
         return false;
@@ -1487,7 +1493,7 @@ void GameBoard::GeneratePlayerCards(GameState& gameState) {
     }
 }
 
-Coordinates GameBoard::GetUnTranslatedPosition(const Coordinates& position) {
+Coordinates GameBoard::GetUnTranslatedPosition(const Coordinates& position) const {
     return {m_maxX - position.GetX(), m_maxY - position.GetY()};
 }
 
@@ -1707,8 +1713,10 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     m_blueCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = std::make_unique<CardTexture>(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/red_back.jpg");
 
-    m_tokenSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_blue.png");
-    m_tokenSprites.emplace_back(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_red.png");
+    CardTexture *tokenSpriteBlue = new CardTexture(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_blue.png");
+    m_tokenCards[0] = new TokenCard(tokenSpriteBlue, 0);
+    CardTexture *tokenSpriteRed = new CardTexture(renderer, "../Eter-MC++/Eter-MC++/Dependencies/textures/token_red.png");
+    m_tokenCards[1] = new TokenCard(tokenSpriteRed, 1);
 
 #else
     for (int i = 0; i < 5; i++) {
@@ -1733,8 +1741,10 @@ void GameBoard::LoadTextures(SDL_Renderer* renderer) {
     m_blueCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/blue_back.jpg");
     m_redCardIllusion = std::make_shared<CardTexture>(renderer, "Dependencies/textures/red_back.jpg");
 
-    m_tokenSprites.emplace_back(renderer, "/Dependencies/textures/token_blue.png");
-    m_tokenSprites.emplace_back(renderer, "/Dependencies/textures/token_red.png");
+    CardTexture *tokenSpriteBlue = new CardTexture(renderer, "Dependencies/textures/token_blue.png");
+    m_tokenCards[0] = new TokenCard(tokenSpriteBlue, 0);
+    CardTexture *tokenSpriteRed = new CardTexture(renderer, "Dependencies/textures/token_red.png");
+    m_tokenCards[1] = new TokenCard(tokenSpriteRed, 1);
 #endif
 }
 

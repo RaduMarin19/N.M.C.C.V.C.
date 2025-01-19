@@ -8,6 +8,7 @@ Game::Game()
     m_selectedStack = nullptr;
     m_explosionTurn = false;
     m_quickModeTimer = 0;
+    m_isPlayingTournament = false;
 }
 
 Game& Game::GetInstance()
@@ -112,6 +113,11 @@ void Game::HandleTournamentSelection() {
 
         m_board->GeneratePlayerCards(m_currentState);
         m_board->InitializeExplosion();
+        this->m_isPlayingTournament = true;
+        m_miniArena.resize(m_board->GetTableSize());
+        for(int i = 0; i < m_board->GetTableSize(); i++) {
+            m_miniArena[i].resize(m_board->GetTableSize(), nullptr);
+        }
     }
 }
 
@@ -182,9 +188,19 @@ bool Game::HandleWin() {
         if(incrementWin)
         {
             m_board->IncreaseRoundsWon(GameState::RED_PLAYER_WON);
+            if(m_isPlayingTournament) {
+                const auto redPlayerCards = m_board->GetPlayerRed()->GetOrderOfPlayedCards();
+                if(redPlayerCards.size() > 0) {
+                    const auto lastCard = redPlayerCards.top();
+                    this->AddTokenToArena(lastCard.GetBoardPosition(), 1);
+                }
+            }
         }
         std::cout << "Red rounds won: " << m_board->GetRedRoundsWon() << '\n';
         incrementWin = false;
+
+
+
     }
     else if (m_currentState == GameState::BLUE_PLAYER_WON || (m_board->GetPlayerRed()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
     {
@@ -192,6 +208,13 @@ bool Game::HandleWin() {
         if(incrementWin)
         {
             m_board->IncreaseRoundsWon(GameState::BLUE_PLAYER_WON);
+            if(m_isPlayingTournament) {
+                const auto bluePlayerCards = m_board->GetPlayerBlue()->GetOrderOfPlayedCards();
+                if(bluePlayerCards.size() > 0) {
+                    const auto lastCard = bluePlayerCards.top();
+                    this->AddTokenToArena(lastCard.GetBoardPosition(), 0);
+                }
+            }
         }
         std::cout << "Blue rounds won: " << m_board->GetBlueRoundsWon() << '\n';
         incrementWin = false;
@@ -217,6 +240,9 @@ bool Game::HandleWin() {
             m_painter->DrawText(message + " the ROUND!", { SCREEN_WIDTH / 2, 50 }, 14, true);
         m_painter->DrawButton(isNextRoundButton, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Play next round!", 14);
     }
+
+    if(m_isPlayingTournament) m_painter->DrawMiniArena(m_miniArena);
+
 
     if (isReset) {
         m_currentState = GameState::MODE_SELECTION;
@@ -1063,6 +1089,18 @@ bool Game::ExplosionTurn(){
     return false;
 }
 
+void Game::AddTokenToArena(const Coordinates &pos, const unsigned int& team) {
+    std::cout << pos.GetX() << " " << pos.GetY() << '\n';
+    const auto rawCoords = m_board->GetUnTranslatedPosition(pos);
+    std::cout << rawCoords.GetX() << " " << rawCoords.GetY() << '\n';
+    m_miniArena[rawCoords.GetX()][rawCoords.GetY()] = m_board->GetTokenCard(team);
+    CheckArenaForWin();
+}
+
+void Game::CheckArenaForWin() {
+    //handle win if one column/row/diagonal is filled.
+}
+
 void Game::LoadSave()
 {
     std::string filename = "save_game.json";
@@ -1093,6 +1131,7 @@ void Game::LoadSave()
 
 void Game::SaveGame()
 {
+    return;
     json save;
     
     save["gameState"] = m_currentState;

@@ -53,6 +53,7 @@ private:
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
 	bool m_explosionTurn;
+	bool m_isPlayingTournament;
 	int m_quickModeTimer;
 	std::vector<std::vector<TokenCard*>> m_miniArena;
 
@@ -72,6 +73,9 @@ private:
 	void PlayWizardCard(Player& player, WizardCard* wizardCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	void PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderRect, const Coordinates& possiblePosition);
 	bool ExplosionTurn();
+
+	void AddTokenToArena(const Coordinates& pos, const unsigned int& team);
+	void CheckArenaForWin();
 
 	void LoadSave();
 	void SaveGame();

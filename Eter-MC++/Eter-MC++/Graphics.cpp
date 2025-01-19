@@ -4,6 +4,8 @@
 
 #include <format>
 
+#include "TokenCard.h"
+
 Graphics::Graphics() {
 
     //Initialize the color pallete, currently "magic numbers"
@@ -568,6 +570,27 @@ void Graphics::DrawSlider(int& value, const int& minValue, const int& maxValue, 
 
     this->DrawText(text, {4 + pos.GetX() + (int)(width * percentageDraggedSlider), pos.GetY() + height + 10}, 14, false);
 
+}
+
+void Graphics::DrawMiniArena(const std::vector<std::vector<TokenCard *>> &arena) {
+
+    const Coordinates pos = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 200};
+    const int cellSize = 64;
+    const Coordinates offset = {(int)(cellSize * (arena.size() / 2.f)), (int)(cellSize * (arena.size() / 2.f))};
+    for(int i = 0; i < arena.size(); i++) {
+        for(int j = 0; j < arena[i].size(); j++) {
+            SDL_Rect positionRect = {pos.GetX() - offset.GetX() + j * cellSize,
+                pos.GetY() - offset.GetY() + i * cellSize,
+                cellSize, cellSize};
+
+            SDL_SetRenderDrawColor(this->m_renderer, 220, 220, 220, 255);
+            SDL_RenderDrawRect(this->m_renderer, &positionRect);
+
+            if (arena[i][j] != nullptr) {
+                SDL_RenderCopy(m_renderer, arena[i][j]->GetCard()->GetTexture(), NULL, &positionRect);
+            }
+        }
+    }
 }
 
 bool Graphics::IsPressingLeftClick() {
