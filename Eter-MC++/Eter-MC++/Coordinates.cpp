@@ -31,15 +31,3 @@ void Coordinates::SetY(int y)
 {
 	m_y = y;
 }
-
-void to_json(nlohmann::json& j, const Coordinates& position)
-{
-	j["x"] = position.GetX();
-	j["y"] = position.GetY();
-}
-
-void from_json(const nlohmann::json& j, Coordinates& position)
-{
-	position.SetX(j.at("x"));
-	position.SetY(j.at("y"));
-}

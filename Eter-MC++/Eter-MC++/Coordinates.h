@@ -1,11 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <functional>
-#if defined linux
-#include "../Dependencies/JSON/json.hpp"
-#else
-#include "json.hpp"
-#endif
+
 
 class Coordinates
 {
@@ -36,7 +32,3 @@ public:
 private:
 	int m_x, m_y;
 };
-
-
-void to_json(nlohmann::json& j, const Coordinates& position);
-void from_json(const nlohmann::json& j, Coordinates& position);
