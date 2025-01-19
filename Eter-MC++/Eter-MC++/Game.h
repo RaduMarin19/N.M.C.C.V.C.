@@ -21,6 +21,7 @@
 #include <vector>
 #include <stack>
 #include <ranges>
+#include "TokenCard.h"
 
 
 #define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)
@@ -53,7 +54,7 @@ private:
 	bool m_drawThisFrame;
 	bool m_explosionTurn;
 	int m_quickModeTimer;
-	std::vector<std::vector<tokenCard*>> m_miniArena;
+	std::vector<std::vector<TokenCard*>> m_miniArena;
 
 	GameBoard::DeckType* m_selectedStack;
 
