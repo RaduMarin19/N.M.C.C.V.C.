@@ -141,6 +141,14 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
         m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
         m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
     }
+    else {
+        m_board->SetPlayingQuickMatch(true);
+        m_board->GetPlayerBlue()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerRed()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
+        m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
+    }
+
 }
 
 void Game::HandleModeSelection() {
@@ -908,7 +916,8 @@ void Game::HandleBoardState() {
             if(timeDiff >= 1000) {
                 //std::cout << "Blue player time ticked down to: " << blueTime << '\n';
                 blue->SetDeltaTime(SDL_GetTicks());
-                blue->SetTimeRemaining(blueTime - (timeDiff / 1000));
+                if(blueTime > 0)
+                    blue->SetTimeRemaining(blueTime - (timeDiff / 1000));
             }
         } else {
             blue->SetDeltaTime(SDL_GetTicks());
@@ -916,7 +925,8 @@ void Game::HandleBoardState() {
             if(timeDiff >= 1000) {
                 //std::cout << "Red player time ticked down to: " << blueTime << '\n';
                 red->SetDeltaTime(SDL_GetTicks());
-                red->SetTimeRemaining(redTime - (timeDiff / 1000));
+                if (redTime > 0)
+                    red->SetTimeRemaining(redTime - (timeDiff / 1000));
             }
         }
 
