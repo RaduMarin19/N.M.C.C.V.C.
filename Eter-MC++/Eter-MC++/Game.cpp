@@ -827,6 +827,38 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
             }
             break;
         }
+
+        case ElementalType::AVALANCHE:
+        {
+            try {
+                if (m_selectedStack == nullptr) {
+                    m_selectedStack = &m_board->GetCardsAtPosition(possiblePosition); //getting the first stack selected
+                    m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                    if (m_selectedStack->back().IsEter())
+                        m_selectedStack = nullptr;
+                }
+                else {
+                    GameBoard::DeckType* otherStack = &m_board->GetCardsAtPosition(possiblePosition);
+                    if (m_selectedStack != otherStack && !otherStack->back().IsEter()) {
+                        if (m_board->MoveStacksToEmptyPosition(m_selectedStack->back().GetBoardPosition(), otherStack->back().GetBoardPosition())) {
+                            m_board->RemoveSpell(spellCard);         //then remove the spell card
+                            m_board->ChangeTurn();
+                        }
+                        else {
+                            m_selectedStack = nullptr;
+                            m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                        }
+                    }
+                    else {
+                        m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+                    }
+                }
+            }
+            catch (const std::runtime_error& error) {
+                m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position
+            }
+            break;
+        }
     }
 }
 

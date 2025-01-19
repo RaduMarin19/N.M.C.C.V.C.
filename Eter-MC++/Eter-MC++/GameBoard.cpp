@@ -529,7 +529,6 @@ bool GameBoard::Hurricane(const Coordinates& position) {
 }
 
 bool GameBoard::WhirlPool(const Coordinates& position) {
-    //TODO: give the player the option to choose which card to place over when the values are = 
     Coordinates left{ position.GetX() + 1, position.GetY() };
     Coordinates right{ position.GetX() - 1, position.GetY() };
 
@@ -612,6 +611,61 @@ bool GameBoard::SetBlockedRow(short row)
 void GameBoard::SetBoundPosition(const Coordinates& position)
 {
     m_boundPosition = new Coordinates(position);
+}
+
+bool GameBoard::MoveStacksToEmptyPosition(const Coordinates& stack1, const Coordinates& stack2)
+{
+    if (stack1.GetY() == stack2.GetY()) {
+        Coordinates emptyPosition(100, 100);
+        for (int i = -1; i <= 1; ++i) {
+                Coordinates newPosition{ stack1.GetX() + i,stack1.GetY()};
+                if (i != 0 && !m_positions.contains(newPosition)) {
+                    emptyPosition = newPosition;
+                    break;
+                }
+        }
+        if (emptyPosition.GetX() == 100)
+        {
+            for (int i = -1; i <= 1; ++i) {
+                Coordinates newPosition{ stack2.GetX() + i,stack1.GetY() };
+                if (i != 0 && !m_positions.contains(newPosition)) {
+                    emptyPosition = newPosition;
+                    break;
+                }
+            }
+            if (emptyPosition.GetX() == 100)
+                return false;
+            MoveStack(stack2, emptyPosition);
+            m_positionsToErase.insert(stack1);
+        }
+        else {
+            MoveStack(stack1, emptyPosition);
+            m_positionsToErase.insert(stack2);
+        }
+        std::swap(m_positions[stack1], m_positions[stack2]);
+        m_shouldResetPositions = true;
+        return true;
+    }
+
+    Coordinates emptyPosition1(100, 100);
+    Coordinates emptyPosition2(100, 100);
+    for (int i = -1; i <= 1; ++i) {
+            Coordinates newPosition1{ stack1.GetX() + i, stack1.GetY() };
+            Coordinates newPosition2{ stack2.GetX() + i, stack2.GetY() };
+            if (i != 0 && !m_positions.contains(newPosition1) && !m_positions.contains(newPosition2)) {
+                emptyPosition1 = newPosition1;
+                emptyPosition2 = newPosition2;
+                m_positionsToErase.insert(stack1);
+                m_positionsToErase.insert(stack2);
+                break;
+            }
+    }
+    if (emptyPosition1.GetX() == 100)
+        return false;
+    MoveStack(stack1, emptyPosition1);
+    MoveStack(stack2, emptyPosition2);
+    m_shouldResetPositions = true;
+    return true;
 }
 
 bool GameBoard::WaterFall(const Coordinates& position)
@@ -1274,8 +1328,6 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
             int randomIndex2 = Random::Get(0, 23);
         }
 
-        randomIndex1 = 22;
-        randomIndex2 = 17;
         InitializeSpellCards(randomIndex1, randomIndex2, 0);
     }
 

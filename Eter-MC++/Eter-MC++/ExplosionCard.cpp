@@ -66,7 +66,9 @@ void ExplosionCard::RotateExplosion() {
 }
 
 void ExplosionCard::MakeExplosionFromVector(std::vector<std::pair<Coordinates, ExplosionType>> vec) {
+	m_explosionMask.resize(m_tableSize);
 	for (int i = 0; i < m_explosionMask.size(); ++i) {
+		m_explosionMask[i].resize(m_tableSize);
 		std::fill(m_explosionMask[i].begin(), m_explosionMask[i].end(), ExplosionType::NONE);
 	}
 	for (const auto& [pos, eff] : vec) {

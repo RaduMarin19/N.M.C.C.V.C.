@@ -18,12 +18,12 @@ enum class ElementalType {
     WAVE,                 // Val: Muta un teanc pe o pozitie adiacenta goala si joaca o carte pe noua pozitie.                         !!DONE!!
     WHIRLPOOL,            // Vartej de apa: Muta 2 carti de pe acelasi rand pe un spatiu gol. Cartea mai mare se pune deasupra.        !!DONE!!
     TSUNAMI,              // Tsunami: Blocheaza un rand pentru urmatoarea tura a adversarului.                                         !!DONE!! 
-    WATERFALL,            // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.
+    WATERFALL,            // Cascada: Teancurile de pe un rand "cad" spre o margine, formand un teanc.                                 !!DONE!!
     SUPPORT,              // Sprijin: Valoarea unei carti proprii 1/2/3 creste cu 1.                                                   !!DONE!!
     EARTHQUAKE,           // Cutremur: Elimina de pe tabla toate cartile vizibile cu numarul 1.                                        !!DONE!!
     SHATTER,              // Sfarama: Valoarea unei carti a adversarului 2/3/4 scade cu 1.                                             !!DONE!!
     BORDERS,              // Granite: Plaseaza o carte neutra pentru a defini o granita a tablei.                                      !!DONE!!
-    AVALANCHE,            // Avalansa: Shift-eaza doua teancuri adiacente pe orizontala/verticala cu 1 pozitie.
+    AVALANCHE,            // Avalansa: Shift-eaza doua teancuri adiacente pe orizontala/verticala cu 1 pozitie.                        !!DONE!!
     BOULDER,               // Bolovan: Acopera orice iluzie cu o carte, fara a intoarce iluzia.                                        !!DONE!!
     NO_ELEMENT //!DONE :)
 };
