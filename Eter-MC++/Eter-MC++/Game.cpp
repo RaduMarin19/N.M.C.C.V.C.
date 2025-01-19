@@ -8,6 +8,7 @@ Game::Game()
     m_selectedStack = nullptr;
     m_explosionTurn = false;
     m_quickModeTimer = 0;
+    m_bestOf = 0;
     m_isPlayingTournament = false;
 }
 
@@ -77,13 +78,15 @@ void Game::IRun() {
                 HandleQuickModeSelection();
                 break;
             }
+            default:
+                break;
         }
 
-        if ((m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE)) {
+        if (m_currentState == GameState::RED_PLAYER_WON || m_currentState == GameState::BLUE_PLAYER_WON || m_currentState == GameState::TIE) {
             HandleWin();
         }
         else if (m_currentState == GameState::TRAINING_MODE || m_currentState == GameState::ELEMENTAL_BATTLE ||
-            m_currentState == GameState::MAGE_DUEL || m_currentState == GameState::TOURNAMENT ||
+            m_currentState == GameState::MAGE_DUEL ||
             m_currentState == GameState::MAGE_ELEMENTAL) {
             HandleBoardState();
             }
@@ -118,6 +121,13 @@ void Game::HandleTournamentSelection() {
         for(int i = 0; i < m_board->GetTableSize(); i++) {
             m_miniArena[i].resize(m_board->GetTableSize(), nullptr);
         }
+
+        if (m_board->GetPlayingQuickMatch()) {
+            m_board->GetPlayerBlue()->SetDeltaTime(SDL_GetTicks());
+            m_board->GetPlayerRed()->SetDeltaTime(SDL_GetTicks());
+            m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
+            m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
+        }
     }
 }
 
@@ -141,12 +151,8 @@ void Game::HandleQuickModeSelection() { //// QUICK MODE
         m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
         m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
     }
-    else {
+    else if (m_currentState != GameState::QUICK_MODE) {
         m_board->SetPlayingQuickMatch(true);
-        m_board->GetPlayerBlue()->SetDeltaTime(SDL_GetTicks());
-        m_board->GetPlayerRed()->SetDeltaTime(SDL_GetTicks());
-        m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
-        m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
     }
 
 }
@@ -205,9 +211,6 @@ bool Game::HandleWin() {
             }
         }
         incrementWin = false;
-
-
-
     }
     else if (m_currentState == GameState::BLUE_PLAYER_WON || (m_board->GetPlayerRed()->GetTimeRemaining() <= 0 && m_board->GetPlayingQuickMatch()))
     {
@@ -233,7 +236,7 @@ bool Game::HandleWin() {
     bool isNextRoundButton = false;
     bool isReset = false;
 
-    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1 || m_board->GetPlayingQuickMatch())
+    if(m_board->GetBlueRoundsWon() == m_bestOf / 2 + 1 || m_board->GetRedRoundsWon() == m_bestOf / 2 + 1)
     {
         m_painter->DrawText(message + " the MATCH!", {SCREEN_WIDTH / 2, 50}, 14, true);
         m_painter->DrawButton(isReset, { SCREEN_WIDTH / 2 - 75, 250 }, 150, 40, "Return to menu!", 14);
@@ -249,7 +252,6 @@ bool Game::HandleWin() {
 
     if(m_isPlayingTournament) m_painter->DrawMiniArena(m_miniArena);
 
-
     if (isReset) {
         m_currentState = GameState::MODE_SELECTION;
         m_board->Clear();
@@ -264,6 +266,10 @@ bool Game::HandleWin() {
     else if (isNextRoundButton) {
         m_currentState = m_nextRoundState;
         m_board->ResetRound(m_currentState);
+        m_board->GetPlayerBlue()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerRed()->SetDeltaTime(SDL_GetTicks());
+        m_board->GetPlayerRed()->SetTimeRemaining(m_quickModeTimer);
+        m_board->GetPlayerBlue()->SetTimeRemaining(m_quickModeTimer);
         m_explosionTurn = false;
         incrementWin = true;
         return true;
@@ -906,7 +912,6 @@ void Game::HandleBoardState() {
         auto blueTime = blue->GetTimeRemaining();
         Player* red = m_board->GetPlayerRed();
         auto redTime = red->GetTimeRemaining();
-
 
         m_painter->DrawTimer(blueTime, {300, SCREEN_HEIGHT - 100}, 40);
         m_painter->DrawTimer(redTime, {SCREEN_WIDTH - 300, SCREEN_HEIGHT - 100}, 40);

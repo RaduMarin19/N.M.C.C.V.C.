@@ -1245,8 +1245,8 @@ void GameBoard::GenerateTrainingCards() {
         }
 
         //Initialize the two players with the newly generated decks
-        this->m_playerBlue = Player(PlayingCardsBlue);
-        this->m_playerRed = Player(PlayingCardsRed);
+        this->m_playerBlue = std::move(Player(PlayingCardsBlue));
+        this->m_playerRed = std::move(Player(PlayingCardsRed));
 
         m_playerBlue.SetIllusionTexture(m_blueCardIllusion);
         m_playerRed.SetIllusionTexture(m_redCardIllusion);
@@ -1886,6 +1886,8 @@ GameBoard::GameBoard(SDL_Renderer* renderer)
     m_isMaxXFixed = false;
     m_isMinYFixed = false;
     m_isMaxYFixed = false;
+    m_blueRoundsWon = 0;
+    m_redRoundsWon = 0;
     m_isPlayingQuickMatch = false;
     //First possible position will always be 0,0
     this->m_possiblePositions.emplace(0, 0);

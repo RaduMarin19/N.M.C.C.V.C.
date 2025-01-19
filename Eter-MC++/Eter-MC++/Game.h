@@ -48,7 +48,7 @@ private:
 
 	GameState m_currentState = GameState::WELCOME_SCREEN;
 	GameState m_nextRoundState;
-	int m_bestOf = -1;
+	int m_bestOf;
 	std::unique_ptr<GameBoard> m_board = nullptr;
 	std::unique_ptr<Graphics> m_painter = nullptr;
 	bool m_drawThisFrame;
