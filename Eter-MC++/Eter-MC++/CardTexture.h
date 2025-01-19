@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <string>
+#include <iostream>
 
 #define textureWidth 128
 #define textureHeight 128

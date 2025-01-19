@@ -1,5 +1,4 @@
 #include "CardTexture.h"
-#include <iostream>
 
 CardTexture::CardTexture()
 {}

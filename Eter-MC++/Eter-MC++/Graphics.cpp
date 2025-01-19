@@ -2,9 +2,6 @@
 
 #include "Graphics.h"
 
-#include <format>
-
-#include "TokenCard.h"
 
 Graphics::Graphics() {
 
