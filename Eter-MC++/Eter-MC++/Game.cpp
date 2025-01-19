@@ -578,6 +578,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                         if (m_board->ValidateBoardAfterEffect(expl.get()) && !card.IsEter()) {
                             this->m_board->DeleteCardAtPosition(card.GetBoardPosition());
                             m_board->RemoveSpell(spellCard);
+                            m_board->SetShouldResetPositions(true);
                         }
                         else
                         {
@@ -743,6 +744,7 @@ void Game::PlaySpellCard(Player& player, SpellCard* spellCard, SDL_Rect& renderR
                     }
                     m_board->RemoveSpell(spellCard); //then remove the spell card
                     m_board->ChangeTurn();
+                    m_board->SetShouldResetPositions(true);
                 }
                 else {
                     m_board->ReturnCardToDeck(*spellCard);   //returning spellcard to its initial position

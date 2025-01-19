@@ -9,8 +9,7 @@ PlayingCard::PlayingCard(const Coordinates& coord, CardTexture* texture, short v
 	m_value{ value },
 	m_initialValue{ value },
 	m_color{ color },
-	m_isIllusion{ false }
-}
+	m_isIllusion{ false } {}
 
 PlayingCard::PlayingCard(const PlayingCard &oth) {
 	m_isIllusion = oth.m_isIllusion;

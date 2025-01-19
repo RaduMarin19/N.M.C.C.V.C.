@@ -2,6 +2,8 @@
 
 void GameBoard::TestPossiblePosition(short x, short y)
 {
+    if (m_possiblePositions.empty())
+        m_possiblePositions.insert({ 0,0 });
     //If the board is at it's max size and our point is outside the bounds then it is not valid
     if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::m_tableSize - 1)) {
         if (x < this->m_minX || x > this->m_maxX) {
@@ -211,6 +213,7 @@ void GameBoard::FixBorders(const Coordinates& position) {
 
 void GameBoard::ResetPossiblePositions() {
     m_possiblePositions.clear();
+    m_possiblePositions.insert({ 0,0 });
     m_maxX = 0;
     m_minX = 0;
     m_maxY = 0;
