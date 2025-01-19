@@ -1,7 +1,5 @@
 ﻿#include "GameBoard.h"
 
-#include "TokenCard.h"
-
 void GameBoard::TestPossiblePosition(short x, short y)
 {
     //If the board is at it's max size and our point is outside the bounds then it is not valid

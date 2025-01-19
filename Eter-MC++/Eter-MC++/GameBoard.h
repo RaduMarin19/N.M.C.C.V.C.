@@ -8,6 +8,7 @@
 #include "CardStatus.h"
 #include "ExplosionType.h"
 #include "ExplosionCard.h"
+#include "TokenCard.h"
 #include "Random.h"
 #include "config.h"
 #include "SpellCard.h"
@@ -23,8 +24,6 @@
 #include <vector>
 #include <cstdlib>
 #include <ranges>
-
-#include "TokenCard.h"
 
 class GameBoard
 {
