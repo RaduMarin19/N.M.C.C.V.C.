@@ -7,8 +7,6 @@ Player::Player() {
 	m_grabbedCard = nullptr;
 	m_timeRemaining = 0;
 	m_deltaTime = 0;
-
-	std::cout << "Called Player() constructor\n";
 }
 
 Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
@@ -22,8 +20,6 @@ Player::Player(std::vector<PlayingCard>& cards) : m_cards(std::move(cards)) {
 	m_color = m_cards.back().GetColor();
 
 	m_grabbedCard = nullptr;
-
-	std::cout << "Called Player(vector) constructor\n";
 }
 
 void Player::SetColor(Color color) {

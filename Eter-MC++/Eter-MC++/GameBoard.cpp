@@ -7,7 +7,6 @@ void GameBoard::TestPossiblePosition(short x, short y)
     //If the board is at it's max size and our point is outside the bounds then it is not valid
     if (std::abs(this->m_minX - this->m_maxX) == (GameBoard::m_tableSize - 1)) {
         if (x < this->m_minX || x > this->m_maxX) {
-            std::cout << x << " " << y << " is out of bounds" << std::endl;
             return;
         }
     }
@@ -25,7 +24,6 @@ void GameBoard::TestPossiblePosition(short x, short y)
 
     if (std::abs(this->m_minY - this->m_maxY) == (GameBoard::m_tableSize - 1)) {
         if (y < this->m_minY || y > this->m_maxY) {
-            std::cout << x << " " << y << " is out of bounds" << std::endl;
             return;
         }
     }
@@ -442,7 +440,6 @@ bool GameBoard::RemoveRow(short column, Color color)
         if (it != m_positions.end()) {
             unsigned short size = it->second.size();
             while (size>0) {
-                std::cerr << "deleting x: " << it->first.GetX() << " y: " << it->first.GetY()<<"\n";
                 DeleteCardAtPosition(it->first);
                 size--;
             }
@@ -468,7 +465,6 @@ void GameBoard::Explode()
                 short translatedX = m_maxX - i;
                 short translatedY = m_maxY - j;
                 Coordinates position{ translatedX,translatedY };
-                std::cout << "expl effect at: " << translatedX << " " << translatedY << std::endl;
                 if (explosionEffects[i][j] == ExplosionType::DELETE) {
                     DeleteCardAtPosition(position);
                 }
@@ -899,31 +895,6 @@ PlayingCard GameBoard::GenerateEterCard(Color color)
     return eterCard;
 }
 
-void GameBoard::PrintExplosionMask() {
-    short n = m_explosion->GetExplosionMask().size();
-    for (short i = 0; i < n; ++i) {
-        for (short j = 0; j < n; ++j) {
-            short mapX = m_minX + i;
-            short mapY = m_minY + j;
-
-            std::cout << mapX << " " << mapY << " explosion: ";
-            switch (m_explosion->GetExplosionMask()[i][j]) {
-            case ExplosionType::RETURN:
-                std::cout << "RETURN\n";
-                break;
-            case ExplosionType::DELETE:
-                std::cout << "DELETE\n";
-                break;
-            case ExplosionType::HOLE:
-                std::cout << "HOLE\n";
-                break;
-            default:
-                std::cout << " No explosion\n";
-            }
-        }
-    }
-}
-
 std::unique_ptr<CardTexture>& GameBoard::GetExplosionBoardTexture() {
     return this->m_tableSize == 3 ? this->m_explosionBoard[0] : this->m_explosionBoard[1];
 }
@@ -1010,7 +981,6 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
 
     //If the position at which the new card is played is not on the posible positions list, discard it
     if (!m_possiblePositions.contains(newCardCoords)) {
-        std::cout << "Not playing card because not a possible position." << newCardCoords.GetX() << " " << newCardCoords.GetY() << "\n";
         return IN_HAND;
     }
     
@@ -1083,10 +1053,6 @@ CardStatus GameBoard::PushNewCard(const PlayingCard& otherCard)
          else return IN_HAND;
             
     }
-
-    std::cout << "Card successfully added at: ("
-        << newCardCoords.GetX() << ", "
-        << newCardCoords.GetY() << ")" << std::endl;
 
     TestPossiblePositions(newCardCoords);
 
@@ -1253,9 +1219,7 @@ void GameBoard::GenerateTrainingCards() {
             availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
         }
 
-        std::cout << "At current screen width, each card is " << availableSpacePerCard << " pixels tall\n";
         for (auto& card : PlayingCardsBlue) {
-            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
             card.GetTexture()->GetRect().x = m_playerHandPadding;
             card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1267,7 +1231,6 @@ void GameBoard::GenerateTrainingCards() {
 
         currentCardOffset = 0;
         for (auto& card : PlayingCardsRed) {
-            std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
             card.GetTexture()->GetRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
             card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
             card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1326,10 +1289,8 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
         availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
     }
 
-    std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
 
     for (auto& card : PlayingCardsBlue) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = m_playerHandPadding;
         card.GetTexture()->GetRect().y = currentCardOffset;
         card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1342,7 +1303,6 @@ void GameBoard::GenerateElementalCards(bool shouldGenerateNewElements) {
 
     currentCardOffset = 0;
     for (auto& card : PlayingCardsRed) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
         card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
         card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1416,10 +1376,7 @@ void GameBoard::GenerateMageDuelCards() {
         availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
     }
 
-    std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
-
     for (auto& card : PlayingCardsBlue) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = m_playerHandPadding;
         card.GetTexture()->GetRect().y = currentCardOffset;
         card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1432,7 +1389,6 @@ void GameBoard::GenerateMageDuelCards() {
 
     currentCardOffset = 0;
     for (auto& card : PlayingCardsRed) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
         card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
         card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1502,10 +1458,7 @@ void GameBoard::GenerateMageElementalCards(bool shouldGenerateNewElements)
         availableSpacePerCard = (availableSpace - m_playerHandPadding) / PlayingCardsBlue.size() + 1;
     }
 
-    std::cout << "At current screen height, each card is " << availableSpacePerCard << " pixels tall\n";
-
     for (auto& card : PlayingCardsBlue) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = m_playerHandPadding;
         card.GetTexture()->GetRect().y = currentCardOffset;
         card.SetCoordinates({ m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1518,7 +1471,6 @@ void GameBoard::GenerateMageElementalCards(bool shouldGenerateNewElements)
 
     currentCardOffset = 0;
     for (auto& card : PlayingCardsRed) {
-        std::cout << "Initialized card with x:" << m_playerHandPadding << " y:" << m_playerHandPadding + currentCardOffset << "\n";
         card.GetTexture()->GetRect().x = (SCREEN_WIDTH - textureWidth) - m_playerHandPadding;
         card.GetTexture()->GetRect().y = m_playerHandPadding + currentCardOffset;
         card.SetCoordinates({ (SCREEN_WIDTH - textureWidth) - m_playerHandPadding, static_cast<int>(m_playerHandPadding + currentCardOffset) });
@@ -1747,7 +1699,6 @@ bool GameBoard::ValidateBoardAfterEffect(ExplosionCard *card) {
             }
         }
 
-        std::cout << curX << " " << curY << " " << nrNeighbours << "\n";
         if(nrNeighbours == 0) {
             return false;
         }
@@ -2199,7 +2150,6 @@ void GameBoard::LoadState(const nlohmann::json& json) {
         if(playerJson.contains("timeRemaining")) {
             player.SetTimeRemaining(playerJson["timeRemaining"].get<unsigned int>());
             player.SetDeltaTime(SDL_GetTicks());
-            std::cout << player.GetTimeRemaining() << std::endl;
         }
 
         if(playerJson.contains("isPlayingIllusion")) {

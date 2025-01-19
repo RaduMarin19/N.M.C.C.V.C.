@@ -1005,7 +1005,6 @@ void Game::HandleBoardState() {
             red->SetDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - blue->GetDeltaTime();
             if(timeDiff >= 1000) {
-                //std::cout << "Blue player time ticked down to: " << blueTime << '\n';
                 blue->SetDeltaTime(SDL_GetTicks());
                 if(blueTime > 0)
                     blue->SetTimeRemaining(blueTime - (timeDiff / 1000));
@@ -1014,7 +1013,6 @@ void Game::HandleBoardState() {
             blue->SetDeltaTime(SDL_GetTicks());
             unsigned int timeDiff = SDL_GetTicks() - red->GetDeltaTime();
             if(timeDiff >= 1000) {
-                //std::cout << "Red player time ticked down to: " << blueTime << '\n';
                 red->SetDeltaTime(SDL_GetTicks());
                 if (redTime > 0)
                     red->SetTimeRemaining(redTime - (timeDiff / 1000));

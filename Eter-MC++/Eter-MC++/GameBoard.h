@@ -21,7 +21,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <iostream>
 #include <cstdlib>
 #include <ranges>
 
@@ -74,7 +73,6 @@ public:
     bool DidExplode() const;
     void Explode();
     void UpdateBoardMask();
-    void PrintExplosionMask();
     std::unique_ptr<CardTexture>& GetExplosionBoardTexture();
     CardTexture* GetExplosionSprite(const int& offset);
 

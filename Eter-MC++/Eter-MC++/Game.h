@@ -6,6 +6,7 @@
 #include "CardStatus.h"
 #include "Graphics.h"
 #include "ElementalType.h"
+#include "TokenCard.h"
 
 #if defined linux
 #include "../Dependencies/JSON/json.hpp"
@@ -14,14 +15,12 @@
 #endif
 
 #include <SDL.h>
-#include <iostream>
-#include <fstream>
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <stack>
 #include <ranges>
-#include "TokenCard.h"
+#include <fstream>
 
 
 #define TARGET_FRAME_TIME 16 // 16ms between frames (60~fps)
