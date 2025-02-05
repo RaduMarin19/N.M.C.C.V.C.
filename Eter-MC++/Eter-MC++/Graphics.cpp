@@ -2,12 +2,38 @@
 
 #include "Graphics.h"
 
+std::regex initializeRegexFromFile(const std::string& filename) {
+    std::ifstream file(filename);
+    std::string regexPattern = ".*(";
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return std::regex("");
+    }
+
+    std::cout << "Start loading regex\n";
+    std::string line;
+    bool firstWord = true;
+
+    while (std::getline(file, line)) {
+        if (!firstWord) {
+            regexPattern += "|";
+        }
+        regexPattern += line;
+        firstWord = false;
+    }
+    regexPattern += ").*";
+    std::cout << "Done loading regex\n";
+
+    file.close();
+    return std::regex(regexPattern);
+}
 
 Graphics::Graphics() {
 
     //Initialize the color pallete, currently "magic numbers"
-    m_mainColor = {160, 220, 50, 255};
-    m_accentColor = {40, 40, 80};
+    m_mainColor = { 160, 220, 50, 255 };
+    m_accentColor = { 40, 40, 80 };
 
     //Initialize random seed
     srand(static_cast<unsigned int>(time(NULL)));
@@ -19,19 +45,19 @@ Graphics::Graphics() {
     }
 
 #if defined linux && SDL_VERSION_ATLEAST(2, 0, 8)
-        // Disable compositor bypass
-        if (!SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0")) {
-            std::cerr << "SDL cannot disable compositor bypass!" << std::endl;
-            throw std::runtime_error("SDL Hint Setting Failed");
-        }
+    // Disable compositor bypass
+    if (!SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0")) {
+        std::cerr << "SDL cannot disable compositor bypass!" << std::endl;
+        throw std::runtime_error("SDL Hint Setting Failed");
+    }
 #endif
 
     // Create window
     m_window = SDL_CreateWindow("Basic C++ SDL project",
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    SCREEN_WIDTH, SCREEN_HEIGHT,
-    SDL_WINDOW_SHOWN);
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        SDL_WINDOW_SHOWN);
     if (!m_window) {
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         throw std::runtime_error("SDL Window Creation Failed");
@@ -45,23 +71,26 @@ Graphics::Graphics() {
         throw std::runtime_error("SDL Renderer Creation Failed");
     }
 
-        // Initialize TTF
-        if (TTF_Init() == -1) {
-            std::cerr << "TTF_Init Failed! TTF_Error: " << TTF_GetError() << std::endl;
-            throw std::runtime_error("TTF Initialization Failed");
+    // Initialize TTF
+    if (TTF_Init() == -1) {
+        std::cerr << "TTF_Init Failed! TTF_Error: " << TTF_GetError() << std::endl;
+        throw std::runtime_error("TTF Initialization Failed");
+    }
+
+    for (int i = 0; i < m_font.size(); i++) {
+        if (m_font[i] == nullptr) {
+            m_font[i] = TTF_OpenFont(FONT_PATH, 15 * (i + 1));
         }
 
-    for(int i =0; i < m_font.size(); i++) {
-        if(m_font[i] == nullptr) {
-            m_font[i] = TTF_OpenFont(FONT_PATH, 15 * (i+1));
-        }
-
-        if(!m_font[i]) {
+        if (!m_font[i]) {
             printf("Unable to load font: '%s'!\n"
-                   "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
+                "SDL2_ttf Error: %s\n", FONT_PATH, TTF_GetError());
             exit(-1);
         }
     }
+
+    this->regex = initializeRegexFromFile(REGEX_FILE_PATH);
+
 }
 
 Graphics::~Graphics()
@@ -134,10 +163,9 @@ void Graphics::DrawText(const std::string &buf, const Coordinates &pos, int font
     }
 }
 
-void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSize, bool isCentered) {
-
-    //Initialize a texture and rectangle for the text
-    SDL_Texture *texture = NULL;
+bool Graphics::DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered) {
+    // Initialize a texture and rectangle for the text
+    SDL_Texture* texture = nullptr;
     SDL_Rect textRect;
 
     textRect.x = pos.GetX();
@@ -146,84 +174,98 @@ void Graphics::DrawTextBox(std::string &buf, const Coordinates &pos, int fontSiz
     SDL_Color textColor = m_accentColor;
     textColor.a = 30;
 
-    static char *buffer = nullptr;
+    static std::string buffer;
     bool isPlaceholder = false;
+    bool isValid = false;
 
-    //If the given buffer is empty, replace it with placeholder text
-    if(buf.empty()) {
-        char placeHolder[] = "Enter text...";
-        if(buffer == nullptr)
-            buffer = new char[strlen(placeHolder) + 1];
-        strcpy(buffer, placeHolder);
+    // If the given buffer is empty, replace it with placeholder text
+    if (buf.empty()) {
+        buffer = "Enter text...";
         isPlaceholder = true;
-    } else {
-        delete buffer;
-        buffer = new char[strlen(buf.c_str()) + 1];
-        strcpy(buffer, buf.c_str());
+    }
+    else {
+        buffer = buf;
+        isValid = !std::regex_match(buffer, this->regex);
     }
 
-    //Try to load our text buffer onto a surface
-    SDL_Surface *textSurface = TTF_RenderText_Shaded(m_font[fontSize < 15 ? 0 : 1], buffer, isPlaceholder ? SDL_Color(80, 80, 80, 240) : SDL_Color(255.f, 255.f, 255.f, 255.f), textColor);
+    // Try to load our text buffer onto a surface
+    SDL_Surface* textSurface = TTF_RenderText_Shaded(
+        m_font[fontSize < 15 ? 0 : 1],
+        buffer.c_str(),
+        isPlaceholder ? SDL_Color{ 80, 80, 80, 240 } : SDL_Color{ 255, 255, 255, 255 },
+        textColor
+    );
 
-    if(!textSurface) {
-        printf("Unable to render text surface!\n"
-               "SDL2_ttf Error: %s\n", TTF_GetError());
-    } else {
-        // Create texture from surface pixels
-        texture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-        if(!texture) {
-            printf("Unable to create texture from rendered text!\n"
-                   "SDL2 Error: %s\n", SDL_GetError());
-            return;
-        }
-        // Get text dimensions
-        textRect.w = textSurface->w;
-        textRect.h = textSurface->h;
+    if (!textSurface) {
+        printf("Unable to render text surface!\nSDL2_ttf Error: %s\n", TTF_GetError());
+        return false;
+    }
 
-        //Create an "outline", a rectangle that's one pixel larger than our text rectangle
-        SDL_Rect outlineRect = textRect;
-        outlineRect.w = (textSurface->w / strlen(buffer)) * 20;
-        outlineRect.h +=2;
-        outlineRect.x --;
-        outlineRect.y --;
-
-        //If the centered flag is set, shift the rectangles by half it's width
-        if(isCentered) {
-            textRect.x -= ((textSurface->w / strlen(buffer)) * 20) / 2;
-            outlineRect.x -= ((textSurface->w / strlen(buffer)) * 20) / 2;
-
-            textRect.y -= textSurface->h /2;
-            outlineRect.y -= textSurface->h /2;
-        }
-
-        //Typing logic, if the mouse is on the element, we can type in it
-        //TODO: Change this logic to be on click instead
-        if(this->IsMouseInRect(outlineRect)) {
-            if(m_PressedKeyThisFrame) {
-                //Get the key ASCII id
-                unsigned short key = m_PressedKey;
-
-                //If we pressed backspace, delete a character instead of adding it
-                //TODO: This logic should delete multiple characters if backspace is held down
-                if(key == SDLK_BACKSPACE) {
-                    buf = buf.substr(0, buf.size() - 1);
-                } else if(buf.length() < 20) buf += static_cast<char>(key);
-            }
-            SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
-        } else SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
-
-        //Render our rectangles and the texture onto the screen
-        SDL_RenderDrawRect(m_renderer, &outlineRect);
-
-        SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-
-        SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
-
-        SDL_DestroyTexture(texture);
-
-        //Delete the created surface
+    texture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+    if (!texture) {
+        printf("Unable to create texture from rendered text!\nSDL2 Error: %s\n", SDL_GetError());
         SDL_FreeSurface(textSurface);
+        return false;
     }
+
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
+
+    size_t bufferLen = buffer.length();
+    if (bufferLen == 0) bufferLen = 1;
+
+    SDL_Rect outlineRect = textRect;
+    outlineRect.w = (textSurface->w / bufferLen) * 20;
+    outlineRect.h += 2;
+    outlineRect.x--;
+    outlineRect.y--;
+
+    if (isCentered) {
+        textRect.x -= ((textSurface->w / bufferLen) * 20) / 2;
+        outlineRect.x -= ((textSurface->w / bufferLen) * 20) / 2;
+
+        textRect.y -= textSurface->h / 2;
+        outlineRect.y -= textSurface->h / 2;
+    }
+
+    if (this->IsMouseInRect(outlineRect)) {
+        if (m_PressedKeyThisFrame) {
+            unsigned short key = m_PressedKey;
+
+            if (key == SDLK_BACKSPACE) {
+                if (!buf.empty()) {
+                    buf.pop_back();
+                }
+            }
+            else if (buf.length() < 20) {
+                buf += static_cast<char>(key);
+            }
+        }
+        SDL_SetRenderDrawColor(m_renderer, m_mainColor.r, m_mainColor.g, m_mainColor.b, m_mainColor.a);
+    }
+    else {
+        SDL_SetRenderDrawColor(m_renderer, m_accentColor.r, m_accentColor.g, m_accentColor.b, m_accentColor.a);
+    }
+
+    if (!isValid) {
+        this->DrawText("Entered string is not valid...", { pos.GetX(), pos.GetY() + fontSize }, fontSize, isCentered);
+        SDL_SetRenderDrawColor(m_renderer, 250, 30, 30, 255);
+    }
+
+    SDL_RenderDrawRect(m_renderer, &outlineRect);
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderCopy(m_renderer, texture, NULL, &textRect);
+
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+    if (textSurface) {
+        SDL_FreeSurface(textSurface);
+        textSurface = nullptr;
+    }
+
+    return isValid;
 }
 
 void Graphics::DrawButton(bool &active, const Coordinates &pos, int width, int height, std::string text, int fontSize) {
@@ -341,13 +383,13 @@ bool Graphics::DrawLoginPage() {
 
     //Draw our elements onto the screen, a text item, a text box and a button
     DrawText("Welcome to ETER!", {SCREEN_WIDTH / 2, 50}, 40, true);
-    DrawTextBox(g_config.playerName, {SCREEN_WIDTH / 2, 250}, 40, true);
+    bool isValidText = DrawTextBox(g_config.playerName, { SCREEN_WIDTH / 2, 250 }, 40, true);
 
     bool buttonActive = false;
     DrawButton(buttonActive, { SCREEN_WIDTH / 2 - 50, 350 }, 100, 40, "Log in!", 14);
 
     //If the user pressed the button return true, otherwise return false;
-    return buttonActive;
+    return buttonActive && isValidText;
 
 }
 

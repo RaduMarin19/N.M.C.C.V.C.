@@ -2,8 +2,10 @@
 #define GRAPHICS_H
 #if defined linux
 #define FONT_PATH   "../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
+#define REGEX_FILE_PATH "../Eter-MC++/Eter-MC++/Dependencies/assets/regex.txt"
 #else 
 #define FONT_PATH   "../../Eter-MC++/Eter-MC++/Dependencies/assets/DroidSansMono.ttf"
+#define REGEX_FILE_PATH "../../Eter-MC++/Eter-MC++/Dependencies/assets/regex.txt"
 #endif
 
 #include "Coordinates.h"
@@ -13,6 +15,7 @@
 #include "TokenCard.h"
 
 #include <iostream>
+#include <fstream>
 #include <format>
 #include <SDL_render.h>
 #include <SDL_ttf.h>
@@ -20,6 +23,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+#include <regex>
 
 class TokenCard;
 
@@ -38,7 +42,7 @@ public:
     Graphics& operator=(Graphics&&) = delete;
 
     void DrawText(const std::string& buf, const Coordinates& pos, int fontSize, bool isCentered, SDL_Color textColor = {255,255,255});
-    void DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
+    bool DrawTextBox(std::string& buf, const Coordinates& pos, int fontSize, bool isCentered);
     void DrawButton(bool& active, const Coordinates& pos, int width, int height, std::string text, int fontSize);
     void DrawTexturedRect(const SDL_Rect& rect, SDL_Texture* texture);
     void DrawTimer(unsigned int seconds, const Coordinates& pos, int fontSize);
@@ -77,6 +81,7 @@ private:
     bool m_isPressingRightClick;
     bool m_PressedKeyThisFrame;
     unsigned short m_PressedKey;
+    std::regex regex;
 };
 
 
